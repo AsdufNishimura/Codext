@@ -9,6 +9,14 @@ Lenguaje sencillo generador de documentos.
 
 # Historial de cambios
 
+## Marzo/26/2020
+Cambios:
+- Se ha separado la documentación y el resto de los archivos por carpetas.
+Se incluyó lo siguiente:
+- Codext.bak -> Respaldo de la base de datos, hasta la tabla de Léxico.
+- Codext.sql -> Consulta para la creación de la base de datos con todo incluido hasta la tabla de Léxico.
+
+
 ## Marzo/16/2020
 Se incluyó dentro de la documentación:
 - Diagrama de transición
