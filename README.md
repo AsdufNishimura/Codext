@@ -9,6 +9,11 @@ Lenguaje sencillo generador de documentos.
 
 # Historial de cambios
 
+## Marzo/27/2020
+Se incluyeron:
+- Los diagramas de documentación del compilador, para la fase de análisis léxico.
+- Primera versión del compilador.
+
 ## Marzo/26/2020
 Cambios:
 - Se ha separado la documentación y el resto de los archivos por carpetas.
