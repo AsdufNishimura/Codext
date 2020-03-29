@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCodext));
             this.txtCodigo = new System.Windows.Forms.RichTextBox();
             this.btnCargar = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -38,6 +39,7 @@
             this.txtEvaluacion = new System.Windows.Forms.TextBox();
             this.txtTokens = new System.Windows.Forms.RichTextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnComenzar = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtCodigo
@@ -61,7 +63,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(287, 46);
+            this.label1.Location = new System.Drawing.Point(287, 71);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(83, 13);
             this.label1.TabIndex = 2;
@@ -69,7 +71,8 @@
             // 
             // txtRenglones
             // 
-            this.txtRenglones.Location = new System.Drawing.Point(290, 62);
+            this.txtRenglones.BackColor = System.Drawing.SystemColors.Control;
+            this.txtRenglones.Location = new System.Drawing.Point(290, 87);
             this.txtRenglones.Name = "txtRenglones";
             this.txtRenglones.ReadOnly = true;
             this.txtRenglones.Size = new System.Drawing.Size(100, 20);
@@ -127,11 +130,22 @@
             this.label4.TabIndex = 9;
             this.label4.Text = "Archivo de Tokens";
             // 
+            // btnComenzar
+            // 
+            this.btnComenzar.Location = new System.Drawing.Point(290, 39);
+            this.btnComenzar.Name = "btnComenzar";
+            this.btnComenzar.Size = new System.Drawing.Size(75, 23);
+            this.btnComenzar.TabIndex = 10;
+            this.btnComenzar.Text = "Comenzar";
+            this.btnComenzar.UseVisualStyleBackColor = true;
+            this.btnComenzar.Click += new System.EventHandler(this.btnComenzar_Click);
+            // 
             // frmCodext
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(423, 541);
+            this.Controls.Add(this.btnComenzar);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtTokens);
             this.Controls.Add(this.txtEvaluacion);
@@ -142,6 +156,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnCargar);
             this.Controls.Add(this.txtCodigo);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmCodext";
             this.Text = "Codext";
             this.Load += new System.EventHandler(this.frmCodext_Load);
@@ -162,6 +177,7 @@
         private System.Windows.Forms.TextBox txtEvaluacion;
         private System.Windows.Forms.RichTextBox txtTokens;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btnComenzar;
     }
 }
 
