@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 
@@ -24,8 +18,18 @@ namespace Codext
             InitializeComponent();
         }
 
+        private void frmCodext_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        // Hace falta la opción de cargar un archivo.
         private void btnCargar_Click(object sender, EventArgs e)
         {
+            OpenFileDialog dialogEntrada = new OpenFileDialog();
+            dialogEntrada.DefaultExt = 
+            dialogEntrada.ShowDialog();
+
             try
             {
                 miInstruccion = new Instrucción();
@@ -39,11 +43,7 @@ namespace Codext
             }
         }
 
-        private void frmCodext_Load(object sender, EventArgs e)
-        {
-
-        }
-
+        #region AnalizadorLexico
         public string CargarQuery(string Query)
         {
             string Consulta = "";
@@ -130,6 +130,7 @@ namespace Codext
             }
             return otraInstruccion.Token;
         }
+        #endregion
     }
 
 }

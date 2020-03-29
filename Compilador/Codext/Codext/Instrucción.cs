@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Codext
 {
+    // Instrucción de código, cada uno de los elementos del programa, separados por delimitadores.
     public class Instrucción
     {
         private string _strCadena;
