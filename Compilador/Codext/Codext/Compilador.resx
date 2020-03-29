@@ -117,4 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAABMLAAATCwAAAAAAAAAA
+        AABNTU2uTU1N/01NTf9NTU3/TU1N/01NTf9NTU3/TU1N/01NTf9NTU3/TExM/5OTk+WTk5Plk5OT5ZOT
+        k+WFhYXlTU1Nrk1NTf9NTU3/TU1N/01NTf9NTU3/TU1N/01NTf9NTU3/TU1N/1dXV///////////////
+        ////////5ubm/0xNTq4oc7n/P1pz/zpgg/8wa6L/RlBY/y5tqP8/W3b/QFZq/zBrof9JZX7/66+N//fl
+        2//2y7T/7reY/+bm5v8+WnOuGn/e/zhiiP8hecv/G4Df/z1Wbf8bguL/InrM/zdcfv8bguL/PnGg/959
+        Rv/vwqn/9MCj/+OLWv/m5ub/MmSTrjtcev89U2f/KXG0/yxilf80YIr/LGmi/yBzwP80X4f/MmCL/01c
+        a//giFb/6Z91//jZx//jjV3/5ubm/yxqo65KT1P/QFVo/zZkj/89VGr/Lmaa/zVmk/8xYY//L2WY/z9b
+        dv9XV1f/5aaC/+BoJP/88er/445e/+bm5v8raqWuTU1N/z1XcP87X4L/RE5Y/ytppP80ZpX/OFt7/ytp
+        ov8+XHj/V1dX/+rEr//jWw7//v7+/+OPX//m5ub/K2qkrk1NTf88WHP/PF59/0dMUf8paqb/M2eX/zxX
+        cf8qa6f/IXvO/0dnhf/w49z/5nIx///////jj1//5ubm/ytqpa5NTU3/PFdx/ztfgP9ITFH/Kmql/zNo
+        mf89V27/Kmun/xp/3f9Ca5H/+fb0/+R4Ov//////449g/+bm5v8qaqWuS05R/z5Vav84Yon/R01U/yxp
+        o/8yaJr/PVhx/ytpo/83X4T/VFda//Pg1v/jXRH//v7+/+OPX//m5ub/LmWYrkRWZ/9CUF7/Mmmc/0JT
+        Yv8wZpj/MWib/zlcfP8uZpr/O1+B/1dXV//vybP/2VwU//vr4v/jj1//5ubm/zVdgq4xaqD/QVVo/yN0
+        wP82Y47/N1+F/yxsqP8tbKb/M2CK/zVlkv9SXGb/67CP/+GNXf/xuZn/439H/+HGuP9AUWCuGoDg/zRn
+        lv8icLn/G4Hh/0NTY/8af97/HIDd/zxXcf8bguL/OHey/+eYa//pwKn/3GMe/+JSAP/QYyX/TE1Nripj
+        mf89Wnb/OVZx/y1onv9KTE7/KGij/zRhiv9CUWD/J2qp/z9qkv/lrIz/9u/s/9qGV//eh1f/zopl/01N
+        Ta5NTU3/TU1N/01NTf9NTU3/TU1N/01NTf9NTU3/TU1N/01NTf9XV1f//////////////////////+bm
+        5v9NTU2uTU1N/01NTf9NTU3/TU1N/01NTf9NTU3/TU1N/01NTf9NTU3/TExM/5OTk/+Tk5P/k5OT/5OT
+        k/+FhYX/gB8AAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAA
+        AACAAAAAgAAAAA==
+</value>
+  </data>
 </root>
