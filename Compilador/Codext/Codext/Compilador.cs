@@ -35,7 +35,31 @@ namespace Codext
 
         private void frmCodext_Load(object sender, EventArgs e)
         {
+            dgvTSIdentificadores.Columns.Add("columnNumero", "# Identificador");
+            dgvTSIdentificadores.Columns.Add("columnNombre", "Nombre");
+            dgvTSIdentificadores.Columns.Add("columnTipo", "Tipo de dato");
+            dgvTSIdentificadores.Columns.Add("columnValor", "Valor");
 
+            dgvTSConstantesNumericas.Columns.Add("columnNumero", "# Constante");
+            dgvTSConstantesNumericas.Columns.Add("columnValor", "Valor");
+
+            dgvTSOperadores.Columns.Add("columnNumero", "# Operador");
+            dgvTSOperadores.Columns.Add("columnJerarquia", "Jerarquía");
+
+            dgvTSOperadores.Rows.Add("**", 1);
+            dgvTSOperadores.Rows.Add("*", 2);
+            dgvTSOperadores.Rows.Add("/", 2);
+            dgvTSOperadores.Rows.Add("+", 3);
+            dgvTSOperadores.Rows.Add("-", 3);
+            dgvTSOperadores.Rows.Add("!", 4);
+            dgvTSOperadores.Rows.Add("&", 5);
+            dgvTSOperadores.Rows.Add("|", 6);
+            dgvTSOperadores.Rows.Add(">", 7);
+            dgvTSOperadores.Rows.Add("<", 7);
+            dgvTSOperadores.Rows.Add("<>", 7);
+            dgvTSOperadores.Rows.Add("=", 7);
+            dgvTSOperadores.Rows.Add("<=", 7);
+            dgvTSOperadores.Rows.Add(">=", 7);
         }
 
 
@@ -58,7 +82,7 @@ namespace Codext
                 {
                     MessageBox.Show("Algo salió mal.\nIntentelo de nuevo.", "Error", MessageBoxButtons.OK);
                 }
-
+                txtConsola.Text = "Archivo cargado.";
             }
             catch (Exception ex)
             {
@@ -67,13 +91,13 @@ namespace Codext
         }
 
 
-
         #region AnalizadorLexico
         // Comienza el proceso del análisis lexico, utilizando el texto que se halle en la caja.
         private async void btnComenzar_Click(object sender, EventArgs e)
         {
             try
             {
+                txtConsola.Text = "Comenzando proceso.";
                 txtTokens.Text = "";
                 txtEvaluacion.Text = "";
                 string strTokenAux;
@@ -81,15 +105,22 @@ namespace Codext
                 ObtenerSubcadenas();
                 int renglonActual = 0;
                 int intPosRenglon = 0;
+                int intPosRenglonTokens = 0;
 
                 foreach (List<string> Subcadenas in lstRenglones)
-                {                    
+                {
+                    txtCodigo.BackColor = Color.Goldenrod;
+                    txtConsola.Text = "Leyendo el renglón " + renglonActual;
+                    txtCodigo.Focus();
+                    txtCodigo.Select(intPosRenglon, txtCodigo.Lines[renglonActual].Length);
+                    await Task.Delay(2000);
+                    txtCodigo.BackColor = Color.FromArgb(255, 240, 240, 240);
                     foreach (string Subcadena in Subcadenas)
                     {
                         //Aquí debería pausar xd creo
                         txtSubcadena.Text = Subcadena;
                         txtSubcadena.BackColor = Color.Goldenrod;
-                        //txtCodigo.Select(intPosRenglon, intPosRenglon + txtRenglones.Lines[renglonActual].Length - 1);
+                        txtConsola.Text = "Leyendo la subcadena " + Subcadena;                        
                         await Task.Delay(2000);
                         txtSubcadena.BackColor = Color.FromArgb(255, 240, 240, 240);
 
@@ -98,32 +129,69 @@ namespace Codext
 
                         strTokenAux = AnalizadorLexico(miInstruccion, 0, "0");
 
-                        //Aquí también                        
-                        txtEvaluacion.Text += strTokenAux + " ";
-                        txtEvaluacion.BackColor = Color.Goldenrod;
-                        await Task.Delay(2000);
-                        txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                        if (strTokenAux == "ERRL")
+                        {
+                            txtEvaluacion.Text += strTokenAux + " ";
+                            txtEvaluacion.BackColor = Color.Goldenrod;
+                            txtConsola.Text = "Error detectado: no se reconoció el elemento. Se asignará un token de error léxico (ERRL)";
+                            await Task.Delay(2000);
+                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                        }
+                        else
+                        {
+                            //Aquí también                        
+                            txtEvaluacion.Text += strTokenAux + " ";
+                            txtEvaluacion.BackColor = Color.Goldenrod;
+                            txtConsola.Text = "Se identifico la subcadena " + Subcadena + " con el token " + strTokenAux;
+                            await Task.Delay(2000);
+                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+
+                            string tipoToken = strTokenAux.Substring(0, 2);
+                            string numToken = strTokenAux.Substring(2, 2);
+
+                            if (tipoToken == "ID")
+                            {
+                                dgvTSIdentificadores.Rows.Add(numToken, Subcadena, "-", "-");
+                                dgvTSIdentificadores.Select();
+                                txtConsola.Text = "Se agregó el identificador con el token " + strTokenAux + " a la tabla de símbolos.";
+                                await Task.Delay(2000);
+
+                            }
+                            else if (tipoToken == "CN" || tipoToken == "CR")
+                            {
+                                dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
+                                dgvTSConstantesNumericas.Select();
+                                txtConsola.Text = "Se agregó la constante numérica con el token " + strTokenAux + " a la tabla de símbolos.";
+                                await Task.Delay(2000);
+                            }
 
 
-                        txtSubcadena.Text = "";
+                            txtSubcadena.Text = "";
+                        }
                     }
                     //Aquí pausa igual                    
                     txtTokens.Text += txtEvaluacion.Text + "\n";
                     txtTokens.BackColor = Color.Goldenrod;
-                    //txtTokens.Select(txtTokens.TextLength - txtTokens.Lines[renglonActual].Length, txtTokens.TextLength);
+                    txtConsola.Text = "Se ha llegado al final del renglón " + renglonActual;
+                    txtTokens.Focus();
+                    txtTokens.Select(intPosRenglonTokens, txtTokens.Lines[renglonActual].Length);
                     await Task.Delay(2000);
                     txtTokens.BackColor = Color.FromArgb(255, 240, 240, 240);
 
                     txtEvaluacion.Text = "";
 
-                    intPosRenglon += txtCodigo.Lines[renglonActual].Length;
+                    intPosRenglon += (txtCodigo.Lines[renglonActual].Length + 1);
+                    intPosRenglonTokens += (txtTokens.Lines[renglonActual].Length + 1);
                     renglonActual++;
                     
                 }
+                txtConsola.Text = "Ha finalizado el análisis léxico.";
+                this.Focus();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtConsola.Text = "Ocurrió un error inesperado.";                
             }
         }
 
@@ -139,7 +207,7 @@ namespace Codext
                     if (strConsulta != "")
                         return AnalizadorLexico(otraInstruccion, Pos + 1, strConsulta);
                     else
-                        throw new Exception("Instrucción no válida");
+                        return "ERRL";
                 }
                 if (Convert.ToInt32(otraInstruccion.Cadena[Pos]) == 92 && otraInstruccion.Cadena[Pos + 1] == 'n')
                 {
@@ -147,7 +215,7 @@ namespace Codext
                     if (strConsulta != "")
                         return AnalizadorLexico(otraInstruccion, Pos + 2, strConsulta);
                     else
-                        throw new Exception("Instrucción no válida");
+                        return "ERRL";
                 }
                 else
                 {
@@ -155,7 +223,7 @@ namespace Codext
                     if (strConsulta != "")
                         return AnalizadorLexico(otraInstruccion, Pos + 1, strConsulta);
                     else
-                        throw new Exception("Instrucción no válida");
+                        return "ERRL";
                 }
 
             }
