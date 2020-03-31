@@ -97,6 +97,12 @@ namespace Codext
         {
             try
             {
+                dgvTSIdentificadores.Rows.Clear();
+                dgvTSConstantesNumericas.Rows.Clear();
+                IDXX = 0;
+                CNXX = 0;
+                CRXX = 0;
+
                 txtConsola.Text = "Comenzando proceso.";
                 txtTokens.Text = "";
                 txtEvaluacion.Text = "";
@@ -127,6 +133,61 @@ namespace Codext
                         miInstruccion = new Instrucción();
                         miInstruccion.Cadena = Subcadena;
 
+
+                        string tsres;
+
+                        if (Subcadena.Contains("_"))
+                        {
+                            tsres = VerificarTablasDeSimbolos("ID");
+
+                            if (tsres != "")
+                            {
+                                strTokenAux = tsres;
+                                dgvTSIdentificadores.Select();
+                                txtEvaluacion.Text += strTokenAux + " ";
+                                txtEvaluacion.BackColor = Color.Goldenrod;
+                                txtConsola.Text = "Se encontró el identificador en la tabla de símbolos, su token es " + strTokenAux;
+                                await Task.Delay(2000);
+                                txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                break;
+                            }
+                        }
+
+                        if (Subcadena.Contains("#"))
+                        {
+                            if (Subcadena.Contains(".") || Subcadena.Contains("E"))
+                            {
+                                tsres = VerificarTablasDeSimbolos("CR");
+                                if (tsres != "")
+                                {
+                                    strTokenAux = tsres;
+                                    dgvTSConstantesNumericas.Select();
+                                    txtEvaluacion.Text += strTokenAux + " ";
+                                    txtEvaluacion.BackColor = Color.Goldenrod;
+                                    txtConsola.Text = "Se encontró la constante numérica real en la tabla de símbolos, su token es " + strTokenAux;
+                                    await Task.Delay(2000);
+                                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                tsres = VerificarTablasDeSimbolos("CN");
+                                if (tsres != "")
+                                {
+                                    strTokenAux = tsres;
+                                    dgvTSConstantesNumericas.Select();
+                                    txtEvaluacion.Text += strTokenAux + " ";
+                                    txtEvaluacion.BackColor = Color.Goldenrod;
+                                    txtConsola.Text = "Se encontró la constante numérica entera en la tabla de símbolos, su token es " + strTokenAux;
+                                    await Task.Delay(2000);
+                                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                    break;
+                                }
+                            }
+                            
+                        }
+
                         strTokenAux = AnalizadorLexico(miInstruccion, 0, "0");
 
                         if (strTokenAux == "ERRL")
@@ -139,7 +200,7 @@ namespace Codext
                         }
                         else
                         {
-                            //Aquí también                        
+                            //Aquí también  
                             txtEvaluacion.Text += strTokenAux + " ";
                             txtEvaluacion.BackColor = Color.Goldenrod;
                             txtConsola.Text = "Se identifico la subcadena " + Subcadena + " con el token " + strTokenAux;
@@ -147,21 +208,27 @@ namespace Codext
                             txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
 
                             string tipoToken = strTokenAux.Substring(0, 2);
-                            string numToken = strTokenAux.Substring(2, 2);
+                            string numToken = strTokenAux.Substring(2, 2);                            
 
                             if (tipoToken == "ID")
-                            {
-                                dgvTSIdentificadores.Rows.Add(numToken, Subcadena, "-", "-");
-                                dgvTSIdentificadores.Select();
-                                txtConsola.Text = "Se agregó el identificador con el token " + strTokenAux + " a la tabla de símbolos.";
-                                await Task.Delay(2000);
-
+                            {                                
+                                    dgvTSIdentificadores.Rows.Add(numToken, Subcadena, "-", "-");
+                                    dgvTSIdentificadores.Select();
+                                    txtConsola.Text = "Se agregó el identificador con el token " + strTokenAux + " a la tabla de símbolos.";
+                                    await Task.Delay(2000);            
                             }
-                            else if (tipoToken == "CN" || tipoToken == "CR")
+                            else if (tipoToken == "CN")
+                            {                                
+                                dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
+                                dgvTSConstantesNumericas.Select();
+                                txtConsola.Text = "Se agregó la constante numérica entera con el token " + strTokenAux + " a la tabla de símbolos.";
+                                await Task.Delay(2000);
+                            }
+                            else if (tipoToken == "CR")
                             {
                                 dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
                                 dgvTSConstantesNumericas.Select();
-                                txtConsola.Text = "Se agregó la constante numérica con el token " + strTokenAux + " a la tabla de símbolos.";
+                                txtConsola.Text = "Se agregó la constante numérica real con el token " + strTokenAux + " a la tabla de símbolos.";
                                 await Task.Delay(2000);
                             }
 
@@ -368,6 +435,48 @@ namespace Codext
                 lstRenglones.Add(lstSubcadenas);
             }
         }
+
+        public string VerificarTablasDeSimbolos(string strToken)
+        {            
+            if (strToken == "ID" && dgvTSIdentificadores.Rows.Count > 0)
+            {
+                foreach (DataGridViewRow r in dgvTSIdentificadores.Rows)
+                {
+                    if (r.Cells[1].Value.ToString() == txtSubcadena.Text)
+                    {
+                        return "ID" + r.Cells[0].Value.ToString();
+                    }
+                }
+                return "";
+            }
+            else if ((strToken == "CN") && dgvTSConstantesNumericas.Rows.Count > 0)
+            {
+                foreach (DataGridViewRow r in dgvTSConstantesNumericas.Rows)
+                {
+                    if ((r.Cells[1].Value.ToString() + "#") == txtSubcadena.Text)
+                    {
+                        return "CN" + r.Cells[0].Value.ToString();
+                    }
+                }
+                return "";
+            }
+            else if ((strToken == "CR") && dgvTSConstantesNumericas.Rows.Count > 0)
+            {
+                foreach (DataGridViewRow r in dgvTSConstantesNumericas.Rows)
+                {
+                    if ((r.Cells[1].Value.ToString() + "#") == txtSubcadena.Text)
+                    {
+                        return "CR" + r.Cells[0].Value.ToString();
+                    }
+                }
+                return "";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         #endregion
     }
 

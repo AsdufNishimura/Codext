@@ -180,7 +180,10 @@
             // 
             // dgvTSConstantesNumericas
             // 
+            this.dgvTSConstantesNumericas.AllowUserToAddRows = false;
+            this.dgvTSConstantesNumericas.AllowUserToDeleteRows = false;
             this.dgvTSConstantesNumericas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTSConstantesNumericas.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgvTSConstantesNumericas.Location = new System.Drawing.Point(209, 513);
             this.dgvTSConstantesNumericas.Name = "dgvTSConstantesNumericas";
             this.dgvTSConstantesNumericas.Size = new System.Drawing.Size(134, 114);
@@ -188,7 +191,10 @@
             // 
             // dgvTSOperadores
             // 
+            this.dgvTSOperadores.AllowUserToAddRows = false;
+            this.dgvTSOperadores.AllowUserToDeleteRows = false;
             this.dgvTSOperadores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTSOperadores.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgvTSOperadores.Location = new System.Drawing.Point(349, 513);
             this.dgvTSOperadores.Name = "dgvTSOperadores";
             this.dgvTSOperadores.Size = new System.Drawing.Size(132, 114);
@@ -196,7 +202,10 @@
             // 
             // dgvTSIdentificadores
             // 
+            this.dgvTSIdentificadores.AllowUserToAddRows = false;
+            this.dgvTSIdentificadores.AllowUserToDeleteRows = false;
             this.dgvTSIdentificadores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTSIdentificadores.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgvTSIdentificadores.Location = new System.Drawing.Point(12, 513);
             this.dgvTSIdentificadores.Name = "dgvTSIdentificadores";
             this.dgvTSIdentificadores.Size = new System.Drawing.Size(190, 114);
