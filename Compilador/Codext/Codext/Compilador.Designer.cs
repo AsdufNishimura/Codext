@@ -47,6 +47,9 @@
             this.dgvTSOperadores = new System.Windows.Forms.DataGridView();
             this.dgvTSIdentificadores = new System.Windows.Forms.DataGridView();
             this.label7 = new System.Windows.Forms.Label();
+            this.txtRenglonActual = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.btnSiguientePaso = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSConstantesNumericas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSOperadores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSIdentificadores)).BeginInit();
@@ -62,17 +65,22 @@
             // 
             // btnCargar
             // 
+            this.btnCargar.BackColor = System.Drawing.Color.Silver;
+            this.btnCargar.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(82)))), ((int)(((byte)(226)))));
+            this.btnCargar.FlatAppearance.MouseOverBackColor = System.Drawing.Color.White;
+            this.btnCargar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCargar.Location = new System.Drawing.Point(344, 10);
             this.btnCargar.Name = "btnCargar";
-            this.btnCargar.Size = new System.Drawing.Size(75, 23);
+            this.btnCargar.Size = new System.Drawing.Size(100, 23);
             this.btnCargar.TabIndex = 1;
             this.btnCargar.Text = "Cargar";
-            this.btnCargar.UseVisualStyleBackColor = true;
+            this.btnCargar.UseVisualStyleBackColor = false;
             this.btnCargar.Click += new System.EventHandler(this.btnCargar_Click);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(341, 71);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(83, 13);
@@ -91,6 +99,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Location = new System.Drawing.Point(26, 179);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(110, 13);
@@ -108,6 +117,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
+            this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(26, 232);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(103, 13);
@@ -134,6 +144,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
+            this.label4.ForeColor = System.Drawing.Color.White;
             this.label4.Location = new System.Drawing.Point(26, 284);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(97, 13);
@@ -142,12 +153,16 @@
             // 
             // btnComenzar
             // 
+            this.btnComenzar.BackColor = System.Drawing.Color.Silver;
+            this.btnComenzar.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(82)))), ((int)(((byte)(226)))));
+            this.btnComenzar.FlatAppearance.MouseOverBackColor = System.Drawing.Color.White;
+            this.btnComenzar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnComenzar.Location = new System.Drawing.Point(344, 39);
             this.btnComenzar.Name = "btnComenzar";
-            this.btnComenzar.Size = new System.Drawing.Size(75, 23);
+            this.btnComenzar.Size = new System.Drawing.Size(100, 23);
             this.btnComenzar.TabIndex = 10;
             this.btnComenzar.Text = "Comenzar";
-            this.btnComenzar.UseVisualStyleBackColor = true;
+            this.btnComenzar.UseVisualStyleBackColor = false;
             this.btnComenzar.Click += new System.EventHandler(this.btnComenzar_Click);
             // 
             // txtConsola
@@ -163,6 +178,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
+            this.label5.ForeColor = System.Drawing.Color.White;
             this.label5.Location = new System.Drawing.Point(206, 484);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(94, 26);
@@ -172,6 +188,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
+            this.label6.ForeColor = System.Drawing.Color.White;
             this.label6.Location = new System.Drawing.Point(346, 484);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(94, 26);
@@ -214,17 +231,56 @@
             // label7
             // 
             this.label7.AutoSize = true;
+            this.label7.ForeColor = System.Drawing.Color.White;
             this.label7.Location = new System.Drawing.Point(9, 484);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(94, 26);
             this.label7.TabIndex = 17;
             this.label7.Text = "Tabla de símbolos\r\nIdentificadores";
             // 
+            // txtRenglonActual
+            // 
+            this.txtRenglonActual.BackColor = System.Drawing.SystemColors.Control;
+            this.txtRenglonActual.Location = new System.Drawing.Point(344, 137);
+            this.txtRenglonActual.Name = "txtRenglonActual";
+            this.txtRenglonActual.ReadOnly = true;
+            this.txtRenglonActual.Size = new System.Drawing.Size(100, 20);
+            this.txtRenglonActual.TabIndex = 19;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.ForeColor = System.Drawing.Color.White;
+            this.label8.Location = new System.Drawing.Point(341, 121);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(79, 13);
+            this.label8.TabIndex = 18;
+            this.label8.Text = "Renglón actual";
+            // 
+            // btnSiguientePaso
+            // 
+            this.btnSiguientePaso.BackColor = System.Drawing.Color.Silver;
+            this.btnSiguientePaso.Enabled = false;
+            this.btnSiguientePaso.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(82)))), ((int)(((byte)(226)))));
+            this.btnSiguientePaso.FlatAppearance.MouseOverBackColor = System.Drawing.Color.White;
+            this.btnSiguientePaso.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSiguientePaso.Location = new System.Drawing.Point(344, 179);
+            this.btnSiguientePaso.Name = "btnSiguientePaso";
+            this.btnSiguientePaso.Size = new System.Drawing.Size(100, 36);
+            this.btnSiguientePaso.TabIndex = 20;
+            this.btnSiguientePaso.Text = "Siguiente paso";
+            this.btnSiguientePaso.UseVisualStyleBackColor = false;
+            this.btnSiguientePaso.Click += new System.EventHandler(this.btnSiguientePaso_Click);
+            // 
             // frmCodext
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(77)))), ((int)(((byte)(77)))), ((int)(((byte)(77)))));
             this.ClientSize = new System.Drawing.Size(488, 671);
+            this.Controls.Add(this.btnSiguientePaso);
+            this.Controls.Add(this.txtRenglonActual);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.dgvTSIdentificadores);
             this.Controls.Add(this.dgvTSOperadores);
@@ -244,9 +300,11 @@
             this.Controls.Add(this.btnCargar);
             this.Controls.Add(this.txtCodigo);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Name = "frmCodext";
-            this.Text = "Codext";
+            this.Text = "Codext - Compilador";
             this.Load += new System.EventHandler(this.frmCodext_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmCodext_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSConstantesNumericas)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSOperadores)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSIdentificadores)).EndInit();
@@ -275,6 +333,9 @@
         private System.Windows.Forms.DataGridView dgvTSOperadores;
         private System.Windows.Forms.DataGridView dgvTSIdentificadores;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox txtRenglonActual;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button btnSiguientePaso;
     }
 }
 
