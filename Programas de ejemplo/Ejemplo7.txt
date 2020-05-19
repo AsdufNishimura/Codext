@@ -1,0 +1,8 @@
+DOC_START
+DECIDE ->
+  TITLE ( <"VERDADERO"> + ARITH ( 1# + 2.5# / 0# ) )
+<-
+DECFALSE ->
+  TITLE ( <"FALSO"> )
+<-
+DOC_END

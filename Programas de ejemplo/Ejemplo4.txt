@@ -1,0 +1,14 @@
+DOC_START
+</Este es el programa 4/>
+TITLE ( <"Operacion"> )
+NEXT_LINE
+1_>=_6_|_3_=_8_&_6_<_9_|_7_>_7
+NEXT_LINE
+F_|_F_&_V_|_F
+NEXT_LINE
+F_|_F_|_F
+NEXT_LINE
+F_|_F
+NEXT_LINE
+F
+DOC_END

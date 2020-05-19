@@ -59,9 +59,11 @@
             // 
             this.txtCodigo.Location = new System.Drawing.Point(12, 12);
             this.txtCodigo.Name = "txtCodigo";
+            this.txtCodigo.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
             this.txtCodigo.Size = new System.Drawing.Size(297, 164);
             this.txtCodigo.TabIndex = 0;
             this.txtCodigo.Text = "";
+            this.txtCodigo.WordWrap = false;
             // 
             // btnCargar
             // 
@@ -137,9 +139,11 @@
             this.txtTokens.Location = new System.Drawing.Point(12, 300);
             this.txtTokens.Name = "txtTokens";
             this.txtTokens.ReadOnly = true;
+            this.txtTokens.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
             this.txtTokens.Size = new System.Drawing.Size(297, 167);
             this.txtTokens.TabIndex = 8;
             this.txtTokens.Text = "";
+            this.txtTokens.WordWrap = false;
             // 
             // label4
             // 

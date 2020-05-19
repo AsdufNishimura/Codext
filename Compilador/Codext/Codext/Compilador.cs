@@ -110,12 +110,13 @@ namespace Codext
                 txtConsola.Text = "Comenzando proceso.";
                 txtTokens.Text = "";
                 txtEvaluacion.Text = "";
-                string strTokenAux;
-                txtRenglones.Text = txtCodigo.Lines.Count().ToString();
+                string strTokenAux;                
                 ObtenerSubcadenas();
                 int renglonActual = 0;
                 int intPosRenglon = 0;
                 int intPosRenglonTokens = 0;
+                txtRenglones.Text = txtCodigo.Lines.Count().ToString();
+                txtRenglonActual.Text = renglonActual.ToString();
 
                 foreach (List<string> Subcadenas in lstRenglones)
                 {
@@ -282,7 +283,7 @@ namespace Codext
                     //Aquí pausa igual                    
                     txtTokens.Text += txtEvaluacion.Text + "\n";
                     txtTokens.BackColor = colorResaltado;
-                    txtConsola.Text = "Se ha llegado al final del renglón " + renglonActual;
+                    txtConsola.Text = "Se ha llegado al final del renglón " + (renglonActual + 1);
                     txtTokens.Focus();
                     txtTokens.Select(intPosRenglonTokens, txtTokens.Lines[renglonActual].Length);
                     //await Task.Delay(2000);
@@ -361,6 +362,7 @@ namespace Codext
                             otraInstruccion.Token = (CRXX < 10) ? "CR0" + CRXX : "CR" + CRXX;
                             break;
                         case "CNXX":
+                            CNXX++;
                             otraInstruccion.Token = (CNXX < 10) ? "CN0" + CNXX : "CN" + CNXX;
                             break;
                     }
