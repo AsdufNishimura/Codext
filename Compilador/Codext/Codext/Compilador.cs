@@ -92,9 +92,17 @@ namespace Codext
         }
 
 
-        #region AnalizadorLexico
+        #region AnalisisLéxico
         // Comienza el proceso del análisis lexico, utilizando el texto que se halle en la caja.
         private async void btnComenzar_Click(object sender, EventArgs e)
+        {
+            boolean resultado_léxico, resultado_sintaxis;            
+            resultado_léxico = AnalisisLexicoPausado();
+            if(resultado_léxico) { AnalisisSintactico(); } else { return; }            
+
+        }
+
+        private async boolean AnalisisLexicoPausado()
         {
             txtCodigo.ReadOnly = true;
             btnSiguientePaso.Enabled = true;
@@ -217,7 +225,7 @@ namespace Codext
                             
                         }
 
-                        strTokenAux = AnalizadorLexico(miInstruccion, 0, "0");
+                        strTokenAux = EncontrarToken(miInstruccion, 0, "0");
 
                         if (strTokenAux == "ERRL")
                         {
@@ -299,20 +307,183 @@ namespace Codext
                     renglonActual++;
                     
                 }
-                txtConsola.Text = "Ha finalizado el análisis léxico.";
+                txtConsola.Text = "Ha finalizado el análisis léxico.";                
                 this.Focus();
+                return true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtConsola.Text = "Ocurrió un error inesperado.";                
+                txtConsola.Text = "Ocurrió un error inesperado.";
+                return false;                
             }
             txtCodigo.ReadOnly = false;
             btnSiguientePaso.Enabled = false;
         }
 
+        private boolean AnalisisLexico()
+        {
+            txtCodigo.ReadOnly = true;
 
-        public string AnalizadorLexico(Instrucción otraInstruccion, int Pos, string Estado)
+            try
+            {
+                dgvTSIdentificadores.Rows.Clear();
+                dgvTSConstantesNumericas.Rows.Clear();
+                IDXX = 0;
+                CNXX = 0;
+                CRXX = 0;
+
+                txtConsola.Text = "Comenzando proceso.";
+                txtTokens.Text = "";
+                txtEvaluacion.Text = "";
+                string strTokenAux;                
+                ObtenerSubcadenas();
+                int renglonActual = 0;
+                int intPosRenglon = 0;
+                int intPosRenglonTokens = 0;
+                txtRenglones.Text = txtCodigo.Lines.Count().ToString();
+                txtRenglonActual.Text = renglonActual.ToString();
+
+                foreach (List<string> Subcadenas in lstRenglones)
+                {
+                    txtCodigo.BackColor = colorResaltado;
+                    txtRenglonActual.Text = (renglonActual + 1).ToString();
+                    txtConsola.Text = "Leyendo el renglón " + (renglonActual + 1);                    
+                    txtCodigo.Focus();
+                    txtCodigo.Select(intPosRenglon, txtCodigo.Lines[renglonActual].Length);
+                                        
+                    txtCodigo.BackColor = Color.FromArgb(255, 240, 240, 240);
+                    foreach (string Subcadena in Subcadenas)
+                    {
+                        txtSubcadena.Text = Subcadena;
+                        txtSubcadena.BackColor = colorResaltado;
+                        txtConsola.Text = "Leyendo la subcadena " + Subcadena;
+                        txtSubcadena.BackColor = Color.FromArgb(255, 240, 240, 240);
+
+                        miInstruccion = new Instrucción();
+                        miInstruccion.Cadena = Subcadena;
+
+
+                        string tsres;
+
+                        if (Subcadena.Contains("_"))
+                        {
+                            tsres = VerificarTablasDeSimbolos("ID");
+
+                            if (tsres != "")
+                            {
+                                strTokenAux = tsres;
+                                dgvTSIdentificadores.Select();
+                                txtEvaluacion.Text += strTokenAux + " ";
+                                txtEvaluacion.BackColor = colorResaltado;
+                                txtConsola.Text = "Se encontró el identificador en la tabla de símbolos, su token es " + strTokenAux;
+                                txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                break;
+                            }
+                        }
+
+                        if (Subcadena.Contains("#"))
+                        {
+                            if (Subcadena.Contains(".") || Subcadena.Contains("E"))
+                            {
+                                tsres = VerificarTablasDeSimbolos("CR");
+                                if (tsres != "")
+                                {
+                                    strTokenAux = tsres;
+                                    dgvTSConstantesNumericas.Select();
+                                    txtEvaluacion.Text += strTokenAux + " ";
+                                    txtEvaluacion.BackColor = colorResaltado;
+                                    txtConsola.Text = "Se encontró la constante numérica real en la tabla de símbolos, su token es " + strTokenAux;         
+                                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                tsres = VerificarTablasDeSimbolos("CN");
+                                if (tsres != "")
+                                {
+                                    strTokenAux = tsres;
+                                    dgvTSConstantesNumericas.Select();
+                                    txtEvaluacion.Text += strTokenAux + " ";
+                                    txtEvaluacion.BackColor = colorResaltado;
+                                    txtConsola.Text = "Se encontró la constante numérica entera en la tabla de símbolos, su token es " + strTokenAux;  
+                                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                    break;
+                                }
+                            }
+                            
+                        }
+
+                        strTokenAux = EncontrarToken(miInstruccion, 0, "0");
+
+                        if (strTokenAux == "ERRL")
+                        {
+                            txtEvaluacion.Text += strTokenAux + " ";
+                            txtEvaluacion.BackColor = colorResaltado;
+                            txtConsola.Text = "Error detectado: no se reconoció el elemento. Se asignará un token de error léxico (ERRL)"; 
+                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                        }
+                        else
+                        {                            
+                            txtEvaluacion.Text += strTokenAux + " ";
+                            txtEvaluacion.BackColor = colorResaltado;
+                            txtConsola.Text = "Se identifico la subcadena " + Subcadena + " con el token " + strTokenAux;                           
+                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+
+                            string tipoToken = strTokenAux.Substring(0, 2);
+                            string numToken = strTokenAux.Substring(2, 2);                            
+
+                            if (tipoToken == "ID")
+                            {                                
+                                    dgvTSIdentificadores.Rows.Add(numToken, Subcadena, "-", "-");
+                                    dgvTSIdentificadores.Select();
+                                    txtConsola.Text = "Se agregó el identificador con el token " + strTokenAux + " a la tabla de símbolos.";
+                            }
+                            else if (tipoToken == "CN")
+                            {                                
+                                dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
+                                dgvTSConstantesNumericas.Select();
+                                txtConsola.Text = "Se agregó la constante numérica entera con el token " + strTokenAux + " a la tabla de símbolos.";
+                            }
+                            else if (tipoToken == "CR")
+                            {
+                                dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
+                                dgvTSConstantesNumericas.Select();
+                                txtConsola.Text = "Se agregó la constante numérica real con el token " + strTokenAux + " a la tabla de símbolos.";
+                            }
+
+
+                            txtSubcadena.Text = "";
+                        }
+                    }              
+                    txtTokens.Text += txtEvaluacion.Text + "\n";
+                    txtTokens.BackColor = colorResaltado;
+                    txtConsola.Text = "Se ha llegado al final del renglón " + (renglonActual + 1);
+                    txtTokens.Focus();
+                    txtTokens.Select(intPosRenglonTokens, txtTokens.Lines[renglonActual].Length);
+                    txtTokens.BackColor = Color.FromArgb(255, 240, 240, 240);
+
+                    txtEvaluacion.Text = "";
+
+                    intPosRenglon += (txtCodigo.Lines[renglonActual].Length + 1);
+                    intPosRenglonTokens += (txtTokens.Lines[renglonActual].Length + 1);
+                    renglonActual++;
+                    
+                }
+                txtConsola.Text = "Ha finalizado el análisis léxico.";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtConsola.Text = "Ocurrió un error inesperado.";  
+                return false;              
+            }
+            txtCodigo.ReadOnly = false;
+        }
+
+        public string EncontrarToken(Instrucción otraInstruccion, int Pos, string Estado)
         {
             string strConsulta = "";
 
@@ -322,7 +493,7 @@ namespace Codext
                 {
                     strConsulta = CargarQuery("select [A_" + otraInstruccion.Cadena[Pos] + "m] from Lexico where Estado = " + Estado);
                     if (strConsulta != "")
-                        return AnalizadorLexico(otraInstruccion, Pos + 1, strConsulta);
+                        return EncontrarToken(otraInstruccion, Pos + 1, strConsulta);
                     else
                         return "ERRL";
                 }
@@ -330,7 +501,7 @@ namespace Codext
                 {
                     strConsulta = CargarQuery("select [A_" + otraInstruccion.Cadena[Pos] + "n] from Lexico where Estado = " + Estado);
                     if (strConsulta != "")
-                        return AnalizadorLexico(otraInstruccion, Pos + 2, strConsulta);
+                        return EncontrarToken(otraInstruccion, Pos + 2, strConsulta);
                     else
                         return "ERRL";
                 }
@@ -338,7 +509,7 @@ namespace Codext
                 {
                     strConsulta = CargarQuery("select [A_" + otraInstruccion.Cadena[Pos] + "] from Lexico where Estado = " + Estado);
                     if (strConsulta != "")
-                        return AnalizadorLexico(otraInstruccion, Pos + 1, strConsulta);
+                        return EncontrarToken(otraInstruccion, Pos + 1, strConsulta);
                     else
                         return "ERRL";
                 }
@@ -373,7 +544,7 @@ namespace Codext
                 {
                     strConsulta = CargarQuery("select A_del from Lexico where Estado = " + Estado);
                     if (strConsulta != "")
-                        return AnalizadorLexico(otraInstruccion, Pos + 1, strConsulta);
+                        return EncontrarToken(otraInstruccion, Pos + 1, strConsulta);
                     else
                         throw new Exception("Instrucción no válida");
 
@@ -433,7 +604,6 @@ namespace Codext
         }
 
         
-
         public void ObtenerSubcadenas()
         {
             string strAux;
@@ -533,6 +703,19 @@ namespace Codext
             {
                 return "";
             }
+        }
+
+        #endregion
+
+        #region AnalisisSintáctico
+        public async boolean AnalisisSintacticoPausado()
+        {
+            
+        }
+
+        public boolean AnalisisSintactico()
+        {
+
         }
 
         #endregion
