@@ -50,6 +50,10 @@
             this.txtRenglonActual = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btnSiguientePaso = new System.Windows.Forms.Button();
+            this.txtGramatica = new System.Windows.Forms.RichTextBox();
+            this.txtSintaxis = new System.Windows.Forms.RichTextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSConstantesNumericas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSOperadores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSIdentificadores)).BeginInit();
@@ -175,7 +179,7 @@
             this.txtConsola.Location = new System.Drawing.Point(0, 633);
             this.txtConsola.Name = "txtConsola";
             this.txtConsola.ReadOnly = true;
-            this.txtConsola.Size = new System.Drawing.Size(488, 38);
+            this.txtConsola.Size = new System.Drawing.Size(968, 38);
             this.txtConsola.TabIndex = 11;
             this.txtConsola.Text = "";
             // 
@@ -276,12 +280,58 @@
             this.btnSiguientePaso.UseVisualStyleBackColor = false;
             this.btnSiguientePaso.Click += new System.EventHandler(this.btnSiguientePaso_Click);
             // 
+            // txtGramatica
+            // 
+            this.txtGramatica.Location = new System.Drawing.Point(461, 32);
+            this.txtGramatica.Name = "txtGramatica";
+            this.txtGramatica.ReadOnly = true;
+            this.txtGramatica.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
+            this.txtGramatica.Size = new System.Drawing.Size(297, 160);
+            this.txtGramatica.TabIndex = 21;
+            this.txtGramatica.Text = "";
+            this.txtGramatica.WordWrap = false;
+            // 
+            // txtSintaxis
+            // 
+            this.txtSintaxis.Location = new System.Drawing.Point(461, 284);
+            this.txtSintaxis.Name = "txtSintaxis";
+            this.txtSintaxis.ReadOnly = true;
+            this.txtSintaxis.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
+            this.txtSintaxis.Size = new System.Drawing.Size(297, 160);
+            this.txtSintaxis.TabIndex = 22;
+            this.txtSintaxis.Text = "";
+            this.txtSintaxis.WordWrap = false;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.ForeColor = System.Drawing.Color.White;
+            this.label9.Location = new System.Drawing.Point(473, 268);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(43, 13);
+            this.label9.TabIndex = 23;
+            this.label9.Text = "Sintaxis";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.ForeColor = System.Drawing.Color.White;
+            this.label10.Location = new System.Drawing.Point(458, 15);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(55, 13);
+            this.label10.TabIndex = 24;
+            this.label10.Text = "Gramatica";
+            // 
             // frmCodext
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(77)))), ((int)(((byte)(77)))), ((int)(((byte)(77)))));
-            this.ClientSize = new System.Drawing.Size(488, 671);
+            this.ClientSize = new System.Drawing.Size(968, 671);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.txtSintaxis);
+            this.Controls.Add(this.txtGramatica);
             this.Controls.Add(this.btnSiguientePaso);
             this.Controls.Add(this.txtRenglonActual);
             this.Controls.Add(this.label8);
@@ -340,6 +390,10 @@
         private System.Windows.Forms.TextBox txtRenglonActual;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnSiguientePaso;
+        private System.Windows.Forms.RichTextBox txtGramatica;
+        private System.Windows.Forms.RichTextBox txtSintaxis;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
     }
 }
 
