@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Codext
 {
@@ -64,6 +65,11 @@ namespace Codext
         }
 
 
+
+        /*
+         *  Eventos de los controles visuales.
+         */
+        #region Controles
         // Carga un archivo externo para un programa.
         private void btnCargar_Click(object sender, EventArgs e)
         {
@@ -90,20 +96,177 @@ namespace Codext
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-        #region AnalisisLéxico
-        // Comienza el proceso del análisis lexico, utilizando el texto que se halle en la caja.
+        
         private void btnComenzar_Click(object sender, EventArgs e)
         {
             txtGramatica.Text = "";
             txtSintaxis.Text = "";
-            bool resultado_léxico, resultado_sintaxis;            
+            bool resultado_léxico, resultado_sintaxis;
             AnalisisLexico();
             //btnSiguientePaso.Enabled = true;
             AnalisisSintactico();
-            //if(resultado_léxico) { AnalisisSintacticoPausado(); } else { return; }            
+            //if(resultado_léxico) { AnalisisSintacticoPausado(); } else { return; } 
+            AnalisisSemantico();
         }
+
+        private void btnSiguientePaso_Click(object sender, EventArgs e)
+        {
+            teclaEnter.TrySetResult(null);
+        }
+        #endregion
+
+
+
+        /*  
+         *  Estos métodos son utilizados por más de uno de los módulos.
+         */
+        #region MétodosComunes
+        public int ObtenerCantidadTokens(string LineaTokens)
+        {
+            int Cantidad = 1;
+
+            foreach (char C in LineaTokens)
+            {
+
+                if (C == ' ')
+                    Cantidad++;
+            }
+            return Cantidad;
+        }
+
+        public string CargarQuery(string Query)
+        {
+            string Consulta = "";
+            try
+            {
+                tabla = new DataTable();
+                Conexion = new SqlConnection("Server=" + nombreServidor + ";Database=" + nombreBD + ";Trusted_Connection=True;");
+                Adapter = new SqlDataAdapter(Query, Conexion);
+                Adapter.Fill(tabla);
+
+                if (tabla.Rows.Count > 0)
+                {
+                    foreach (DataRow row in tabla.Rows)
+                    {
+                        foreach (DataColumn column in tabla.Columns)
+                        {
+                            Consulta = row[column].ToString();
+                        }
+                    }
+                }
+                else
+                    Consulta = "";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return Consulta;
+        }
+
+        public void ObtenerSubcadenas()
+        {
+            string strAux;
+            string strSubcadena = "";
+            lstRenglones = new List<List<string>>();
+            foreach (string Cad in txtCodigo.Lines)
+            {
+                strAux = Cad;
+                lstSubcadenas = new List<string>();
+
+                for (int i = 0; i <= strAux.Length - 1; i++)
+                {
+
+                    //Esto es para que pueda cadenas o comentarios
+                    if (strAux[i] == '<' && (strAux[i + 1] == '"' || strAux[i + 1] == '/'))
+                    {
+
+                        do
+                        {
+                            strSubcadena += strAux[i];
+                            i++;
+                        } while ((strAux[i] != '"' || strAux[i] != '/') && strAux[i + 1] != '>');
+                        strSubcadena += strAux[i] + ">";
+                        lstSubcadenas.Add(strSubcadena);
+                        strSubcadena = "";
+                        i++;
+                    }
+                    else if (strAux[i] == ' ')
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if (strAux[i] != ' ')
+                        {
+                            strSubcadena += strAux[i];
+                            if (i == strAux.Length - 1 || strAux[i + 1] == ' ')
+                            {
+                                lstSubcadenas.Add(strSubcadena);
+                                strSubcadena = "";
+                            }
+                        }
+
+                        else
+                        {
+                            lstSubcadenas.Add(strSubcadena);
+                            strSubcadena = "";
+                        }
+                    }
+
+                }
+                lstRenglones.Add(lstSubcadenas);
+            }
+        }
+
+        public string ObtenerSubcadenaEvaluar(string Cadena, int CarAEva, int Posicion)
+        {
+            string Subcadena = "";
+            for (int i = 0; i <= CarAEva - 1; i++)
+            {
+                Subcadena = Subcadena + Cadena[Posicion];
+                Posicion++;
+            }
+            return Subcadena;
+
+        }
+
+        public string CambiarLineaCodigo(string Cadena, int Desde, int Hasta, string Cambio)
+        {
+            string NuevaCadena = "";
+            bool Bandera = true;
+
+            for (int i = 0; i <= Cadena.Length - 1; i++)
+            {
+                if (i >= Desde && i <= Hasta)
+                {
+                    if (Bandera)
+                    {
+                        NuevaCadena = NuevaCadena + Cambio;
+                        Bandera = false;
+                    }
+                }
+                else
+                {
+                    NuevaCadena = NuevaCadena + Cadena[i];
+                }
+            }
+            return NuevaCadena;
+        }
+
+        void frmCodext_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                teclaEnter.TrySetResult(null);
+        }
+
+
+        #endregion
+
+
+
+        #region AnalisisLéxico
+
 
         #region Analisis Léxico Pausado
         private async void AnalisisLexicoPausado()
@@ -556,35 +719,7 @@ namespace Codext
             return otraInstruccion.Token;
         }
 
-        public string CargarQuery(string Query)
-        {
-            string Consulta = "";
-            try
-            {
-                tabla = new DataTable();
-                Conexion = new SqlConnection("Server=" + nombreServidor + ";Database=" + nombreBD + ";Trusted_Connection=True;");
-                Adapter = new SqlDataAdapter(Query, Conexion);
-                Adapter.Fill(tabla);
-
-                if (tabla.Rows.Count > 0)
-                {
-                    foreach (DataRow row in tabla.Rows)
-                    {
-                        foreach (DataColumn column in tabla.Columns)
-                        {
-                            Consulta = row[column].ToString();
-                        }
-                    }
-                }
-                else
-                    Consulta = "";
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            return Consulta;
-        }
+        
 
         public bool EstadoFinal(string Query)
         {
@@ -612,65 +747,9 @@ namespace Codext
         }
 
         
-        public void ObtenerSubcadenas()
-        {
-            string strAux;
-            string strSubcadena = "";
-            lstRenglones = new List<List<string>>();
-            foreach (string Cad in txtCodigo.Lines)
-            {
-                strAux = Cad;
-                lstSubcadenas = new List<string>();
-                
-                for (int i = 0; i <= strAux.Length - 1; i++)
-                {
+        
 
-                    //Esto es para que pueda cadenas o comentarios
-                    if (strAux[i] == '<' && (strAux[i + 1] == '"' || strAux[i + 1] == '/'))
-                    {
-
-                        do
-                        {
-                            strSubcadena += strAux[i];
-                            i++;
-                        } while ((strAux[i] != '"' || strAux[i] != '/') && strAux[i + 1] != '>');
-                        strSubcadena += strAux[i] + ">";
-                        lstSubcadenas.Add(strSubcadena);
-                        strSubcadena = "";
-                        i++;
-                    }
-                    else if (strAux[i] == ' ')
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        if (strAux[i] != ' ')
-                        {
-                            strSubcadena += strAux[i];
-                            if (i == strAux.Length - 1 || strAux[i + 1] == ' ')
-                            {
-                                lstSubcadenas.Add(strSubcadena);
-                                strSubcadena = "";
-                            }
-                        }
-                            
-                        else
-                        {
-                            lstSubcadenas.Add(strSubcadena);
-                            strSubcadena = "";
-                        }
-                    }
-
-                }
-                lstRenglones.Add(lstSubcadenas);
-            }
-        }
-
-        private void btnSiguientePaso_Click(object sender, EventArgs e)
-        {
-            teclaEnter.TrySetResult(null);
-        }
+        
 
         public string VerificarTablasDeSimbolos(string strToken)
         {            
@@ -714,6 +793,8 @@ namespace Codext
         }
 
         #endregion
+
+
 
         #region AnalisisSintáctico
         public async void AnalisisSintacticoPausado()
@@ -1043,60 +1124,64 @@ namespace Codext
             }
         }
 
-        public int ObtenerCantidadTokens(string LineaTokens)
-        {
-            int Cantidad = 1;
+        
 
-            foreach (char C in LineaTokens)
-            {
-
-                if (C == ' ')
-                    Cantidad++;
-            }
-            return Cantidad;
-        }
-
-        public string ObtenerSubcadenaEvaluar(string Cadena, int CarAEva, int Posicion)
-        {
-            string Subcadena = "";
-            for(int i = 0; i<= CarAEva - 1; i++)
-            {
-                Subcadena = Subcadena + Cadena[Posicion];
-                Posicion++;
-            }
-            return Subcadena;
-
-        }
-
-        public string CambiarLineaCodigo(string Cadena, int Desde, int Hasta, string Cambio)
-        {
-            string NuevaCadena = "";
-            bool Bandera = true;
-
-            for(int i = 0; i <= Cadena.Length - 1; i++)
-            {
-                if(i >= Desde && i <= Hasta)
-                {
-                    if (Bandera)
-                    {
-                        NuevaCadena = NuevaCadena + Cambio;
-                        Bandera = false;
-                    }                        
-                }
-                else
-                {
-                    NuevaCadena = NuevaCadena + Cadena[i];
-                }
-            }
-            return NuevaCadena;
-        }
+        
         #endregion
 
-        void frmCodext_KeyDown(object sender, KeyEventArgs e)
+
+
+        #region AnalisisSemántico
+        public void AnalisisSemantico()
         {
-            if(e.KeyCode == Keys.Enter)
-            teclaEnter.TrySetResult(null);
+            //  Primera pasada
+            GenerarArchivoDeTipos();
+
+            // Segunda pasada
+            int CantidadTokens = 1;
+            string Linea = "";
+
+            foreach (string LineaTokens in txtTipos.Lines)
+            {
+                if (LineaTokens != "")
+                {
+                    if (LineaTokens[LineaTokens.Length - 1] == ' ')
+                    {
+                        for (int i = 0; i < LineaTokens.Length - 1; i++)
+                            Linea += LineaTokens[i];
+                    }
+
+                }
+                if (Linea != "")
+                {
+                    txtReglasSem.Text += Linea + "\n";
+                    do
+                    {
+                        Linea = BottomUp(Linea, ObtenerCantidadTokens(Linea), ObtenerCantidadTokens(Linea));
+                        txtReglasSem.Text += Linea + "\n";
+                    } while (Linea != "S" && Linea != "ERROR SEMANTICO");
+                    txtReglasSem.Text += "\n";
+                    txtSemantica.Text += Linea + "\n";
+                }
+
+
+                CantidadTokens = 1;
+                Linea = "";
+            }
+
         }
+
+        public void GenerarArchivoDeTipos()
+        {
+            txtTipos.Text = txtTokens.Text;
+            Regex.Replace(txtTipos.Text, "COND", "BOOL");
+            Regex.Replace(txtTipos.Text, @"CN[0-9]{2}", "ENTE");
+            Regex.Replace(txtTipos.Text, @"CR[0-9]{2}", "REAL");
+        }
+
+        #endregion
+
+        
     }
 
 }

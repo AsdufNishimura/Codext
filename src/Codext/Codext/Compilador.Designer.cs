@@ -54,6 +54,12 @@
             this.txtSintaxis = new System.Windows.Forms.RichTextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.txtSemantica = new System.Windows.Forms.RichTextBox();
+            this.txtReglasSem = new System.Windows.Forms.RichTextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.txtTipos = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSConstantesNumericas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSOperadores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSIdentificadores)).BeginInit();
@@ -179,7 +185,7 @@
             this.txtConsola.Location = new System.Drawing.Point(0, 633);
             this.txtConsola.Name = "txtConsola";
             this.txtConsola.ReadOnly = true;
-            this.txtConsola.Size = new System.Drawing.Size(968, 38);
+            this.txtConsola.Size = new System.Drawing.Size(1308, 38);
             this.txtConsola.TabIndex = 11;
             this.txtConsola.Text = "";
             // 
@@ -282,7 +288,7 @@
             // 
             // txtGramatica
             // 
-            this.txtGramatica.Location = new System.Drawing.Point(461, 32);
+            this.txtGramatica.Location = new System.Drawing.Point(657, 32);
             this.txtGramatica.Name = "txtGramatica";
             this.txtGramatica.ReadOnly = true;
             this.txtGramatica.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
@@ -293,7 +299,7 @@
             // 
             // txtSintaxis
             // 
-            this.txtSintaxis.Location = new System.Drawing.Point(461, 284);
+            this.txtSintaxis.Location = new System.Drawing.Point(657, 284);
             this.txtSintaxis.Name = "txtSintaxis";
             this.txtSintaxis.ReadOnly = true;
             this.txtSintaxis.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
@@ -306,7 +312,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.ForeColor = System.Drawing.Color.White;
-            this.label9.Location = new System.Drawing.Point(473, 268);
+            this.label9.Location = new System.Drawing.Point(669, 268);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(43, 13);
             this.label9.TabIndex = 23;
@@ -316,18 +322,87 @@
             // 
             this.label10.AutoSize = true;
             this.label10.ForeColor = System.Drawing.Color.White;
-            this.label10.Location = new System.Drawing.Point(473, 15);
+            this.label10.Location = new System.Drawing.Point(669, 15);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(55, 13);
             this.label10.TabIndex = 24;
             this.label10.Text = "Gramatica";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.ForeColor = System.Drawing.Color.White;
+            this.label11.Location = new System.Drawing.Point(994, 15);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(96, 13);
+            this.label11.TabIndex = 28;
+            this.label11.Text = "Reglas semánticas";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.ForeColor = System.Drawing.Color.White;
+            this.label12.Location = new System.Drawing.Point(994, 268);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(57, 13);
+            this.label12.TabIndex = 27;
+            this.label12.Text = "Semántica";
+            // 
+            // txtSemantica
+            // 
+            this.txtSemantica.Location = new System.Drawing.Point(982, 284);
+            this.txtSemantica.Name = "txtSemantica";
+            this.txtSemantica.ReadOnly = true;
+            this.txtSemantica.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
+            this.txtSemantica.Size = new System.Drawing.Size(297, 160);
+            this.txtSemantica.TabIndex = 26;
+            this.txtSemantica.Text = "";
+            this.txtSemantica.WordWrap = false;
+            // 
+            // txtReglasSem
+            // 
+            this.txtReglasSem.Location = new System.Drawing.Point(982, 32);
+            this.txtReglasSem.Name = "txtReglasSem";
+            this.txtReglasSem.ReadOnly = true;
+            this.txtReglasSem.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
+            this.txtReglasSem.Size = new System.Drawing.Size(297, 160);
+            this.txtReglasSem.TabIndex = 25;
+            this.txtReglasSem.Text = "";
+            this.txtReglasSem.WordWrap = false;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.ForeColor = System.Drawing.Color.White;
+            this.label13.Location = new System.Drawing.Point(341, 284);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(87, 13);
+            this.label13.TabIndex = 30;
+            this.label13.Text = "Archivo de Tipos";
+            // 
+            // txtTipos
+            // 
+            this.txtTipos.Location = new System.Drawing.Point(327, 300);
+            this.txtTipos.Name = "txtTipos";
+            this.txtTipos.ReadOnly = true;
+            this.txtTipos.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
+            this.txtTipos.Size = new System.Drawing.Size(297, 167);
+            this.txtTipos.TabIndex = 29;
+            this.txtTipos.Text = "";
+            this.txtTipos.WordWrap = false;
             // 
             // frmCodext
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(77)))), ((int)(((byte)(77)))), ((int)(((byte)(77)))));
-            this.ClientSize = new System.Drawing.Size(968, 671);
+            this.ClientSize = new System.Drawing.Size(1308, 671);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.txtTipos);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.txtSemantica);
+            this.Controls.Add(this.txtReglasSem);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.txtSintaxis);
@@ -394,6 +469,12 @@
         private System.Windows.Forms.RichTextBox txtSintaxis;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.RichTextBox txtSemantica;
+        private System.Windows.Forms.RichTextBox txtReglasSem;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.RichTextBox txtTipos;
     }
 }
 
