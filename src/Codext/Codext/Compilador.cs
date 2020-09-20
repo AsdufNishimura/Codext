@@ -99,236 +99,236 @@ namespace Codext
             txtGramatica.Text = "";
             txtSintaxis.Text = "";
             bool resultado_léxico, resultado_sintaxis;            
-            resultado_léxico = AnalisisLexico();
-            if(resultado_léxico) { AnalisisSintacticoPausado(); } else { return; }            
-
+            AnalisisLexico();
+            //btnSiguientePaso.Enabled = true;
+            AnalisisSintactico();
+            //if(resultado_léxico) { AnalisisSintacticoPausado(); } else { return; }            
         }
 
         #region Analisis Léxico Pausado
-        //private async void AnalisisLexicoPausado()
-        //{
-        //    txtCodigo.ReadOnly = true;
-        //    btnSiguientePaso.Enabled = true;
+        private async void AnalisisLexicoPausado()
+        {
+            txtCodigo.ReadOnly = true;
+            btnSiguientePaso.Enabled = true;
 
-        //    try
-        //    {
-        //        dgvTSIdentificadores.Rows.Clear();
-        //        dgvTSConstantesNumericas.Rows.Clear();
-        //        IDXX = 0;
-        //        CNXX = 0;
-        //        CRXX = 0;
+            try
+            {
+                dgvTSIdentificadores.Rows.Clear();
+                dgvTSConstantesNumericas.Rows.Clear();
+                IDXX = 0;
+                CNXX = 0;
+                CRXX = 0;
 
-        //        txtConsola.Text = "Comenzando proceso.";
-        //        txtTokens.Text = "";
-        //        txtEvaluacion.Text = "";
-        //        string strTokenAux;                
-        //        ObtenerSubcadenas();
-        //        int renglonActual = 0;
-        //        int intPosRenglon = 0;
-        //        int intPosRenglonTokens = 0;
-        //        txtRenglones.Text = txtCodigo.Lines.Count().ToString();
-        //        txtRenglonActual.Text = renglonActual.ToString();
+                txtConsola.Text = "Comenzando proceso.";
+                txtTokens.Text = "";
+                txtEvaluacion.Text = "";
+                string strTokenAux;
+                ObtenerSubcadenas();
+                int renglonActual = 0;
+                int intPosRenglon = 0;
+                int intPosRenglonTokens = 0;
+                txtRenglones.Text = txtCodigo.Lines.Count().ToString();
+                txtRenglonActual.Text = renglonActual.ToString();
 
-        //        foreach (List<string> Subcadenas in lstRenglones)
-        //        {
-        //            txtCodigo.BackColor = colorResaltado;
-        //            txtRenglonActual.Text = (renglonActual + 1).ToString();
-        //            txtConsola.Text = "Leyendo el renglón " + (renglonActual + 1);                    
-        //            txtCodigo.Focus();
-        //            txtCodigo.Select(intPosRenglon, txtCodigo.Lines[renglonActual].Length);
-        //            //await Task.Delay(2000);
-        //            this.Focus();
-        //            await teclaEnter.Task;                    
-        //            teclaEnter = new TaskCompletionSource<object>();
-        //            //await Task.Run(() =>
-        //            //                    {
-        //            //                        void frmCodext_KeyDowna(object senderinterno, KeyEventArgs einterno)
-        //            //                        {
-        //            //                            if (einterno.KeyCode == Keys.Enter)
-        //            //                                return;
-        //            //                        }
-        //            //                    });
-        //            txtCodigo.BackColor = Color.FromArgb(255, 240, 240, 240);
-        //            foreach (string Subcadena in Subcadenas)
-        //            {
-        //                //Aquí debería pausar xd creo
-        //                txtSubcadena.Text = Subcadena;
-        //                txtSubcadena.BackColor = colorResaltado;
-        //                txtConsola.Text = "Leyendo la subcadena " + Subcadena;
-        //                //await Task.Delay(2000);
-        //                this.Focus();
-        //                await teclaEnter.Task;
-        //                teclaEnter = new TaskCompletionSource<object>();
-        //                txtSubcadena.BackColor = Color.FromArgb(255, 240, 240, 240);
+                foreach (List<string> Subcadenas in lstRenglones)
+                {
+                    txtCodigo.BackColor = colorResaltado;
+                    txtRenglonActual.Text = (renglonActual + 1).ToString();
+                    txtConsola.Text = "Leyendo el renglón " + (renglonActual + 1);
+                    txtCodigo.Focus();
+                    txtCodigo.Select(intPosRenglon, txtCodigo.Lines[renglonActual].Length);
+                    //await Task.Delay(2000);
+                    this.Focus();
+                    await teclaEnter.Task;
+                    teclaEnter = new TaskCompletionSource<object>();
+                    //await Task.Run(() =>
+                    //                    {
+                    //                        void frmCodext_KeyDowna(object senderinterno, KeyEventArgs einterno)
+                    //                        {
+                    //                            if (einterno.KeyCode == Keys.Enter)
+                    //                                return;
+                    //                        }
+                    //                    });
+                    txtCodigo.BackColor = Color.FromArgb(255, 240, 240, 240);
+                    foreach (string Subcadena in Subcadenas)
+                    {
+                        //Aquí debería pausar xd creo
+                        txtSubcadena.Text = Subcadena;
+                        txtSubcadena.BackColor = colorResaltado;
+                        txtConsola.Text = "Leyendo la subcadena " + Subcadena;
+                        //await Task.Delay(2000);
+                        this.Focus();
+                        await teclaEnter.Task;
+                        teclaEnter = new TaskCompletionSource<object>();
+                        txtSubcadena.BackColor = Color.FromArgb(255, 240, 240, 240);
 
-        //                miInstruccion = new Instrucción();
-        //                miInstruccion.Cadena = Subcadena;
-
-
-        //                string tsres;
-
-        //                if (Subcadena.Contains("_"))
-        //                {
-        //                    tsres = VerificarTablasDeSimbolos("ID");
-
-        //                    if (tsres != "")
-        //                    {
-        //                        strTokenAux = tsres;
-        //                        dgvTSIdentificadores.Select();
-        //                        txtEvaluacion.Text += strTokenAux + " ";
-        //                        txtEvaluacion.BackColor = colorResaltado;
-        //                        txtConsola.Text = "Se encontró el identificador en la tabla de símbolos, su token es " + strTokenAux;
-        //                        //await Task.Delay(2000);
-        //                        this.Focus();
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                        txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-        //                        break;
-        //                    }
-        //                }
-
-        //                if (Subcadena.Contains("#"))
-        //                {
-        //                    if (Subcadena.Contains(".") || Subcadena.Contains("E"))
-        //                    {
-        //                        tsres = VerificarTablasDeSimbolos("CR");
-        //                        if (tsres != "")
-        //                        {
-        //                            strTokenAux = tsres;
-        //                            dgvTSConstantesNumericas.Select();
-        //                            txtEvaluacion.Text += strTokenAux + " ";
-        //                            txtEvaluacion.BackColor = colorResaltado;
-        //                            txtConsola.Text = "Se encontró la constante numérica real en la tabla de símbolos, su token es " + strTokenAux;
-        //                            //await Task.Delay(2000);
-        //                            this.Focus();
-        //                            await teclaEnter.Task;
-        //                            teclaEnter = new TaskCompletionSource<object>();
-        //                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-        //                            break;
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        tsres = VerificarTablasDeSimbolos("CN");
-        //                        if (tsres != "")
-        //                        {
-        //                            strTokenAux = tsres;
-        //                            dgvTSConstantesNumericas.Select();
-        //                            txtEvaluacion.Text += strTokenAux + " ";
-        //                            txtEvaluacion.BackColor = colorResaltado;
-        //                            txtConsola.Text = "Se encontró la constante numérica entera en la tabla de símbolos, su token es " + strTokenAux;
-        //                            //await Task.Delay(2000);
-        //                            this.Focus();
-        //                            await teclaEnter.Task;
-        //                            teclaEnter = new TaskCompletionSource<object>();
-        //                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-        //                            break;
-        //                        }
-        //                    }
-
-        //                }
-
-        //                strTokenAux = EncontrarToken(miInstruccion, 0, "0");
-
-        //                if (strTokenAux == "ERRL")
-        //                {
-        //                    txtEvaluacion.Text += strTokenAux + " ";
-        //                    txtEvaluacion.BackColor = colorResaltado;
-        //                    txtConsola.Text = "Error detectado: no se reconoció el elemento. Se asignará un token de error léxico (ERRL)";
-        //                    //await Task.Delay(2000);
-        //                    this.Focus();
-        //                    await teclaEnter.Task;
-        //                    teclaEnter = new TaskCompletionSource<object>();
-        //                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-        //                }
-        //                else
-        //                {
-        //                    //Aquí también  
-        //                    txtEvaluacion.Text += strTokenAux + " ";
-        //                    txtEvaluacion.BackColor = colorResaltado;
-        //                    txtConsola.Text = "Se identifico la subcadena " + Subcadena + " con el token " + strTokenAux;
-        //                    //await Task.Delay(2000);
-        //                    this.Focus();
-        //                    await teclaEnter.Task;
-        //                    teclaEnter = new TaskCompletionSource<object>();
-        //                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-
-        //                    string tipoToken = strTokenAux.Substring(0, 2);
-        //                    string numToken = strTokenAux.Substring(2, 2);                            
-
-        //                    if (tipoToken == "ID")
-        //                    {                                
-        //                            dgvTSIdentificadores.Rows.Add(numToken, Subcadena, "-", "-");
-        //                            dgvTSIdentificadores.Select();
-        //                            txtConsola.Text = "Se agregó el identificador con el token " + strTokenAux + " a la tabla de símbolos.";
-        //                            //await Task.Delay(2000);
-        //                            this.Focus();
-        //                            await teclaEnter.Task;
-        //                            teclaEnter = new TaskCompletionSource<object>();
-        //                    }
-        //                    else if (tipoToken == "CN")
-        //                    {                                
-        //                        dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
-        //                        dgvTSConstantesNumericas.Select();
-        //                        txtConsola.Text = "Se agregó la constante numérica entera con el token " + strTokenAux + " a la tabla de símbolos.";
-        //                        //await Task.Delay(2000);
-        //                        this.Focus();
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                    }
-        //                    else if (tipoToken == "CR")
-        //                    {
-        //                        dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
-        //                        dgvTSConstantesNumericas.Select();
-        //                        txtConsola.Text = "Se agregó la constante numérica real con el token " + strTokenAux + " a la tabla de símbolos.";
-        //                        //await Task.Delay(2000);
-        //                        this.Focus();
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                    }
+                        miInstruccion = new Instrucción();
+                        miInstruccion.Cadena = Subcadena;
 
 
-        //                    txtSubcadena.Text = "";
-        //                }
-        //            }
-        //            //Aquí pausa igual                    
-        //            txtTokens.Text += txtEvaluacion.Text + "\n";
-        //            txtTokens.BackColor = colorResaltado;
-        //            txtConsola.Text = "Se ha llegado al final del renglón " + (renglonActual + 1);
-        //            txtTokens.Focus();
-        //            txtTokens.Select(intPosRenglonTokens, txtTokens.Lines[renglonActual].Length);
-        //            //await Task.Delay(2000);
-        //            this.Focus();
-        //            await teclaEnter.Task;
-        //            teclaEnter = new TaskCompletionSource<object>();
-        //            txtTokens.BackColor = Color.FromArgb(255, 240, 240, 240);
+                        string tsres;
 
-        //            txtEvaluacion.Text = "";
+                        if (Subcadena.Contains("_"))
+                        {
+                            tsres = VerificarTablasDeSimbolos("ID");
 
-        //            intPosRenglon += (txtCodigo.Lines[renglonActual].Length + 1);
-        //            intPosRenglonTokens += (txtTokens.Lines[renglonActual].Length + 1);
-        //            renglonActual++;
+                            if (tsres != "")
+                            {
+                                strTokenAux = tsres;
+                                dgvTSIdentificadores.Select();
+                                txtEvaluacion.Text += strTokenAux + " ";
+                                txtEvaluacion.BackColor = colorResaltado;
+                                txtConsola.Text = "Se encontró el identificador en la tabla de símbolos, su token es " + strTokenAux;
+                                //await Task.Delay(2000);
+                                this.Focus();
+                                await teclaEnter.Task;
+                                teclaEnter = new TaskCompletionSource<object>();
+                                txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                break;
+                            }
+                        }
 
-        //        }
-        //        txtConsola.Text = "Ha finalizado el análisis léxico.";                
-        //        this.Focus();
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        txtConsola.Text = "Ocurrió un error inesperado.";
-        //        return false;                
-        //    }
-        //    txtCodigo.ReadOnly = false;
-        //    btnSiguientePaso.Enabled = false;
-        //}
+                        if (Subcadena.Contains("#"))
+                        {
+                            if (Subcadena.Contains(".") || Subcadena.Contains("E"))
+                            {
+                                tsres = VerificarTablasDeSimbolos("CR");
+                                if (tsres != "")
+                                {
+                                    strTokenAux = tsres;
+                                    dgvTSConstantesNumericas.Select();
+                                    txtEvaluacion.Text += strTokenAux + " ";
+                                    txtEvaluacion.BackColor = colorResaltado;
+                                    txtConsola.Text = "Se encontró la constante numérica real en la tabla de símbolos, su token es " + strTokenAux;
+                                    //await Task.Delay(2000);
+                                    this.Focus();
+                                    await teclaEnter.Task;
+                                    teclaEnter = new TaskCompletionSource<object>();
+                                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                tsres = VerificarTablasDeSimbolos("CN");
+                                if (tsres != "")
+                                {
+                                    strTokenAux = tsres;
+                                    dgvTSConstantesNumericas.Select();
+                                    txtEvaluacion.Text += strTokenAux + " ";
+                                    txtEvaluacion.BackColor = colorResaltado;
+                                    txtConsola.Text = "Se encontró la constante numérica entera en la tabla de símbolos, su token es " + strTokenAux;
+                                    //await Task.Delay(2000);
+                                    this.Focus();
+                                    await teclaEnter.Task;
+                                    teclaEnter = new TaskCompletionSource<object>();
+                                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                    break;
+                                }
+                            }
+
+                        }
+
+                        strTokenAux = EncontrarToken(miInstruccion, 0, "0");
+
+                        if (strTokenAux == "ERRL")
+                        {
+                            txtEvaluacion.Text += strTokenAux + " ";
+                            txtEvaluacion.BackColor = colorResaltado;
+                            txtConsola.Text = "Error detectado: no se reconoció el elemento. Se asignará un token de error léxico (ERRL)";
+                            //await Task.Delay(2000);
+                            this.Focus();
+                            await teclaEnter.Task;
+                            teclaEnter = new TaskCompletionSource<object>();
+                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                        }
+                        else
+                        {
+                            //Aquí también  
+                            txtEvaluacion.Text += strTokenAux + " ";
+                            txtEvaluacion.BackColor = colorResaltado;
+                            txtConsola.Text = "Se identifico la subcadena " + Subcadena + " con el token " + strTokenAux;
+                            //await Task.Delay(2000);
+                            this.Focus();
+                            await teclaEnter.Task;
+                            teclaEnter = new TaskCompletionSource<object>();
+                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+
+                            string tipoToken = strTokenAux.Substring(0, 2);
+                            string numToken = strTokenAux.Substring(2, 2);
+
+                            if (tipoToken == "ID")
+                            {
+                                dgvTSIdentificadores.Rows.Add(numToken, Subcadena, "-", "-");
+                                dgvTSIdentificadores.Select();
+                                txtConsola.Text = "Se agregó el identificador con el token " + strTokenAux + " a la tabla de símbolos.";
+                                //await Task.Delay(2000);
+                                this.Focus();
+                                await teclaEnter.Task;
+                                teclaEnter = new TaskCompletionSource<object>();
+                            }
+                            else if (tipoToken == "CN")
+                            {
+                                dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
+                                dgvTSConstantesNumericas.Select();
+                                txtConsola.Text = "Se agregó la constante numérica entera con el token " + strTokenAux + " a la tabla de símbolos.";
+                                //await Task.Delay(2000);
+                                this.Focus();
+                                await teclaEnter.Task;
+                                teclaEnter = new TaskCompletionSource<object>();
+                            }
+                            else if (tipoToken == "CR")
+                            {
+                                dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
+                                dgvTSConstantesNumericas.Select();
+                                txtConsola.Text = "Se agregó la constante numérica real con el token " + strTokenAux + " a la tabla de símbolos.";
+                                //await Task.Delay(2000);
+                                this.Focus();
+                                await teclaEnter.Task;
+                                teclaEnter = new TaskCompletionSource<object>();
+                            }
+
+
+                            txtSubcadena.Text = "";
+                        }
+                    }
+                    //Aquí pausa igual                    
+                    txtTokens.Text += txtEvaluacion.Text + "\n";
+                    txtTokens.BackColor = colorResaltado;
+                    txtConsola.Text = "Se ha llegado al final del renglón " + (renglonActual + 1);
+                    txtTokens.Focus();
+                    txtTokens.Select(intPosRenglonTokens, txtTokens.Lines[renglonActual].Length);
+                    //await Task.Delay(2000);
+                    this.Focus();
+                    await teclaEnter.Task;
+                    teclaEnter = new TaskCompletionSource<object>();
+                    txtTokens.BackColor = Color.FromArgb(255, 240, 240, 240);
+
+                    txtEvaluacion.Text = "";
+
+                    intPosRenglon += (txtCodigo.Lines[renglonActual].Length + 1);
+                    intPosRenglonTokens += (txtTokens.Lines[renglonActual].Length + 1);
+                    renglonActual++;
+
+                }
+                txtConsola.Text = "Ha finalizado el análisis léxico.";
+                this.Focus();
+                return;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtConsola.Text = "Ocurrió un error inesperado.";
+                return;
+            }
+            txtCodigo.ReadOnly = false;
+            btnSiguientePaso.Enabled = false;
+        }
         #endregion
 
         private bool AnalisisLexico()
         {
             txtCodigo.ReadOnly = true;
-
             try
             {
                 dgvTSIdentificadores.Rows.Clear();
@@ -382,7 +382,7 @@ namespace Codext
                                 txtEvaluacion.BackColor = colorResaltado;
                                 txtConsola.Text = "Se encontró el identificador en la tabla de símbolos, su token es " + strTokenAux;
                                 txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-                                break;
+                                continue;
                             }
                         }
 
@@ -399,7 +399,7 @@ namespace Codext
                                     txtEvaluacion.BackColor = colorResaltado;
                                     txtConsola.Text = "Se encontró la constante numérica real en la tabla de símbolos, su token es " + strTokenAux;         
                                     txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-                                    break;
+                                    continue;
                                 }
                             }
                             else
@@ -413,7 +413,7 @@ namespace Codext
                                     txtEvaluacion.BackColor = colorResaltado;
                                     txtConsola.Text = "Se encontró la constante numérica entera en la tabla de símbolos, su token es " + strTokenAux;  
                                     txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-                                    break;
+                                    continue;
                                 }
                             }
                             
@@ -484,7 +484,6 @@ namespace Codext
                 txtConsola.Text = "Ocurrió un error inesperado.";  
                 return false;              
             }
-            txtCodigo.ReadOnly = false;
         }
 
         public string EncontrarToken(Instrucción otraInstruccion, int Pos, string Estado)
@@ -796,7 +795,6 @@ namespace Codext
                     }
 
                 }
-
                 if(Linea != "")
                 {
                     txtGramatica.Text += Linea + "\n";
@@ -818,7 +816,6 @@ namespace Codext
 
         public string BottomUp(string LineaCodigo, int TokensTotales, int TokensActuales)
         {            
-
             int VecesIterar = TokensTotales - TokensActuales;
             int CaracteresAEvaluar = LineaCodigo.Length - 5 * (TokensTotales - TokensActuales);
             string SubCadenaEvaluar, CadenaAux = "";
@@ -861,7 +858,12 @@ namespace Codext
                         if (SubCadenaEvaluar.Contains("CR") && SubCadenaEvaluar != "CRXX")
                             SubCadenaEvaluar = "CRXX";
                         if (SubCadenaEvaluar.Contains("ID") && SubCadenaEvaluar != "IDXX")
+                        {
                             SubCadenaEvaluar = "IDXX";
+                            string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, SubCadenaEvaluar);
+                            return NuevaLinea;
+                        }
+                            
                         if (SubCadenaEvaluar == "ERRL")
                             return "ERROR DE SINTAXIS";
 
@@ -969,9 +971,15 @@ namespace Codext
                         if (SubCadenaEvaluar.Contains("ID") && SubCadenaEvaluar != "IDXX")
                         {
                             SubCadenaEvaluar = "IDXX";
-                            txtConsola.Text = "La subcadena es un identificador.";
-                            await teclaEnter.Task;
-                            teclaEnter = new TaskCompletionSource<object>();
+                            {
+                                SubCadenaEvaluar = "IDXX";
+                                txtConsola.Text = "La subcadena es un identificador.";
+                                await teclaEnter.Task;
+                                teclaEnter = new TaskCompletionSource<object>();
+                                string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, SubCadenaEvaluar);
+                                return NuevaLinea;
+                            }
+                            
                         }
                         if (SubCadenaEvaluar == "ERRL")
                         {
