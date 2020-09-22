@@ -107,6 +107,9 @@ namespace Codext
             AnalisisSintactico();
             //if(resultado_léxico) { AnalisisSintacticoPausado(); } else { return; } 
             AnalisisSemantico();
+
+            //  Compilador
+
         }
 
         private void btnSiguientePaso_Click(object sender, EventArgs e)
@@ -121,6 +124,87 @@ namespace Codext
          *  Estos métodos son utilizados por más de uno de los módulos.
          */
         #region MétodosComunes
+
+        public string BottomUp(string LineaCodigo, int TokensTotales, int TokensActuales, string Tabla)
+        {
+            int VecesIterar = TokensTotales - TokensActuales;
+            int CaracteresAEvaluar = LineaCodigo.Length - 5 * (TokensTotales - TokensActuales);
+            string SubCadenaEvaluar, CadenaAux = "";
+
+            if (LineaCodigo != "S" && LineaCodigo != "ERROR DE SINTAXIS" && LineaCodigo != "ERROR DE SEMANTICA")
+            {
+
+                for (int i = 0; i <= VecesIterar; i++)
+                {
+                    if (TokensActuales > 1)
+                    {
+                        SubCadenaEvaluar = ObtenerSubcadenaEvaluar(LineaCodigo, CaracteresAEvaluar, i * 5);
+                        CadenaAux = CargarQuery("select Produccion from " + Tabla + " where Definicion = '" + SubCadenaEvaluar + "' and CantidadTokens = " + TokensActuales);
+                        if (CadenaAux != "")
+                        {
+                            if (CadenaAux != "S")
+                            {
+                                string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, CadenaAux);
+                                return NuevaLinea;
+                            }
+                            else
+                            {
+                                return "S";
+                            }
+                        }
+                        else
+                        {
+                            if (i < VecesIterar)
+                                continue;
+                            else
+                                return BottomUp(LineaCodigo, TokensTotales, TokensActuales - 1, Tabla);
+                        }
+                    }
+                    else
+                    {
+
+                        SubCadenaEvaluar = ObtenerSubcadenaEvaluar(LineaCodigo, CaracteresAEvaluar, i * 5);
+                        if (SubCadenaEvaluar.Contains("CN") && SubCadenaEvaluar != "CNXX")
+                            SubCadenaEvaluar = "CNXX";
+                        if (SubCadenaEvaluar.Contains("CR") && SubCadenaEvaluar != "CRXX")
+                            SubCadenaEvaluar = "CRXX";
+                        if (SubCadenaEvaluar.Contains("ID") && SubCadenaEvaluar != "IDXX")
+                        {
+                            SubCadenaEvaluar = "IDXX";
+                            string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, SubCadenaEvaluar);
+                            return NuevaLinea;
+                        }
+
+                        if (SubCadenaEvaluar == "ERRL")
+                            return (Tabla == "Sintaxis" ? "ERROR DE SINTAXIS" : "ERROR DE SEMANTICA");
+
+                        CadenaAux = CargarQuery("select Produccion from " + Tabla + " where Definicion LIKE '%" + SubCadenaEvaluar + "%' and CantidadTokens = 1");
+                        if (CadenaAux != "")
+                        {
+                            if (CadenaAux != "S")
+                            {
+                                string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, CadenaAux);
+                                return NuevaLinea;
+                            }
+                            else
+                            {
+                                return "S";
+                            }
+                        }
+                        else
+                        {
+                            if (i < VecesIterar)
+                                continue;
+                            else
+                                return (Tabla == "Sintaxis" ? "ERROR DE SINTAXIS" : "ERROR DE SEMANTICA");
+                        }
+                    }
+                }
+                return "S";
+            }
+            else
+                return "";
+        }
         public int ObtenerCantidadTokens(string LineaTokens)
         {
             int Cantidad = 1;
@@ -797,68 +881,68 @@ namespace Codext
 
 
         #region AnalisisSintáctico
-        public async void AnalisisSintacticoPausado()
-        {
-            txtConsola.Text = "Comenzando análisis léxico";
-            await teclaEnter.Task;
-            teclaEnter = new TaskCompletionSource<object>();
+        //public async void AnalisisSintacticoPausado()
+        //{
+        //    txtConsola.Text = "Comenzando análisis léxico";
+        //    await teclaEnter.Task;
+        //    teclaEnter = new TaskCompletionSource<object>();
 
-            int CantidadTokens = 1;
-            string Linea = "";
-            int NumeroLinea = 1;
+        //    int CantidadTokens = 1;
+        //    string Linea = "";
+        //    int NumeroLinea = 1;
 
-            foreach (string LineaTokens in txtTokens.Lines)
-            {
-                txtConsola.Text = "Leyendo la línea " + NumeroLinea + " del archivo de tokens.";
-                await teclaEnter.Task;
-                teclaEnter = new TaskCompletionSource<object>();
+        //    foreach (string LineaTokens in txtTokens.Lines)
+        //    {
+        //        txtConsola.Text = "Leyendo la línea " + NumeroLinea + " del archivo de tokens.";
+        //        await teclaEnter.Task;
+        //        teclaEnter = new TaskCompletionSource<object>();
 
-                if (LineaTokens != "")
-                {
-                    if (LineaTokens[LineaTokens.Length - 1] == ' ')
-                    {
-                        for (int i = 0; i < LineaTokens.Length - 1; i++)
-                            Linea += LineaTokens[i];
-                    }
+        //        if (LineaTokens != "")
+        //        {
+        //            if (LineaTokens[LineaTokens.Length - 1] == ' ')
+        //            {
+        //                for (int i = 0; i < LineaTokens.Length - 1; i++)
+        //                    Linea += LineaTokens[i];
+        //            }
 
-                }
+        //        }
 
-                if (Linea != "")
-                {
-                    txtGramatica.Text += Linea + "\n";
-                    do
-                    {
-                        Linea = BottomUpPausado(Linea, ObtenerCantidadTokens(Linea), ObtenerCantidadTokens(Linea)).Result;
-                        //txtConsola.Text = "Leyendo la línea " + NumeroLinea + " del archivo de tokens.";
-                        //await teclaEnter.Task;
-                        //teclaEnter = new TaskCompletionSource<object>();
-                        txtGramatica.Text += Linea + "\n";
-                    } while (Linea != "S" && Linea != "ERROR DE SINTAXIS");
-                    txtGramatica.Text += "\n";
-                    txtSintaxis.Text += Linea + "\n";
-                    if (Linea == "S")
-                    {
-                        txtConsola.Text = "La sintaxis de esta línea es correcta.";
-                    }
-                    else
-                    {
-                        txtConsola.Text = "Esta línea contiene un error de sintaxis.";
-                    }
+        //        if (Linea != "")
+        //        {
+        //            txtGramatica.Text += Linea + "\n";
+        //            do
+        //            {
+        //                Linea = BottomUpPausado(Linea, ObtenerCantidadTokens(Linea), ObtenerCantidadTokens(Linea)).Result;
+        //                //txtConsola.Text = "Leyendo la línea " + NumeroLinea + " del archivo de tokens.";
+        //                //await teclaEnter.Task;
+        //                //teclaEnter = new TaskCompletionSource<object>();
+        //                txtGramatica.Text += Linea + "\n";
+        //            } while (Linea != "S" && Linea != "ERROR DE SINTAXIS");
+        //            txtGramatica.Text += "\n";
+        //            txtSintaxis.Text += Linea + "\n";
+        //            if (Linea == "S")
+        //            {
+        //                txtConsola.Text = "La sintaxis de esta línea es correcta.";
+        //            }
+        //            else
+        //            {
+        //                txtConsola.Text = "Esta línea contiene un error de sintaxis.";
+        //            }
                     
-                    await teclaEnter.Task;
-                    teclaEnter = new TaskCompletionSource<object>();
+        //            await teclaEnter.Task;
+        //            teclaEnter = new TaskCompletionSource<object>();
 
-                    txtConsola.Text = "Se terminó de analizar la linea " + NumeroLinea + " del archivo de tokens.";
-                    await teclaEnter.Task;
-                    teclaEnter = new TaskCompletionSource<object>();
-                }
+        //            txtConsola.Text = "Se terminó de analizar la linea " + NumeroLinea + " del archivo de tokens.";
+        //            await teclaEnter.Task;
+        //            teclaEnter = new TaskCompletionSource<object>();
+        //        }
 
 
-                CantidadTokens = 1;
-                Linea = "";
-                NumeroLinea++;
-            }
-        }
+        //        CantidadTokens = 1;
+        //        Linea = "";
+        //        NumeroLinea++;
+        //    }
+        //}
 
         public void AnalisisSintactico()
         {
@@ -881,7 +965,7 @@ namespace Codext
                     txtGramatica.Text += Linea + "\n";
                     do
                     {
-                        Linea = BottomUp(Linea, ObtenerCantidadTokens(Linea), ObtenerCantidadTokens(Linea));
+                        Linea = BottomUp(Linea, ObtenerCantidadTokens(Linea), ObtenerCantidadTokens(Linea), "Sintaxis");
                         txtGramatica.Text += Linea + "\n";
                     } while (Linea != "S" && Linea != "ERROR DE SINTAXIS");
                     txtGramatica.Text += "\n";
@@ -895,234 +979,155 @@ namespace Codext
         }
 
 
-        public string BottomUp(string LineaCodigo, int TokensTotales, int TokensActuales)
-        {            
-            int VecesIterar = TokensTotales - TokensActuales;
-            int CaracteresAEvaluar = LineaCodigo.Length - 5 * (TokensTotales - TokensActuales);
-            string SubCadenaEvaluar, CadenaAux = "";
+       
 
-            if (LineaCodigo != "S" && LineaCodigo != "ERROR DE SINTAXIS")
-            {
-                
-                for (int i = 0; i <= VecesIterar; i++)
-                {
-                    if (TokensActuales > 1)
-                    {
-                        SubCadenaEvaluar = ObtenerSubcadenaEvaluar(LineaCodigo, CaracteresAEvaluar, i * 5);
-                        CadenaAux = CargarQuery("select Produccion from Sintaxis where Definicion = '" + SubCadenaEvaluar + "' and CantidadTokens = " + TokensActuales);
-                        if (CadenaAux != "")
-                        {
-                            if (CadenaAux != "S")
-                            {
-                                string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, CadenaAux);
-                                return NuevaLinea;
-                            }
-                            else
-                            {
-                                return "S";
-                            }
-                        }
-                        else
-                        {
-                            if (i < VecesIterar)
-                                continue;
-                            else
-                                return BottomUp(LineaCodigo, TokensTotales, TokensActuales - 1);
-                        }
-                    }
-                    else
-                    {
+        //public async Task<string> BottomUpPausado(string LineaCodigo, int TokensTotales, int TokensActuales)
+        //{
+        //    txtConsola.Text = "Analizando la línea " + LineaCodigo + " de " + TokensTotales + " de longitud. Buscando producciones de " + TokensActuales + ".";
+        //    await teclaEnter.Task;
+        //    teclaEnter = new TaskCompletionSource<object>();
 
-                        SubCadenaEvaluar = ObtenerSubcadenaEvaluar(LineaCodigo, CaracteresAEvaluar, i * 5);
-                        if (SubCadenaEvaluar.Contains("CN") && SubCadenaEvaluar != "CNXX")
-                            SubCadenaEvaluar = "CNXX";
-                        if (SubCadenaEvaluar.Contains("CR") && SubCadenaEvaluar != "CRXX")
-                            SubCadenaEvaluar = "CRXX";
-                        if (SubCadenaEvaluar.Contains("ID") && SubCadenaEvaluar != "IDXX")
-                        {
-                            SubCadenaEvaluar = "IDXX";
-                            string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, SubCadenaEvaluar);
-                            return NuevaLinea;
-                        }
+        //    int VecesIterar = TokensTotales - TokensActuales;
+        //    int CaracteresAEvaluar = LineaCodigo.Length - 5 * (TokensTotales - TokensActuales);
+        //    string SubCadenaEvaluar, CadenaAux = "";
+
+        //    if (LineaCodigo != "S" && LineaCodigo != "ERROR DE SINTAXIS")
+        //    {
+
+        //        for (int i = 0; i <= VecesIterar; i++)
+        //        {
+        //            if (TokensActuales > 1)
+        //            {
+        //                SubCadenaEvaluar = ObtenerSubcadenaEvaluar(LineaCodigo, CaracteresAEvaluar, i * 5);
+        //                CadenaAux = CargarQuery("select Produccion from Sintaxis where Definicion = '" + SubCadenaEvaluar + "' and CantidadTokens = " + TokensActuales);
+        //                if (CadenaAux != "")
+        //                {
+        //                    if (CadenaAux != "S")
+        //                    {
+        //                        txtConsola.Text = "Se ha reducido la subcadena " + SubCadenaEvaluar + " a " + CadenaAux + " de acuerdo a la producción identificada. Continua el analisis sintáctico";
+        //                        await teclaEnter.Task;
+        //                        teclaEnter = new TaskCompletionSource<object>();
+        //                        string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, CadenaAux);
+        //                        return NuevaLinea;
+        //                    }
+        //                    else
+        //                    {
+        //                        txtConsola.Text = "Se ha reducido la subadena " + SubCadenaEvaluar + " a S de acuerdo a la producción encontrada. La sintaxis es correcta.";
+        //                        await teclaEnter.Task;
+        //                        teclaEnter = new TaskCompletionSource<object>();
+        //                        return "S";
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    if (i < VecesIterar)
+        //                    {
+        //                        txtConsola.Text = "Evaluando siguiente conjunto de tokens.";
+        //                        await teclaEnter.Task;
+        //                        teclaEnter = new TaskCompletionSource<object>();
+        //                        continue;
+        //                    }
+        //                    else
+        //                    {
+        //                        txtConsola.Text = "No se ha encontrado una producción válida en la gramática. Se va a reducir la cantidad de tokens seleccionados para buscar producciones más pequeñas..";
+        //                        await teclaEnter.Task;
+        //                        teclaEnter = new TaskCompletionSource<object>();
+        //                        await BottomUpPausado(LineaCodigo, TokensTotales, TokensActuales - 1);
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+
+        //                SubCadenaEvaluar = ObtenerSubcadenaEvaluar(LineaCodigo, CaracteresAEvaluar, i * 5);
+        //                if (SubCadenaEvaluar.Contains("CN") && SubCadenaEvaluar != "CNXX")
+        //                {
+        //                    SubCadenaEvaluar = "CNXX";
+        //                    txtConsola.Text = "La subcadena es una constante numérica entera.";
+        //                    await teclaEnter.Task;
+        //                    teclaEnter = new TaskCompletionSource<object>();
+        //                }
+        //                if (SubCadenaEvaluar.Contains("CR") && SubCadenaEvaluar != "CRXX")
+        //                {
+        //                    SubCadenaEvaluar = "CRXX";
+        //                    txtConsola.Text = "La subcadena es una constante numérica real.";
+        //                    await teclaEnter.Task;
+        //                    teclaEnter = new TaskCompletionSource<object>();
+        //                }
+        //                if (SubCadenaEvaluar.Contains("ID") && SubCadenaEvaluar != "IDXX")
+        //                {
+        //                    SubCadenaEvaluar = "IDXX";
+        //                    {
+        //                        SubCadenaEvaluar = "IDXX";
+        //                        txtConsola.Text = "La subcadena es un identificador.";
+        //                        await teclaEnter.Task;
+        //                        teclaEnter = new TaskCompletionSource<object>();
+        //                        string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, SubCadenaEvaluar);
+        //                        return NuevaLinea;
+        //                    }
                             
-                        if (SubCadenaEvaluar == "ERRL")
-                            return "ERROR DE SINTAXIS";
+        //                }
+        //                if (SubCadenaEvaluar == "ERRL")
+        //                {
+        //                    txtConsola.Text = "No se ha encontrado una producción válida en la gramática. Esto es un error de sintaxis.";
+        //                    await teclaEnter.Task;
+        //                    teclaEnter = new TaskCompletionSource<object>();
+        //                    return "ERROR DE SINTAXIS";
+        //                }
 
-                        CadenaAux = CargarQuery("select Produccion from Sintaxis where Definicion LIKE '%" + SubCadenaEvaluar + "%' and CantidadTokens = 1");
-                        if (CadenaAux != "")
-                        {
-                            if (CadenaAux != "S")
-                            {
-                                string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, CadenaAux);
-                                return NuevaLinea;
-                            }
-                            else
-                            {
-                                return "S";
-                            }
-                        }
-                        else
-                        {
-                            if (i < VecesIterar)
-                                continue;
-                            else
-                                return "ERROR DE SINTAXIS";
-                        }
-                    }
-                }
-                return "S";
-            }
-            else
-                return "";
-        }
-
-        public async Task<string> BottomUpPausado(string LineaCodigo, int TokensTotales, int TokensActuales)
-        {
-            txtConsola.Text = "Analizando la línea " + LineaCodigo + " de " + TokensTotales + " de longitud. Buscando producciones de " + TokensActuales + ".";
-            await teclaEnter.Task;
-            teclaEnter = new TaskCompletionSource<object>();
-
-            int VecesIterar = TokensTotales - TokensActuales;
-            int CaracteresAEvaluar = LineaCodigo.Length - 5 * (TokensTotales - TokensActuales);
-            string SubCadenaEvaluar, CadenaAux = "";
-
-            if (LineaCodigo != "S" && LineaCodigo != "ERROR DE SINTAXIS")
-            {
-
-                for (int i = 0; i <= VecesIterar; i++)
-                {
-                    if (TokensActuales > 1)
-                    {
-                        SubCadenaEvaluar = ObtenerSubcadenaEvaluar(LineaCodigo, CaracteresAEvaluar, i * 5);
-                        CadenaAux = CargarQuery("select Produccion from Sintaxis where Definicion = '" + SubCadenaEvaluar + "' and CantidadTokens = " + TokensActuales);
-                        if (CadenaAux != "")
-                        {
-                            if (CadenaAux != "S")
-                            {
-                                txtConsola.Text = "Se ha reducido la subcadena " + SubCadenaEvaluar + " a " + CadenaAux + " de acuerdo a la producción identificada. Continua el analisis sintáctico";
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                                string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, CadenaAux);
-                                return NuevaLinea;
-                            }
-                            else
-                            {
-                                txtConsola.Text = "Se ha reducido la subadena " + SubCadenaEvaluar + " a S de acuerdo a la producción encontrada. La sintaxis es correcta.";
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                                return "S";
-                            }
-                        }
-                        else
-                        {
-                            if (i < VecesIterar)
-                            {
-                                txtConsola.Text = "Evaluando siguiente conjunto de tokens.";
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                                continue;
-                            }
-                            else
-                            {
-                                txtConsola.Text = "No se ha encontrado una producción válida en la gramática. Se va a reducir la cantidad de tokens seleccionados para buscar producciones más pequeñas..";
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                                await BottomUpPausado(LineaCodigo, TokensTotales, TokensActuales - 1);
-                            }
-                        }
-                    }
-                    else
-                    {
-
-                        SubCadenaEvaluar = ObtenerSubcadenaEvaluar(LineaCodigo, CaracteresAEvaluar, i * 5);
-                        if (SubCadenaEvaluar.Contains("CN") && SubCadenaEvaluar != "CNXX")
-                        {
-                            SubCadenaEvaluar = "CNXX";
-                            txtConsola.Text = "La subcadena es una constante numérica entera.";
-                            await teclaEnter.Task;
-                            teclaEnter = new TaskCompletionSource<object>();
-                        }
-                        if (SubCadenaEvaluar.Contains("CR") && SubCadenaEvaluar != "CRXX")
-                        {
-                            SubCadenaEvaluar = "CRXX";
-                            txtConsola.Text = "La subcadena es una constante numérica real.";
-                            await teclaEnter.Task;
-                            teclaEnter = new TaskCompletionSource<object>();
-                        }
-                        if (SubCadenaEvaluar.Contains("ID") && SubCadenaEvaluar != "IDXX")
-                        {
-                            SubCadenaEvaluar = "IDXX";
-                            {
-                                SubCadenaEvaluar = "IDXX";
-                                txtConsola.Text = "La subcadena es un identificador.";
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                                string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, SubCadenaEvaluar);
-                                return NuevaLinea;
-                            }
-                            
-                        }
-                        if (SubCadenaEvaluar == "ERRL")
-                        {
-                            txtConsola.Text = "No se ha encontrado una producción válida en la gramática. Esto es un error de sintaxis.";
-                            await teclaEnter.Task;
-                            teclaEnter = new TaskCompletionSource<object>();
-                            return "ERROR DE SINTAXIS";
-                        }
-
-                        CadenaAux = CargarQuery("select Produccion from Sintaxis where Definicion LIKE '%" + SubCadenaEvaluar + "%' and CantidadTokens = 1");
-                        if (CadenaAux != "")
-                        {
-                            if (CadenaAux != "S")
-                            {
-                                txtConsola.Text = "Se ha reducido la subcadena " + SubCadenaEvaluar + " a " + CadenaAux + " de acuerdo a la producción identificada. Continua el analisis sintáctico";
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                                string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, CadenaAux);
-                                return NuevaLinea;
-                            }
-                            else
-                            {
-                                txtConsola.Text = "Se ha reducido la subadena " + SubCadenaEvaluar + " a S de acuerdo a la producción encontrada. La sintaxis es correcta.";
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                                return "S";
-                            }
-                        }
-                        else
-                        {
-                            if (i < VecesIterar)
-                            {
-                                txtConsola.Text = "Evaluando siguiente token.";
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                                continue;
-                            }
-                            else
-                            {
-                                txtConsola.Text = "No se ha encontrado una producción válida en la totalidad de la gramática. Esto es un error de sintaxis.";
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                                return "ERROR DE SINTAXIS";
-                            }
-                        }
-                    }
-                }
-                // Aquí tengo duda, no entiendo bien por qué esta esto aquí, por si acaso dejo el código de la pausa comentado
-                //txtConsola.Text = "Esto se mostrará en la caja de consola, aquí debe ir la indicación del paso que se realizó, o por qué se hizo la pausa.";
-                //await teclaEnter.Task;
-                //teclaEnter = new TaskCompletionSource<object>();
-                return "S";
-            }
-            else
-            {
-                // Ni tampoco entendí esto, igual que antes, dejo el código por si acaso
-                //txtConsola.Text = "Esto se mostrará en la caja de consola, aquí debe ir la indicación del paso que se realizó, o por qué se hizo la pausa.";
-                //await teclaEnter.Task;
-                //teclaEnter = new TaskCompletionSource<object>();
-                return "";
-            }
-        }
+        //                CadenaAux = CargarQuery("select Produccion from Sintaxis where Definicion LIKE '%" + SubCadenaEvaluar + "%' and CantidadTokens = 1");
+        //                if (CadenaAux != "")
+        //                {
+        //                    if (CadenaAux != "S")
+        //                    {
+        //                        txtConsola.Text = "Se ha reducido la subcadena " + SubCadenaEvaluar + " a " + CadenaAux + " de acuerdo a la producción identificada. Continua el analisis sintáctico";
+        //                        await teclaEnter.Task;
+        //                        teclaEnter = new TaskCompletionSource<object>();
+        //                        string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, CadenaAux);
+        //                        return NuevaLinea;
+        //                    }
+        //                    else
+        //                    {
+        //                        txtConsola.Text = "Se ha reducido la subadena " + SubCadenaEvaluar + " a S de acuerdo a la producción encontrada. La sintaxis es correcta.";
+        //                        await teclaEnter.Task;
+        //                        teclaEnter = new TaskCompletionSource<object>();
+        //                        return "S";
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    if (i < VecesIterar)
+        //                    {
+        //                        txtConsola.Text = "Evaluando siguiente token.";
+        //                        await teclaEnter.Task;
+        //                        teclaEnter = new TaskCompletionSource<object>();
+        //                        continue;
+        //                    }
+        //                    else
+        //                    {
+        //                        txtConsola.Text = "No se ha encontrado una producción válida en la totalidad de la gramática. Esto es un error de sintaxis.";
+        //                        await teclaEnter.Task;
+        //                        teclaEnter = new TaskCompletionSource<object>();
+        //                        return "ERROR DE SINTAXIS";
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        // Aquí tengo duda, no entiendo bien por qué esta esto aquí, por si acaso dejo el código de la pausa comentado
+        //        //txtConsola.Text = "Esto se mostrará en la caja de consola, aquí debe ir la indicación del paso que se realizó, o por qué se hizo la pausa.";
+        //        //await teclaEnter.Task;
+        //        //teclaEnter = new TaskCompletionSource<object>();
+        //        return "S";
+        //    }
+        //    else
+        //    {
+        //        // Ni tampoco entendí esto, igual que antes, dejo el código por si acaso
+        //        //txtConsola.Text = "Esto se mostrará en la caja de consola, aquí debe ir la indicación del paso que se realizó, o por qué se hizo la pausa.";
+        //        //await teclaEnter.Task;
+        //        //teclaEnter = new TaskCompletionSource<object>();
+        //        return "";
+        //    }
+        //}
 
         
 
@@ -1137,7 +1142,7 @@ namespace Codext
             //  Primera pasada
             GenerarArchivoDeTipos();
 
-            // Segunda pasada
+            //   Segunda pasada
             int CantidadTokens = 1;
             string Linea = "";
 
@@ -1157,9 +1162,9 @@ namespace Codext
                     txtReglasSem.Text += Linea + "\n";
                     do
                     {
-                        Linea = BottomUp(Linea, ObtenerCantidadTokens(Linea), ObtenerCantidadTokens(Linea));
+                        Linea = BottomUp(Linea, ObtenerCantidadTokens(Linea), ObtenerCantidadTokens(Linea), "Semantica");
                         txtReglasSem.Text += Linea + "\n";
-                    } while (Linea != "S" && Linea != "ERROR SEMANTICO");
+                    } while (Linea != "S" && Linea != "ERROR DE SEMANTICA");
                     txtReglasSem.Text += "\n";
                     txtSemantica.Text += Linea + "\n";
                 }
@@ -1169,6 +1174,8 @@ namespace Codext
                 Linea = "";
             }
 
+            //  Tercera pasada
+            TerceraPasada();
         }
 
         public void GenerarArchivoDeTipos()
@@ -1179,9 +1186,17 @@ namespace Codext
             Regex.Replace(txtTipos.Text, @"CR[0-9]{2}", "REAL");
         }
 
+        public void TerceraPasada()
+        {
+            //  Aquí uwu
+            //  Revisar los contadores de las operaciones compuestas
+            //  El for -no cerro = perfecto + hay dos instrucciones fulanas que se abrieron y no se cerraron
+            //  txtConsola.Text
+        }
+
         #endregion
 
-        
+
     }
 
 }
