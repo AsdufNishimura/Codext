@@ -52,6 +52,7 @@
     <Compile Include="Compilador.Designer.cs">
       <DependentUpon>Compilador.cs</DependentUpon>
     </Compile>
+    <Compile Include="Database.cs" />
     <Compile Include="Instrucción.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
