@@ -60,6 +60,8 @@
             this.txtReglasSem = new System.Windows.Forms.RichTextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.txtTipos = new System.Windows.Forms.RichTextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.txtPostFijo = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSConstantesNumericas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSOperadores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSIdentificadores)).BeginInit();
@@ -185,7 +187,7 @@
             this.txtConsola.Location = new System.Drawing.Point(0, 633);
             this.txtConsola.Name = "txtConsola";
             this.txtConsola.ReadOnly = true;
-            this.txtConsola.Size = new System.Drawing.Size(1308, 38);
+            this.txtConsola.Size = new System.Drawing.Size(1370, 38);
             this.txtConsola.TabIndex = 11;
             this.txtConsola.Text = "";
             // 
@@ -193,7 +195,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(206, 484);
+            this.label5.Location = new System.Drawing.Point(324, 484);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(94, 26);
             this.label5.TabIndex = 12;
@@ -203,7 +205,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(346, 484);
+            this.label6.Location = new System.Drawing.Point(521, 484);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(94, 26);
             this.label6.TabIndex = 13;
@@ -215,9 +217,9 @@
             this.dgvTSConstantesNumericas.AllowUserToDeleteRows = false;
             this.dgvTSConstantesNumericas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTSConstantesNumericas.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dgvTSConstantesNumericas.Location = new System.Drawing.Point(209, 513);
+            this.dgvTSConstantesNumericas.Location = new System.Drawing.Point(327, 513);
             this.dgvTSConstantesNumericas.Name = "dgvTSConstantesNumericas";
-            this.dgvTSConstantesNumericas.Size = new System.Drawing.Size(134, 114);
+            this.dgvTSConstantesNumericas.Size = new System.Drawing.Size(181, 114);
             this.dgvTSConstantesNumericas.TabIndex = 14;
             // 
             // dgvTSOperadores
@@ -226,7 +228,7 @@
             this.dgvTSOperadores.AllowUserToDeleteRows = false;
             this.dgvTSOperadores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTSOperadores.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dgvTSOperadores.Location = new System.Drawing.Point(349, 513);
+            this.dgvTSOperadores.Location = new System.Drawing.Point(524, 513);
             this.dgvTSOperadores.Name = "dgvTSOperadores";
             this.dgvTSOperadores.Size = new System.Drawing.Size(132, 114);
             this.dgvTSOperadores.TabIndex = 15;
@@ -239,7 +241,7 @@
             this.dgvTSIdentificadores.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgvTSIdentificadores.Location = new System.Drawing.Point(12, 513);
             this.dgvTSIdentificadores.Name = "dgvTSIdentificadores";
-            this.dgvTSIdentificadores.Size = new System.Drawing.Size(190, 114);
+            this.dgvTSIdentificadores.Size = new System.Drawing.Size(297, 114);
             this.dgvTSIdentificadores.TabIndex = 16;
             // 
             // label7
@@ -299,11 +301,11 @@
             // 
             // txtSintaxis
             // 
-            this.txtSintaxis.Location = new System.Drawing.Point(657, 284);
+            this.txtSintaxis.Location = new System.Drawing.Point(657, 218);
             this.txtSintaxis.Name = "txtSintaxis";
             this.txtSintaxis.ReadOnly = true;
             this.txtSintaxis.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.txtSintaxis.Size = new System.Drawing.Size(297, 160);
+            this.txtSintaxis.Size = new System.Drawing.Size(297, 167);
             this.txtSintaxis.TabIndex = 22;
             this.txtSintaxis.Text = "";
             this.txtSintaxis.WordWrap = false;
@@ -312,7 +314,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.ForeColor = System.Drawing.Color.White;
-            this.label9.Location = new System.Drawing.Point(669, 268);
+            this.label9.Location = new System.Drawing.Point(669, 202);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(43, 13);
             this.label9.TabIndex = 23;
@@ -342,7 +344,7 @@
             // 
             this.label12.AutoSize = true;
             this.label12.ForeColor = System.Drawing.Color.White;
-            this.label12.Location = new System.Drawing.Point(994, 268);
+            this.label12.Location = new System.Drawing.Point(994, 202);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(57, 13);
             this.label12.TabIndex = 27;
@@ -350,11 +352,11 @@
             // 
             // txtSemantica
             // 
-            this.txtSemantica.Location = new System.Drawing.Point(982, 284);
+            this.txtSemantica.Location = new System.Drawing.Point(982, 218);
             this.txtSemantica.Name = "txtSemantica";
             this.txtSemantica.ReadOnly = true;
             this.txtSemantica.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.txtSemantica.Size = new System.Drawing.Size(297, 160);
+            this.txtSemantica.Size = new System.Drawing.Size(297, 167);
             this.txtSemantica.TabIndex = 26;
             this.txtSemantica.Text = "";
             this.txtSemantica.WordWrap = false;
@@ -391,12 +393,35 @@
             this.txtTipos.Text = "";
             this.txtTipos.WordWrap = false;
             // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.ForeColor = System.Drawing.Color.White;
+            this.label14.Location = new System.Drawing.Point(710, 428);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(149, 13);
+            this.label14.TabIndex = 32;
+            this.label14.Text = "Conversion a notación postfija";
+            // 
+            // txtPostFijo
+            // 
+            this.txtPostFijo.Location = new System.Drawing.Point(698, 444);
+            this.txtPostFijo.Name = "txtPostFijo";
+            this.txtPostFijo.ReadOnly = true;
+            this.txtPostFijo.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
+            this.txtPostFijo.Size = new System.Drawing.Size(297, 167);
+            this.txtPostFijo.TabIndex = 31;
+            this.txtPostFijo.Text = "";
+            this.txtPostFijo.WordWrap = false;
+            // 
             // frmCodext
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(77)))), ((int)(((byte)(77)))), ((int)(((byte)(77)))));
-            this.ClientSize = new System.Drawing.Size(1308, 671);
+            this.ClientSize = new System.Drawing.Size(1370, 671);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.txtPostFijo);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.txtTipos);
             this.Controls.Add(this.label11);
@@ -475,6 +500,8 @@
         private System.Windows.Forms.RichTextBox txtReglasSem;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.RichTextBox txtTipos;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.RichTextBox txtPostFijo;
     }
 }
 

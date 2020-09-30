@@ -1,0 +1,9 @@
+DOC_START
+VAR ( _miVar )
+VAR ( _miVar2 )
+VAR ( _miVar3 )
+VAR ( _miVar4 )
+VALUE ( _miVar , 2.1# )
+VALUE ( _miVar2 , 1# )
+VALUE ( _miVar3 , <"hola mundo"> )
+DOC_END

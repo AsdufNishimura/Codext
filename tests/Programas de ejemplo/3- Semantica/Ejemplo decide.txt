@@ -1,0 +1,1 @@
+DECIDE ( LOGIC ( > , ARITH ( * , 5# , ARITH ( + , 1# , 1# ) ) , 4# ) )

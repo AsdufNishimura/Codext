@@ -96,12 +96,15 @@ namespace Codext
         {
             txtGramatica.Text = "";
             txtSintaxis.Text = "";
+            txtReglasSem.Text = "";
+            txtSemantica.Text = "";
             bool resultado_léxico, resultado_sintaxis;
             AnalisisLexico();
             //btnSiguientePaso.Enabled = true;
             AnalisisSintactico();
             //if(resultado_léxico) { AnalisisSintacticoPausado(); } else { return; } 
             AnalisisSemantico();
+            CodigoIntermedio();
 
             //  Compilador
 
@@ -645,52 +648,56 @@ namespace Codext
         #region AnalisisSemántico
         public void AnalisisSemantico()
         {
-            //  Primera pasada
-            PrimeraPasada();
-
-            //   Segunda pasada
-            int CantidadTokens = 1;
-            string Linea = "";
-
-            foreach (string LineaTokens in txtTipos.Lines)
+            try
             {
-                if (LineaTokens != "")
+                //  Primera pasada
+                PrimeraPasada();
+
+                //   Segunda pasada
+                int CantidadTokens = 1;
+                string Linea = "";
+
+                foreach (string LineaTokens in txtTipos.Lines)
                 {
-                    if (LineaTokens[LineaTokens.Length - 1] == ' ')
+                    if (LineaTokens != "")
                     {
-                        for (int i = 0; i < LineaTokens.Length - 1; i++)
-                            Linea += LineaTokens[i];
+                        if (LineaTokens[LineaTokens.Length - 1] == ' ')
+                        {
+                            for (int i = 0; i < LineaTokens.Length - 1; i++)
+                                Linea += LineaTokens[i];
+                        }
+
+                    }
+                    if (Linea != "")
+                    {
+                        txtReglasSem.Text += Linea + "\n";
+                        do
+                        {
+                            Linea = BottomUp(Linea, ObtenerCantidadTokens(Linea), ObtenerCantidadTokens(Linea), "Semantica");
+                            txtReglasSem.Text += Linea + "\n";
+                        } while (Linea != "S" && Linea != "ERROR DE SEMANTICA");
+                        txtReglasSem.Text += "\n";
+                        txtSemantica.Text += Linea + "\n";
                     }
 
-                }
-                if (Linea != "")
-                {
-                    txtReglasSem.Text += Linea + "\n";
-                    do
-                    {
-                        Linea = BottomUp(Linea, ObtenerCantidadTokens(Linea), ObtenerCantidadTokens(Linea), "Semantica");
-                        txtReglasSem.Text += Linea + "\n";
-                    } while (Linea != "S" && Linea != "ERROR DE SEMANTICA");
-                    txtReglasSem.Text += "\n";
-                    txtSemantica.Text += Linea + "\n";
+
+                    CantidadTokens = 1;
+                    Linea = "";
                 }
 
-
-                CantidadTokens = 1;
-                Linea = "";
+                //  Tercera pasada
+                TerceraPasada();
             }
-
-            //  Tercera pasada
-            TerceraPasada();
+            catch (Exception e) { MessageBox.Show(e.Message); }
         }
 
         public void PrimeraPasada()
         {
             txtTipos.Text = txtTokens.Text;
             Regex.Replace(txtTipos.Text, "COND", "BOOL");
-            Regex.Replace(txtTipos.Text, "PR16", "ENTE");
-            Regex.Replace(txtTipos.Text, @"CN[0-9]{2}", "ENTE");
-            Regex.Replace(txtTipos.Text, @"CR[0-9]{2}", "REAL");
+            txtTipos.Text = Regex.Replace(txtTipos.Text, "PR16", "ENTE");
+            txtTipos.Text = Regex.Replace(txtTipos.Text, @"CN[0-9]{2}", "ENTE");
+            txtTipos.Text = Regex.Replace(txtTipos.Text, @"CR[0-9]{2}", "REAL");
             ComprobarTablaDeTipos();
         }
 
@@ -702,14 +709,60 @@ namespace Codext
              *  [2] ->  Tipo de dato");
              *  [3] ->  Valor 
              */
+            string strIden = "";
+            string strValor = "";
+            bool boolIden = false;
+            bool boolValor = false;
+
+
+
+            foreach (List<string> linea in lstRenglones)
+            {
+                if (linea.Contains("VALUE"))
+                {
+                    if (linea.ElementAt(linea.IndexOf("VALUE") + 3) == ",")
+                    {
+                        strIden = linea.ElementAt(linea.IndexOf("VALUE") + 2);
+                        strValor = linea.ElementAt(linea.IndexOf("VALUE") + 4);
+                        foreach (DataGridViewRow row in dgvTSIdentificadores.Rows)
+                        {
+                            if (row.Cells[1].Value.ToString() == strIden)
+                            {
+                                row.Cells[3].Value = strValor;
+                                if (strValor.Contains("#"))
+                                {
+                                    if (strValor.Contains("."))
+                                    {
+                                        row.Cells[2].Value = "REAL";
+                                    }
+                                    else
+                                    {
+                                        row.Cells[2].Value = "ENTE";
+                                    }
+                                }
+                                if (strValor.Contains("<"))
+                                {
+                                    row.Cells[2].Value = "CADE";
+                                }
+                                if (strValor.Contains("LOGIC") || strValor.Contains("true") || strValor.Contains("false"))
+                                {
+                                    row.Cells[2].Value = "BOOL";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+
             foreach (DataGridViewRow row in dgvTSIdentificadores.Rows)
             {
                 string strTipoToken = "NULL";
-                if(string.IsNullOrEmpty(row.Cells[2].Value.ToString()))
+                if(row.Cells[2].Value.ToString() != "-")
                 {
                     strTipoToken = row.Cells[2].Value.ToString();
                 }
-                Regex.Replace(txtTipos.Text, "ID" + row.Cells[0].Value.ToString(), strTipoToken);
+                txtTipos.Text = Regex.Replace(txtTipos.Text, "ID" + row.Cells[0].Value.ToString(), strTipoToken);
             }
         }
 
@@ -719,9 +772,153 @@ namespace Codext
             //  Revisar los contadores de las operaciones compuestas
             //  El for -no cerro = perfecto + hay dos instrucciones fulanas que se abrieron y no se cerraron
             //  txtConsola.Text
+            int cntInicioPrograma = Regex.Matches(txtTipos.Text, "PR01").Count;
+            int cntFinPrograma = Regex.Matches(txtTipos.Text, "PR02").Count;
+            int cntApertura = Regex.Matches(txtTipos.Text, "PR03").Count;
+            int cntCierre = Regex.Matches(txtTipos.Text, "PR04").Count;
+            int cntParApertura = Regex.Matches(txtTipos.Text, "CE07").Count;
+            int cntParCierre = Regex.Matches(txtTipos.Text, "CE08").Count;
+            bool bandera = false;
+
+            switch (cntApertura - cntCierre)
+            {
+                case 1:
+                    txtConsola.Text = "ERROR: Hay un bloque de código abierto que no está cerrando.";
+                    bandera = true;
+                    break;
+                case -1:
+                    txtConsola.Text = "ERROR: Hay cierres de bloque de sobra. Se está cerrando un bloque antes de tiempo";
+                    bandera = true;
+                    break;
+            }
+            switch (cntParApertura - cntParCierre)
+            {
+                case 1:
+                    txtConsola.Text = "ERROR: Hay un parentesis abierto que no está cerrando.";
+                    bandera = true;
+                    break;
+                case -1:
+                    txtConsola.Text = "ERROR: Hay parentesis de sobra. Se está cerrando un parentesis antes de tiempo";
+                    bandera = true;
+                    break;
+            }
+            switch (cntInicioPrograma)
+            {
+                case 0:
+                    txtConsola.Text += "\nADVERTENCIA: No se encontró la instrucción de inicio.";
+                    break;
+                case 1:
+                    break;
+                default:
+                    txtConsola.Text += "\nADVERTENCIA: La instrucción de inicio solo puede usarse una vez al inicio del programa.";
+                    break;
+            }
+            switch (cntFinPrograma)
+            {
+                case 0:
+                    txtConsola.Text += "\nADVERTENCIA: No se encontró la instrucción de fin.";
+                    break;
+                case 1:
+                    break;
+                default:
+                    txtConsola.Text += "\nADVERTENCIA: La instrucción de fin solo puede usarse una vez al final del programa.";
+                    break;
+            }
+
+
+            if (bandera) { throw new Exception("ERROR DE SEMÁNTICA"); }
+
         }
 
         #endregion
+
+
+
+        /**
+         *  Fase de código intermedio
+         */
+        #region CodigoIntermedio
+
+        public void CodigoIntermedio()
+        {
+            txtPostFijo.Text = txtTokens.Text;
+            for(int i = 0; i < txtPostFijo.Lines.Length; i++)
+            {
+                if(txtPostFijo.Lines[i].Contains("PR08"))
+                {
+                    txtPostFijo.Text = Regex.Replace(txtPostFijo.Text, txtPostFijo.Lines[i], ConvertirAOrdenacionPostfijo(txtPostFijo.Lines[i].Substring(5, txtPostFijo.Lines[i].Length - 6)));
+                    //txtPostFijo.Lines[i] = ConvertirAOrdenacionPostfijo(txtPostFijo.Lines[i]);
+                }
+            }
+        }
+
+        public string ConvertirAOrdenacionPostfijo(string strCadena)
+        {
+            string strOperandos = "", strOperadores = "", s;
+            int intInicioSublista = 0, intFinSublista, i = 0, intContadorParentesisApertura = 0, intContadorParentesisCierre = 0;
+            bool banderaSublista = false;
+            int intCantidadTokens = ObtenerCantidadTokens(strCadena);
+
+            while(i < intCantidadTokens)
+            {
+                s = strCadena.Substring((i * 4) + i, 4);
+                if(banderaSublista == false)
+                {
+                    if(s == "PR08")
+                    {
+                        banderaSublista = true;
+                        intInicioSublista = ((i + 1) * 4) + (i + 1);
+                    }
+                    if(s == "OPAS" ||
+                       s == "OPAR" ||
+                       s == "OPAM" ||
+                       s == "OPAD" ||
+                       s == "OPAP" ||
+                       s == "OPAC")
+                    {
+                        strOperadores = s;
+                    }
+                    if(s.StartsWith("ID") ||
+                       s.StartsWith("CN") ||
+                       s.StartsWith("CR"))
+                    {
+                        if (strOperandos != "")
+                        {
+                            strOperandos += " ";
+                        }                        
+                        strOperandos += s;
+                        
+                    }
+                    
+                }
+                if (s == "CE07" && banderaSublista == true)
+                {
+                    intContadorParentesisApertura++;
+                }
+                if (s == "CE08" && banderaSublista == true)
+                {
+                    intContadorParentesisCierre++;
+                    if (intContadorParentesisApertura == intContadorParentesisCierre)
+                    {
+                        banderaSublista = false;
+                        intFinSublista = (i * 4) + i + 4;
+                        string strSubcadena = strCadena.Substring(intInicioSublista, intFinSublista - intInicioSublista);
+                        if(strOperandos != "")
+                        {
+                            strOperandos += " ";
+                        }
+                        strOperandos += /* strCadena.Replace(strSubcadena,*/
+                            "CE07 " + ConvertirAOrdenacionPostfijo(strSubcadena) + " CE08";
+                    }
+                }
+                i++;
+            }
+            return strOperandos + " " + strOperadores;
+
+        }
+
+        #endregion
+
 
 
         /**

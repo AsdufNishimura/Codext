@@ -1,0 +1,3 @@
+ARITH ( / , ARITH ( + , _x , 10# ) , 6# )
+ARITH ( * , 20.1# , 6# )
+ARITH ( / , ARITH ( + , _x , 10# ) , ARITH ( * , _x , 5# ) )

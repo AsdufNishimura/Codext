@@ -1,0 +1,28 @@
+DOC_START
+VAR ( _CONTA )
+VAR ( _NUM-CONTROL )
+VAR ( _NOM )
+VAR ( _CALIF )
+TITLE ( _tam , <"LISTADO DE CALIFICACIONES DEL PARCIAL 1"> )
+TABLE ( _N )
+->
+TABLE_ROW ( <"Num. Control "> , <"Nombre"> , <"Calificacion"> )
+REPEAT
+->
+DECIDE ( LOGIC ( >= , _CALIF , 70# ) )
+->
+TABLE_ROW ( _NUM-CONTROL , _NOM , _CALIF )
+NEXT_LINE
+<-
+DECFALSE
+->
+TABLE_ROW ( _NUM-CONTROL , _NOM , <"NA"> )
+<-
+DECIDE ( LOGIC ( = , _CONTA , 40# )
+->
+NEXT_LINE ( 5# )
+<-
+<-
+TIL ( 160# )
+<-
+DOC_END
