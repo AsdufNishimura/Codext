@@ -841,15 +841,67 @@ namespace Codext
 
         public void CodigoIntermedio()
         {
-            txtPostFijo.Text = txtTokens.Text;
-            for(int i = 0; i < txtPostFijo.Lines.Length; i++)
+            //  Conversión a ordenación postfija de las expresiones aritmeticas, lógicas y relacionales          
+            txtPostFijo.Clear();
+            for (int i = 0; i < txtTokens.Lines.Length; i++)
             {
-                if(txtPostFijo.Lines[i].Contains("PR08"))
+                string s;
+                int intInicioSublista = 0, intFinSublista, j = 0, intContadorParentesisApertura = 0, intContadorParentesisCierre = 0;
+                bool banderaSublista = false;
+                int intCantidadTokens = ObtenerCantidadTokens(txtTokens.Lines[i].Trim());
+
+                if (!string.IsNullOrEmpty(txtTokens.Lines[i]))
                 {
-                    txtPostFijo.Text = Regex.Replace(txtPostFijo.Text, txtPostFijo.Lines[i], ConvertirAOrdenacionPostfijo(txtPostFijo.Lines[i].Substring(5, txtPostFijo.Lines[i].Length - 6)));
-                    //txtPostFijo.Lines[i] = ConvertirAOrdenacionPostfijo(txtPostFijo.Lines[i]);
+                    while (j < intCantidadTokens)
+                    {
+                        s = txtTokens.Lines[i].Substring((j * 4) + j, 4);
+                        if (banderaSublista == false)
+                        {
+                            if (s == "PR08" || s == "PR13")
+                            {
+                                banderaSublista = true;
+                                intInicioSublista = ((j + 1) * 4) + (j + 1);
+                            }
+
+
+                        }
+                        if (s == "CE07" && banderaSublista == true)
+                        {
+                            intContadorParentesisApertura++;
+                        }
+                        if (s == "CE08" && banderaSublista == true)
+                        {
+                            intContadorParentesisCierre++;
+                            if (intContadorParentesisApertura == intContadorParentesisCierre)
+                            {
+                                banderaSublista = false;
+                                intFinSublista = (j * 4) + j + 4;
+                                string strSubcadena = txtTokens.Lines[i].Substring(intInicioSublista, intFinSublista - intInicioSublista);
+                                
+                                txtPostFijo.Text += txtTokens.Lines[i].Substring(0, intInicioSublista) + ConvertirAOrdenacionPostfijo(strSubcadena) + txtTokens.Lines[i].Substring(intFinSublista) + "\n";/* strCadena.Replace(strSubcadena,*/
+                                    
+                            }
+                        }
+                        j++;
+                    }
                 }
-            }
+
+
+
+
+                    
+                    //if(txtPostFijo.Lines[i].Contains("PR08"))
+                    //{
+                    //    txtPostFijo.Text = Regex.Replace(txtPostFijo.Text, txtPostFijo.Lines[i], "PR08 " + ConvertirAOrdenacionPostfijo(txtPostFijo.Lines[i].Substring(5, txtPostFijo.Lines[i].Length - 6)));                    
+                    //}
+                    //if(txtPostFijo.Lines[i].Contains("PR13"))
+                    //{
+                    //    txtPostFijo.Text = Regex.Replace(txtPostFijo.Text, txtPostFijo.Lines[i], "PR13 " + ConvertirAOrdenacionPostfijo(txtPostFijo.Lines[i].Substring(5, txtPostFijo.Lines[i].Length - 6)));
+                    //}
+                }
+
+
+
         }
 
         public string ConvertirAOrdenacionPostfijo(string strCadena)
@@ -857,24 +909,33 @@ namespace Codext
             string strOperandos = "", strOperadores = "", s;
             int intInicioSublista = 0, intFinSublista, i = 0, intContadorParentesisApertura = 0, intContadorParentesisCierre = 0;
             bool banderaSublista = false;
-            int intCantidadTokens = ObtenerCantidadTokens(strCadena);
+            int intCantidadTokens = ObtenerCantidadTokens(strCadena.Trim());
 
             while(i < intCantidadTokens)
             {
                 s = strCadena.Substring((i * 4) + i, 4);
                 if(banderaSublista == false)
                 {
-                    if(s == "PR08")
+                    if(s == "PR08" || s == "PR13")
                     {
                         banderaSublista = true;
                         intInicioSublista = ((i + 1) * 4) + (i + 1);
                     }
-                    if(s == "OPAS" ||
-                       s == "OPAR" ||
-                       s == "OPAM" ||
-                       s == "OPAD" ||
-                       s == "OPAP" ||
-                       s == "OPAC")
+                    if(s == "OPAS" ||   /*  +  */
+                       s == "OPAR" ||   /*  -  */
+                       s == "OPAM" ||   /*  *  */
+                       s == "OPAD" ||   /*  /  */
+                       s == "OPAP" ||   /*  ** */
+                       s == "OPAC" ||   /*  %  */
+                       s == "OPRM" ||   /*  >  */
+                       s == "OPRm" ||   /*  <  */
+                       s == "OPRI" ||   /*  =  */
+                       s == "OPRD" ||   /*  <> */
+                       s == "ORMI" ||   /*  >= */
+                       s == "ORmI" ||   /*  <= */
+                       s == "OPLA" ||   /*  &  */
+                       s == "OPLO" ||   /*  |  */
+                       s == "OPLN"      /*  !  */)
                     {
                         strOperadores = s;
                     }
