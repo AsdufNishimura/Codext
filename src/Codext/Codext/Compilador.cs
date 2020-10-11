@@ -11,26 +11,26 @@ using System.Text.RegularExpressions;
 
 namespace Codext
 {
-    public partial class frmCodext : Form
+    public partial class FrmCodext : Form
     {   
         /**
          *  Propiedades y métodos propios del Form principal. 
          */
         Instrucción miInstruccion;
-        List<Instrucción> lstInstrucciones = new List<Instrucción>();
+        readonly List<Instrucción> lstInstrucciones = new List<Instrucción>();
         List<string> lstSubcadenas;
         List<List<string>> lstRenglones;
-        int IDXX = 0, CNXX = 0, CRXX = 0;        
-
-        Color colorResaltado = Color.FromArgb(226, 130, 27);
+        int IDXX = 0, CNXX = 0, CRXX = 0;
+        readonly Color colorResaltado = Color.FromArgb(226, 130, 27);
         TaskCompletionSource<object> teclaEnter = new TaskCompletionSource<object>();
+        List<List<Tripleta>> tripletas = new List<List<Tripleta>>();
 
-        public frmCodext()
+        public FrmCodext()
         {
             InitializeComponent();
         }
 
-        private void frmCodext_Load(object sender, EventArgs e)
+        private void FrmCodext_Load(object sender, EventArgs e)
         {
             dgvTSIdentificadores.Columns.Add("columnNumero", "# Identificador");
             dgvTSIdentificadores.Columns.Add("columnNombre", "Nombre");
@@ -70,8 +70,10 @@ namespace Codext
         {
             try
             {
-                OpenFileDialog dialogEntrada = new OpenFileDialog();
-                dialogEntrada.Filter = ".txt files (*.txt)|*.txt";
+                OpenFileDialog dialogEntrada = new OpenFileDialog
+                {
+                    Filter = ".txt files (*.txt)|*.txt"
+                };
                 dialogEntrada.ShowDialog();
 
                 if(dialogEntrada.CheckFileExists)
@@ -98,7 +100,7 @@ namespace Codext
             txtSintaxis.Text = "";
             txtReglasSem.Text = "";
             txtSemantica.Text = "";
-            bool resultado_léxico, resultado_sintaxis;
+            //bool resultado_léxico, resultado_sintaxis;
             AnalisisLexico();
             //btnSiguientePaso.Enabled = true;
             AnalisisSintactico();
@@ -277,7 +279,7 @@ namespace Codext
             string Subcadena = "";
             for (int i = 0; i <= CarAEva - 1; i++)
             {
-                Subcadena = Subcadena + Cadena[Posicion];
+                Subcadena += Cadena[Posicion];
                 Posicion++;
             }
             return Subcadena;
@@ -295,13 +297,13 @@ namespace Codext
                 {
                     if (Bandera)
                     {
-                        NuevaCadena = NuevaCadena + Cambio;
+                        NuevaCadena += Cambio;
                         Bandera = false;
                     }
                 }
                 else
                 {
-                    NuevaCadena = NuevaCadena + Cadena[i];
+                    NuevaCadena += Cadena[i];
                 }
             }
             return NuevaCadena;
@@ -319,7 +321,7 @@ namespace Codext
 
 
         /**
-         *  Fase de análisis léxio 
+         *  Fase de análisis léxico 
          */
         #region AnalisisLéxico
 
@@ -362,8 +364,10 @@ namespace Codext
                         txtConsola.Text = "Leyendo la subcadena " + Subcadena;
                         txtSubcadena.BackColor = Color.FromArgb(255, 240, 240, 240);
 
-                        miInstruccion = new Instrucción();
-                        miInstruccion.Cadena = Subcadena;
+                        miInstruccion = new Instrucción
+                        {
+                            Cadena = Subcadena
+                        };
 
 
                         string tsres;
@@ -654,7 +658,7 @@ namespace Codext
                 PrimeraPasada();
 
                 //   Segunda pasada
-                int CantidadTokens = 1;
+                //int CantidadTokens = 1;
                 string Linea = "";
 
                 foreach (string LineaTokens in txtTipos.Lines)
@@ -681,7 +685,7 @@ namespace Codext
                     }
 
 
-                    CantidadTokens = 1;
+                    //CantidadTokens = 1;
                     Linea = "";
                 }
 
@@ -709,10 +713,10 @@ namespace Codext
              *  [2] ->  Tipo de dato");
              *  [3] ->  Valor 
              */
-            string strIden = "";
-            string strValor = "";
-            bool boolIden = false;
-            bool boolValor = false;
+            string strIden;
+            string strValor;
+            //bool boolIden = false;
+            //bool boolValor = false;
 
 
 
@@ -898,9 +902,9 @@ namespace Codext
                     //{
                     //    txtPostFijo.Text = Regex.Replace(txtPostFijo.Text, txtPostFijo.Lines[i], "PR13 " + ConvertirAOrdenacionPostfijo(txtPostFijo.Lines[i].Substring(5, txtPostFijo.Lines[i].Length - 6)));
                     //}
-                }
+            }
 
-
+            //  Conversión a tripletas
 
         }
 
@@ -978,7 +982,127 @@ namespace Codext
 
         }
 
+        public List<Tripleta> TripletaExpresionAritmetica(string cadenaOriginal)
+        {
+            /*  
+             *  Paso 1: Declarar una variable para la cadena original de la expresión
+             *  Paso 2: Cadena auxiliar donde se concatenarán todos los tokens hasta que se encuentre un operador.
+             *  Paso 3: Cadena auxiliar 2, donde se tome el operador detectado y los 2 operandos previos.
+             *  Paso 4: Agregar a la tripleta 2 registros, uno que sea T1 recibe un identificador, el otro realiza la operación al mismo temporal.
+             *  Paso 5: En la cadena auxiliar 1, se reemplaza la cadena auxiliar 2 por un temporal (TEXX)
+             *  Paso 6: Si la cadena original termina, entonces se termina, si no, regresa al paso 2. (Ciclo hasta que termine la cadena).
+             */
+
+            List<Tripleta> trResultado = new List<Tripleta>();
+
+            //  Aclarar si se deben incluir las operaciones en general a solo la de operaciones aritméticas.
+            string s;
+            string cadenaAuxiliar1 = "";
+            string cadenaAuxiliar2;
+            int i = 0;
+            int contadorTemporales = 0;
+            int intCantidadTokens = ObtenerCantidadTokens(cadenaOriginal.Trim());
+
+            while (i < intCantidadTokens)
+            {
+                s = cadenaOriginal.Substring((i * 4) + i, 4);
+                if (cadenaAuxiliar1 != "")
+                {
+                    cadenaAuxiliar1 += " ";
+                }
+                cadenaAuxiliar1 += s;
+                if (s == "OPAS" ||   /*  +  */
+                    s == "OPAR" ||   /*  -  */
+                    s == "OPAM" ||   /*  *  */
+                    s == "OPAD" ||   /*  /  */
+                    s == "OPAP" ||   /*  ** */
+                    s == "OPAC"      /*  %  */)
+                {
+                    cadenaAuxiliar2 = cadenaOriginal.Substring(((i - 2) * 4) + (i - 2));
+
+                    //  Agregar registros en la tripleta
+                    //trResultado.Add(new Tripleta(trResultado.Count() + 1, cadenaAuxiliar2.Substring(0, 4)));
+                    //trResultado.Add(new Tripleta(trResultado.Count() + 1, ));
+
+                    cadenaAuxiliar1 = Regex.Replace(cadenaAuxiliar1, cadenaAuxiliar2, "TE" + contadorTemporales.ToString("##"));
+                    contadorTemporales++;
+                }
+            }
+            return trResultado;
+        }
+
+        public List<Tripleta> TripletaExpresionCondicional(string instruccionCondicional)
+        {
+            List<Tripleta> trResultado = new List<Tripleta>();
+
+
+            //  Definir tripleta condicional, verdadera y falsa
+            string s = "";
+
+            string[] arregloString = instruccionCondicional.Split('\n');
+            
+            if (arregloString[0].Contains("OPLA") ||   /*  &  */
+                arregloString[0].Contains("OPLO") ||   /*  |  */
+                arregloString[0].Contains("OPLN")      /*  !  */)
+            {
+                //  Condición compleja                
+                int i = 0;
+                int intCantidadTokens = ObtenerCantidadTokens(arregloString[0].Trim());
+                while (i < intCantidadTokens)
+                {
+                    s = arregloString[0].Substring((i * 4) + i, 4);
+                }
+                
+                
+            }
+            else
+            {
+                //  Condición simple
+                //  tripletaCondicional.AgregarRegistro("TE01", arregloString[0].Substring(5,4), ORAS);
+                //  tripletaCondicional.AgregarRegistro("TE01", arregloString[0].Substring(10,4), ORAS);
+                //  tripletaCondicional.AgregarRegistro("TE01", "TE02", arregloString[0].Substring(15,4));
+                //  tripletaCondicional.AgregarRegistro("TER1", "TRUE", 6);
+                //  tripletaCondicional.AgregarRegistro("TER1", "FALSE", 8);
+            }
+
+            //  tripletaCondicional.AgregarRegistro("ETIQ", trTrue, "");
+            //  tripletaCondicional.AgregarRegistro("ETIQ", "", tripletaCondiconal.Count + 2);
+            //  tripletaCondicional.AgregarRegistro("ETIQ", trFalse, "");
+            //  tripletaCondicional.AgregarRegistro("FIN", "", "");
+
+            //  Obtener tripleta verdadera
+            int intRenglonRecorrido = 2;
+            while (s != "PR04")
+            {
+                int i = 0;
+                int intCantidadTokens = ObtenerCantidadTokens(arregloString[intRenglonRecorrido].Trim());
+                {
+                    while (i < intCantidadTokens)
+                    {
+                        
+                    }
+                }
+            }
+            //  Obtener tripleta falsa
+            
+
+            return trResultado;
+        }
+
+        public List<Tripleta> TripletaExpresionIteracion(string instruccionIteracion)
+        {
+            List<Tripleta> trResultado = new List<Tripleta>();
+
+            return trResultado;
+        }
+
         #endregion
+
+
+
+
+
+
 
 
 
@@ -1254,8 +1378,10 @@ namespace Codext
                         teclaEnter = new TaskCompletionSource<object>();
                         txtSubcadena.BackColor = Color.FromArgb(255, 240, 240, 240);
 
-                        miInstruccion = new Instrucción();
-                        miInstruccion.Cadena = Subcadena;
+                        miInstruccion = new Instrucción
+                        {
+                            Cadena = Subcadena
+                        };
 
 
                         string tsres;

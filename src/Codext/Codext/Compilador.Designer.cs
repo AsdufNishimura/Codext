@@ -1,6 +1,6 @@
 ﻿namespace Codext
 {
-    partial class frmCodext
+    partial class FrmCodext
     {
         /// <summary>
         /// Variable del diseñador necesaria.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCodext));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCodext));
             this.txtCodigo = new System.Windows.Forms.RichTextBox();
             this.btnCargar = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -457,7 +457,7 @@
             this.KeyPreview = true;
             this.Name = "frmCodext";
             this.Text = "Codext - Compilador";
-            this.Load += new System.EventHandler(this.frmCodext_Load);
+            this.Load += new System.EventHandler(this.FrmCodext_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmCodext_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSConstantesNumericas)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSOperadores)).EndInit();

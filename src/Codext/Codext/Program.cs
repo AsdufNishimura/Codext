@@ -16,7 +16,7 @@ namespace Codext
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmCodext());
+            Application.Run(new FrmCodext());
         }
     }
 }
