@@ -8,6 +8,7 @@
 Lenguaje sencillo generador de documentos.
 
 # Colaboradores
+- Heidy Yulissa Balboa Rivera
 - Daniel Eduardo González Mendoza
 - Eliseo Zepeda Arredondo
 - Emmanuel Villanueva Rivera
