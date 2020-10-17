@@ -22,6 +22,7 @@ namespace Codext
         List<List<string>> lstRenglones;
         int IDXX = 0, CNXX = 0, CRXX = 0;
         readonly Color colorResaltado = Color.FromArgb(226, 130, 27);
+        readonly Color colorUnresaltado = Color.FromArgb(255, 240, 240, 240);
         TaskCompletionSource<object> teclaEnter = new TaskCompletionSource<object>();
         List<List<Tripleta>> tripletas = new List<List<Tripleta>>();
 
@@ -57,6 +58,11 @@ namespace Codext
             dgvTSOperadores.Rows.Add("=", 7);
             dgvTSOperadores.Rows.Add("<=", 7);
             dgvTSOperadores.Rows.Add(">=", 7);
+
+            dgvTripleta.Columns.Add("columnIndice","Índice");
+            dgvTripleta.Columns.Add("columnDatoObjeto","Dato objeto");
+            dgvTripleta.Columns.Add("columnDatoFuente","Dato fuente");
+            dgvTripleta.Columns.Add("columnOperador","Operador");
         }
 
 
@@ -355,14 +361,14 @@ namespace Codext
                     txtConsola.Text = "Leyendo el renglón " + (renglonActual + 1);                    
                     txtCodigo.Focus();
                     txtCodigo.Select(intPosRenglon, txtCodigo.Lines[renglonActual].Length);
-                                        
-                    txtCodigo.BackColor = Color.FromArgb(255, 240, 240, 240);
+
+                    txtCodigo.BackColor = colorUnresaltado;  /*Color.FromArgb(255, 240, 240, 240);*/
                     foreach (string Subcadena in Subcadenas)
                     {
                         txtSubcadena.Text = Subcadena;
                         txtSubcadena.BackColor = colorResaltado;
                         txtConsola.Text = "Leyendo la subcadena " + Subcadena;
-                        txtSubcadena.BackColor = Color.FromArgb(255, 240, 240, 240);
+                        txtSubcadena.BackColor = colorUnresaltado; /*Color.FromArgb(255, 240, 240, 240);*/
 
                         miInstruccion = new Instrucción
                         {
@@ -383,7 +389,7 @@ namespace Codext
                                 txtEvaluacion.Text += strTokenAux + " ";
                                 txtEvaluacion.BackColor = colorResaltado;
                                 txtConsola.Text = "Se encontró el identificador en la tabla de símbolos, su token es " + strTokenAux;
-                                txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                txtEvaluacion.BackColor = colorUnresaltado; /*Color.FromArgb(255, 240, 240, 240);*/
                                 continue;
                             }
                         }
@@ -399,8 +405,8 @@ namespace Codext
                                     dgvTSConstantesNumericas.Select();
                                     txtEvaluacion.Text += strTokenAux + " ";
                                     txtEvaluacion.BackColor = colorResaltado;
-                                    txtConsola.Text = "Se encontró la constante numérica real en la tabla de símbolos, su token es " + strTokenAux;         
-                                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                    txtConsola.Text = "Se encontró la constante numérica real en la tabla de símbolos, su token es " + strTokenAux;
+                                    txtEvaluacion.BackColor = colorUnresaltado; /*Color.FromArgb(255, 240, 240, 240);*/
                                     continue;
                                 }
                             }
@@ -413,8 +419,8 @@ namespace Codext
                                     dgvTSConstantesNumericas.Select();
                                     txtEvaluacion.Text += strTokenAux + " ";
                                     txtEvaluacion.BackColor = colorResaltado;
-                                    txtConsola.Text = "Se encontró la constante numérica entera en la tabla de símbolos, su token es " + strTokenAux;  
-                                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                                    txtConsola.Text = "Se encontró la constante numérica entera en la tabla de símbolos, su token es " + strTokenAux;
+                                    txtEvaluacion.BackColor = colorUnresaltado; /*Color.FromArgb(255, 240, 240, 240);*/
                                     continue;
                                 }
                             }
@@ -427,15 +433,15 @@ namespace Codext
                         {
                             txtEvaluacion.Text += strTokenAux + " ";
                             txtEvaluacion.BackColor = colorResaltado;
-                            txtConsola.Text = "Error detectado: no se reconoció el elemento. Se asignará un token de error léxico (ERRL)"; 
-                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                            txtConsola.Text = "Error detectado: no se reconoció el elemento. Se asignará un token de error léxico (ERRL)";
+                            txtEvaluacion.BackColor = colorUnresaltado; /*Color.FromArgb(255, 240, 240, 240);*/
                         }
                         else
                         {                            
                             txtEvaluacion.Text += strTokenAux + " ";
                             txtEvaluacion.BackColor = colorResaltado;
-                            txtConsola.Text = "Se identifico la subcadena " + Subcadena + " con el token " + strTokenAux;                           
-                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
+                            txtConsola.Text = "Se identifico la subcadena " + Subcadena + " con el token " + strTokenAux;
+                            txtEvaluacion.BackColor = colorUnresaltado; /*Color.FromArgb(255, 240, 240, 240);*/
 
                             string tipoToken = strTokenAux.Substring(0, 2);
                             string numToken = strTokenAux.Substring(2, 2);                            
@@ -468,7 +474,7 @@ namespace Codext
                     txtConsola.Text = "Se ha llegado al final del renglón " + (renglonActual + 1);
                     txtTokens.Focus();
                     txtTokens.Select(intPosRenglonTokens, txtTokens.Lines[renglonActual].Length);
-                    txtTokens.BackColor = Color.FromArgb(255, 240, 240, 240);
+                    txtTokens.BackColor = colorUnresaltado; /*Color.FromArgb(255, 240, 240, 240);*/
 
                     txtEvaluacion.Text = "";
 
@@ -610,7 +616,9 @@ namespace Codext
         
         public void AnalisisSintactico()
         {
-            int CantidadTokens = 1;
+#pragma warning disable CS0219 // La variable está asignada pero nunca se usa su valor
+            int CantidadTokens;
+#pragma warning restore CS0219 // La variable está asignada pero nunca se usa su valor
             string Linea = "";
 
             foreach(string LineaTokens in txtTokens.Lines)
@@ -864,10 +872,8 @@ namespace Codext
                             if (s == "PR08" || s == "PR13")
                             {
                                 banderaSublista = true;
-                                intInicioSublista = ((j + 1) * 4) + (j + 1);
+                                intInicioSublista = ((j * 4) + j);
                             }
-
-
                         }
                         if (s == "CE07" && banderaSublista == true)
                         {
@@ -882,30 +888,18 @@ namespace Codext
                                 intFinSublista = (j * 4) + j + 4;
                                 string strSubcadena = txtTokens.Lines[i].Substring(intInicioSublista, intFinSublista - intInicioSublista);
                                 
-                                txtPostFijo.Text += txtTokens.Lines[i].Substring(0, intInicioSublista) + ConvertirAOrdenacionPostfijo(strSubcadena) + txtTokens.Lines[i].Substring(intFinSublista) + "\n";/* strCadena.Replace(strSubcadena,*/
+                                txtPostFijo.Text += txtTokens.Lines[i].Substring(0, intInicioSublista) + "POST " + ConvertirAOrdenacionPostfijo(strSubcadena) + "POST" + txtTokens.Lines[i].Substring(intFinSublista) + "\n";/* strCadena.Replace(strSubcadena,*/
                                     
                             }
                         }
                         j++;
                     }
                 }
-
-
-
-
-                    
-                    //if(txtPostFijo.Lines[i].Contains("PR08"))
-                    //{
-                    //    txtPostFijo.Text = Regex.Replace(txtPostFijo.Text, txtPostFijo.Lines[i], "PR08 " + ConvertirAOrdenacionPostfijo(txtPostFijo.Lines[i].Substring(5, txtPostFijo.Lines[i].Length - 6)));                    
-                    //}
-                    //if(txtPostFijo.Lines[i].Contains("PR13"))
-                    //{
-                    //    txtPostFijo.Text = Regex.Replace(txtPostFijo.Text, txtPostFijo.Lines[i], "PR13 " + ConvertirAOrdenacionPostfijo(txtPostFijo.Lines[i].Substring(5, txtPostFijo.Lines[i].Length - 6)));
-                    //}
             }
 
             //  Conversión a tripletas
-
+            //GenerarTripletas();
+            //MostrarTripletas();
         }
 
         public string ConvertirAOrdenacionPostfijo(string strCadena)
@@ -982,6 +976,110 @@ namespace Codext
 
         }
 
+        public void GenerarTripletas()
+        {
+            /*
+             *  4 tipos de tripletas:
+             *  1 -> Tripletas de asignación (puede contener operaciones aritméticas o lógicas)
+             *  2 -> Tripletas aritmeticas
+             *  3 -> Tripletas de selección (contiene una expresión lógica)
+             *  4 -> Tripletas de iteración (contiene una expresión lógica)
+             * 
+             */
+            string s = "";
+            int contadorLinea = 0;
+            
+            
+            while (contadorLinea < txtPostFijo.Lines.Count())
+            {
+                int cantidadTokens = ObtenerCantidadTokens(txtPostFijo.Lines[contadorLinea]);
+                int contadorToken = 0;
+                bool banderaSeleccion = false;
+                bool banderaCiclo = false;
+                string cadenaOriginal = "";
+
+                if (!banderaSeleccion && !banderaCiclo)
+                {
+                    while (contadorToken < cantidadTokens)
+                    {
+                        s = txtPostFijo.Lines[contadorLinea].Substring((contadorToken * 4) + contadorToken, 4);
+
+                        //  Asignación
+                        if (s == "PR18")
+                        {
+                            //  Agregar en postfijo identificador + valor + ASIG+
+                            while (Regex.Matches(cadenaOriginal, "POST").Count < 2)
+                            {
+                                s = txtPostFijo.Lines[contadorLinea].Substring((contadorToken * 4) + contadorToken, 4);
+                                if (cadenaOriginal != "")
+                                {
+                                    cadenaOriginal += " ";
+                                }
+                                cadenaOriginal += s;
+                                contadorToken++;
+                            }
+                            tripletas.Add(TripletaExpresionAritmetica(cadenaOriginal));
+                        }
+                        //  Selección
+                        if (s == "PR11")
+                        {
+#pragma warning disable IDE0059 // Asignación innecesaria de un valor
+                            banderaSeleccion = true;
+#pragma warning restore IDE0059 // Asignación innecesaria de un valor
+                        }
+                        //  Iteración
+                        if (s == "PR14")
+                        {
+#pragma warning disable IDE0059 // Asignación innecesaria de un valor
+                            banderaCiclo = true;
+#pragma warning restore IDE0059 // Asignación innecesaria de un valor
+                        }
+                        contadorToken++;
+                    }
+                }
+                else
+                {
+                    if (cadenaOriginal != "")
+                    {
+                        cadenaOriginal += " ";
+                    }
+                    cadenaOriginal += txtPostFijo.Lines[contadorLinea] + "\n";
+
+                    if (txtPostFijo.Lines[contadorLinea].Contains("PR04"))
+                    {
+                        if (banderaSeleccion)
+                        {
+                            if (!txtPostFijo.Lines[contadorLinea + 1].Contains("PR12"))
+                            {
+                                banderaSeleccion = false;
+                                tripletas.Add(TripletaExpresionCondicional(cadenaOriginal));
+                            }
+                        }
+                        if (banderaCiclo)
+                        {
+                            banderaCiclo = false;
+                            cadenaOriginal += txtPostFijo.Lines[contadorLinea + 1] + "\n";
+                            tripletas.Add(TripletaExpresionIteracion(cadenaOriginal));
+                        }
+                    }
+                                       
+                }
+                contadorLinea++;
+            }
+            
+        }
+
+        public void MostrarTripletas()
+        {
+            foreach(List<Tripleta> lista in tripletas)
+            {
+                foreach(Tripleta t in lista)
+                {
+                    dgvTripleta.Rows.Add(t.Indice, t.DatoObjeto.ToString(), t.DatoFuente.ToString(), t.Operador.ToString());
+                }
+            }
+        }
+
         public List<Tripleta> TripletaExpresionAritmetica(string cadenaOriginal)
         {
             /*  
@@ -1016,13 +1114,14 @@ namespace Codext
                     s == "OPAM" ||   /*  *  */
                     s == "OPAD" ||   /*  /  */
                     s == "OPAP" ||   /*  ** */
-                    s == "OPAC"      /*  %  */)
+                    s == "OPAC" ||   /*  %  */
+                    s == "ASIG"      /* Denota una asignación */   )
                 {
                     cadenaAuxiliar2 = cadenaOriginal.Substring(((i - 2) * 4) + (i - 2));
 
                     //  Agregar registros en la tripleta
-                    //trResultado.Add(new Tripleta(trResultado.Count() + 1, cadenaAuxiliar2.Substring(0, 4)));
-                    //trResultado.Add(new Tripleta(trResultado.Count() + 1, ));
+                    //  trResultado.Add(new Tripleta(trResultado.Count() + 1, cadenaAuxiliar2.Substring(0, 4)));
+                    //  trResultado.Add(new Tripleta(trResultado.Count() + 1, ));
 
                     cadenaAuxiliar1 = Regex.Replace(cadenaAuxiliar1, cadenaAuxiliar2, "TE" + contadorTemporales.ToString("##"));
                     contadorTemporales++;
@@ -1322,7 +1421,9 @@ namespace Codext
         //    }
         //}
 
+#pragma warning disable IDE0051 // Quitar miembros privados no utilizados
         private async void AnalisisLexicoPausado()
+#pragma warning restore IDE0051 // Quitar miembros privados no utilizados
         {
             txtCodigo.ReadOnly = true;
             btnSiguientePaso.Enabled = true;
@@ -1539,7 +1640,9 @@ namespace Codext
                 txtConsola.Text = "Ocurrió un error inesperado.";
                 return;
             }
+#pragma warning disable CS0162 // Se detectó código inaccesible
             txtCodigo.ReadOnly = false;
+#pragma warning restore CS0162 // Se detectó código inaccesible
             btnSiguientePaso.Enabled = false;
         }
 

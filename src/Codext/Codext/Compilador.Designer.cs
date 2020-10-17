@@ -62,9 +62,12 @@
             this.txtTipos = new System.Windows.Forms.RichTextBox();
             this.label14 = new System.Windows.Forms.Label();
             this.txtPostFijo = new System.Windows.Forms.RichTextBox();
+            this.dgvTripleta = new System.Windows.Forms.DataGridView();
+            this.label15 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSConstantesNumericas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSOperadores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSIdentificadores)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTripleta)).BeginInit();
             this.SuspendLayout();
             // 
             // txtCodigo
@@ -187,7 +190,7 @@
             this.txtConsola.Location = new System.Drawing.Point(0, 633);
             this.txtConsola.Name = "txtConsola";
             this.txtConsola.ReadOnly = true;
-            this.txtConsola.Size = new System.Drawing.Size(1370, 38);
+            this.txtConsola.Size = new System.Drawing.Size(1292, 38);
             this.txtConsola.TabIndex = 11;
             this.txtConsola.Text = "";
             // 
@@ -397,7 +400,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.ForeColor = System.Drawing.Color.White;
-            this.label14.Location = new System.Drawing.Point(710, 428);
+            this.label14.Location = new System.Drawing.Point(681, 428);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(149, 13);
             this.label14.TabIndex = 32;
@@ -405,7 +408,7 @@
             // 
             // txtPostFijo
             // 
-            this.txtPostFijo.Location = new System.Drawing.Point(698, 444);
+            this.txtPostFijo.Location = new System.Drawing.Point(669, 444);
             this.txtPostFijo.Name = "txtPostFijo";
             this.txtPostFijo.ReadOnly = true;
             this.txtPostFijo.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
@@ -414,12 +417,35 @@
             this.txtPostFijo.Text = "";
             this.txtPostFijo.WordWrap = false;
             // 
-            // frmCodext
+            // dgvTripleta
+            // 
+            this.dgvTripleta.AllowUserToAddRows = false;
+            this.dgvTripleta.AllowUserToDeleteRows = false;
+            this.dgvTripleta.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTripleta.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.dgvTripleta.Location = new System.Drawing.Point(971, 444);
+            this.dgvTripleta.Name = "dgvTripleta";
+            this.dgvTripleta.Size = new System.Drawing.Size(308, 167);
+            this.dgvTripleta.TabIndex = 33;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.ForeColor = System.Drawing.Color.White;
+            this.label15.Location = new System.Drawing.Point(985, 428);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(42, 13);
+            this.label15.TabIndex = 34;
+            this.label15.Text = "Tripleta";
+            // 
+            // FrmCodext
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(77)))), ((int)(((byte)(77)))), ((int)(((byte)(77)))));
-            this.ClientSize = new System.Drawing.Size(1370, 671);
+            this.ClientSize = new System.Drawing.Size(1292, 671);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.dgvTripleta);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.txtPostFijo);
             this.Controls.Add(this.label13);
@@ -455,13 +481,14 @@
             this.Controls.Add(this.txtCodigo);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.Name = "frmCodext";
+            this.Name = "FrmCodext";
             this.Text = "Codext - Compilador";
             this.Load += new System.EventHandler(this.FrmCodext_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmCodext_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSConstantesNumericas)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSOperadores)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSIdentificadores)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTripleta)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -502,6 +529,8 @@
         private System.Windows.Forms.RichTextBox txtTipos;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.RichTextBox txtPostFijo;
+        private System.Windows.Forms.DataGridView dgvTripleta;
+        private System.Windows.Forms.Label label15;
     }
 }
 
