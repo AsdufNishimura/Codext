@@ -1005,22 +1005,21 @@ namespace Codext
                     {
                         s = txtPostFijo.Lines[contadorLinea].Substring((contadorToken * 4) + contadorToken, 4);
 
-                        //  Asignación
-                        if (s == "PR18")
+                        //  Instruccion
+                        if (s == "PR01" ||
+                            s == "PR02" ||
+                            s == "PR05" ||
+                            s == "PR06" ||
+                            s == "PR07" ||
+                            s == "PR09" ||
+                            s == "PR10" ||
+                            s == "PR17" ||
+                            s == "PR18" ||
+                            s == "PR19" )
                         {
-                            //  Agregar en postfijo identificador + valor + ASIG+
-                            while (Regex.Matches(cadenaOriginal, "POST").Count < 2)
-                            {
-                                s = txtPostFijo.Lines[contadorLinea].Substring((contadorToken * 4) + contadorToken, 4);
-                                if (cadenaOriginal != "")
-                                {
-                                    cadenaOriginal += " ";
-                                }
-                                cadenaOriginal += s;
-                                contadorToken++;
-                            }
-                            tripletas.Add(TripletaExpresionAritmetica(cadenaOriginal));
+                            tripletas.Add(TripletaInstruccion(txtPostFijo.Lines[contadorLinea]));
                         }
+                        
                         //  Selección
                         if (s == "PR11")
                         {
@@ -1094,12 +1093,12 @@ namespace Codext
 
             List<Tripleta> trResultado = new List<Tripleta>();
 
-            //  Aclarar si se deben incluir las operaciones en general a solo la de operaciones aritméticas.
             string s;
             string cadenaAuxiliar1 = "";
             string cadenaAuxiliar2;
             int i = 0;
-            int contadorTemporales = 0;
+            int intContadorRegistro = 0;
+            int intContadorTemporales = 0;
             int intCantidadTokens = ObtenerCantidadTokens(cadenaOriginal.Trim());
 
             while (i < intCantidadTokens)
@@ -1115,24 +1114,33 @@ namespace Codext
                     s == "OPAM" ||   /*  *  */
                     s == "OPAD" ||   /*  /  */
                     s == "OPAP" ||   /*  ** */
-                    s == "OPAC" ||   /*  %  */
-                    s == "ASIG"      /* Denota una asignación */   )
+                    s == "OPAC"      /*  %  */)
                 {
                     cadenaAuxiliar2 = cadenaOriginal.Substring(((i - 2) * 4) + (i - 2));
 
                     //  Agregar registros en la tripleta
-                    //  trResultado.Add(new Tripleta(trResultado.Count() + 1, cadenaAuxiliar2.Substring(0, 4)));
-                    //  trResultado.Add(new Tripleta(trResultado.Count() + 1, ));
+                    trResultado.Add(new Tripleta(intContadorRegistro, "TE" + intContadorTemporales.ToString("##"), cadenaAuxiliar2.Substring(0, 4),"OPAS"));
+                    intContadorRegistro++;
+                    trResultado.Add(new Tripleta(intContadorRegistro, "TE" + intContadorTemporales.ToString("##"), cadenaAuxiliar2.Substring(5,4), cadenaAuxiliar2.Substring(10)));
+                    intContadorRegistro++;
 
-                    cadenaAuxiliar1 = Regex.Replace(cadenaAuxiliar1, cadenaAuxiliar2, "TE" + contadorTemporales.ToString("##"));
-                    contadorTemporales++;
+                    cadenaAuxiliar1 = Regex.Replace(cadenaAuxiliar1, cadenaAuxiliar2, "TE" + intContadorTemporales.ToString("##"));
+                    intContadorTemporales++;
                 }
+                intCantidadTokens++;
             }
             return trResultado;
         }
 
         public List<Tripleta> TripletaExpresionCondicional(string instruccionCondicional)
         {
+            int intContadorRegistro = 0;
+            int intContadorTemporales = 0;
+
+            List<Tripleta> trCondicional = new List<Tripleta>();
+            List<Tripleta> trTrue = new List<Tripleta>();
+            List<Tripleta> trFalse = new List<Tripleta>();
+
             List<Tripleta> trResultado = new List<Tripleta>();
 
 
@@ -1158,33 +1166,46 @@ namespace Codext
             else
             {
                 //  Condición simple
-                //  tripletaCondicional.AgregarRegistro("TE01", arregloString[0].Substring(5,4), ORAS);
-                //  tripletaCondicional.AgregarRegistro("TE01", arregloString[0].Substring(10,4), ORAS);
-                //  tripletaCondicional.AgregarRegistro("TE01", "TE02", arregloString[0].Substring(15,4));
-                //  tripletaCondicional.AgregarRegistro("TER1", "TRUE", 6);
-                //  tripletaCondicional.AgregarRegistro("TER1", "FALSE", 8);
+                trCondicional.Add(new Tripleta(0, "TE01", arregloString[0].Substring(5, 4), "ORAS"));
+                trCondicional.Add(new Tripleta(1, "TE01", arregloString[0].Substring(10, 4), "ORAS"));
+                trCondicional.Add(new Tripleta(2, "TE01", "TE02", arregloString[0].Substring(15, 4)));
+                trCondicional.Add(new Tripleta(3, "TER1", "TRUE", 6));
+                trCondicional.Add(new Tripleta(4, "TER1", "FALSE", 8));
+                intContadorRegistro = 5;
             }
-
-            //  tripletaCondicional.AgregarRegistro("ETIQ", trTrue, "");
-            //  tripletaCondicional.AgregarRegistro("ETIQ", "", tripletaCondiconal.Count + 2);
-            //  tripletaCondicional.AgregarRegistro("ETIQ", trFalse, "");
-            //  tripletaCondicional.AgregarRegistro("FIN", "", "");
 
             //  Obtener tripleta verdadera
             int intRenglonRecorrido = 2;
-            while (s != "PR04")
+            do
             {
-                int i = 0;
-                int intCantidadTokens = ObtenerCantidadTokens(arregloString[intRenglonRecorrido].Trim());
+                foreach (Tripleta tr in TripletaInstruccion(arregloString[intRenglonRecorrido]))
                 {
-                    while (i < intCantidadTokens)
-                    {
-                        
-                    }
+                    trTrue.Add(tr);
                 }
+                intRenglonRecorrido++;
             }
+            while (!arregloString[intRenglonRecorrido].Contains("PR04"));
             //  Obtener tripleta falsa
-            
+            intRenglonRecorrido++;
+            if (intRenglonRecorrido != arregloString.Length)
+            {
+                do
+                {
+                    foreach (Tripleta tr in TripletaInstruccion(arregloString[intRenglonRecorrido]))
+                    {
+                        trFalse.Add(tr);
+                    }
+                    intRenglonRecorrido++;
+                }
+                while (intRenglonRecorrido < arregloString.Length);
+            }
+
+
+            //  Agregar etiquetas a la tripleta condicional
+            trCondicional.Add(new Tripleta(intContadorRegistro, "ETIQ", trTrue, null));
+            trCondicional.Add(new Tripleta(intContadorRegistro, "ETIQ", null, intContadorRegistro + 2));
+            trCondicional.Add(new Tripleta(intContadorRegistro, "ETIQ", trFalse, null));
+            trCondicional.Add(new Tripleta(intContadorRegistro, "FIN", null, null));
 
             return trResultado;
         }
@@ -1193,6 +1214,79 @@ namespace Codext
         {
             List<Tripleta> trResultado = new List<Tripleta>();
 
+            return trResultado;
+        }
+
+        public List<Tripleta> TripletaInstruccion(string instruccion)
+        {
+            List<Tripleta> trResultado = new List<Tripleta>();
+            /*
+             *  Las palabras reservadas que generarán tripletas son:
+             *  01 -> DOC_START
+             *  02 -> DOC_END
+             *  05 -> TITLE
+             *  06 -> PAGE_JUMP
+             *  07 -> NEXT_LINE
+             *  09 -> TABLE
+             *  10 -> TABLE_ROW
+             *  17 -> VAR
+             *  18 -> VALUE
+             *  19 -> VIEW
+             */
+            if (instruccion.Contains("PR01"))
+            {
+                trResultado.Add(new Tripleta(0, "PR01", null, null));
+            }
+            if (instruccion.Contains("PR02"))
+            {
+                trResultado.Add(new Tripleta(0, "PR02", null, null));
+            }
+            if (instruccion.Contains("PR05"))
+            {
+                trResultado.Add(new Tripleta(0, "PR05", null, null));
+            }
+            if (instruccion.Contains("PR06"))
+            {
+                trResultado.Add(new Tripleta(0, "PR06", null, null));
+            }
+            if (instruccion.Contains("PR07"))
+            {
+                trResultado.Add(new Tripleta(0, "PR07", null, null));
+            }
+            if (instruccion.Contains("PR09"))
+            {
+                trResultado.Add(new Tripleta(0, "PR09", null, null));
+            }
+            if (instruccion.Contains("PR10"))
+            {
+                trResultado.Add(new Tripleta(0, "PR10", null, null));
+            }
+            if (instruccion.Contains("PR17"))
+            {
+                trResultado.Add(new Tripleta(0, "PR17", null, null));
+            }
+            if (instruccion.Contains("PR18"))
+            {
+                //  Asignación
+                //if (s == "PR18")
+                //{
+                //    while (Regex.Matches(cadenaOriginal, "POST").Count < 2)
+                //    {
+                //        s = txtPostFijo.Lines[contadorLinea].Substring((contadorToken * 4) + contadorToken, 4);
+                //        if (cadenaOriginal != "")
+                //        {
+                //            cadenaOriginal += " ";
+                //        }
+                //        cadenaOriginal += s;
+                //        contadorToken++;
+                //    }
+                //}
+                trResultado.Add(new Tripleta(0, "PR18", null, null));
+            }
+            if (instruccion.Contains("PR19"))
+            {
+                trResultado.Add(new Tripleta(0, "PR19", null, null));
+            }
             return trResultado;
         }
 
