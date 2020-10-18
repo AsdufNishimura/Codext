@@ -939,7 +939,8 @@ namespace Codext
                     }
                     if(s.StartsWith("ID") ||
                        s.StartsWith("CN") ||
-                       s.StartsWith("CR"))
+                       s.StartsWith("CR") ||
+                       s.Equals("PR16"))
                     {
                         if (strOperandos != "")
                         {
