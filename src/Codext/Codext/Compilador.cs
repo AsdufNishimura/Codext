@@ -1134,14 +1134,18 @@ namespace Codext
 
         public List<Tripleta> TripletaExpresionCondicional(string instruccionCondicional)
         {
-            int intContadorRegistro = 0;
+            int intContadorRegistro = 1;
             int intContadorTemporales = 0;
+            int intContadorTemporalesRelacionales = 0;
+            string cadenaAuxiliar1 = "";
+            string cadenaAuxiliar2 = "";
 
             List<Tripleta> trCondicional = new List<Tripleta>();
             List<Tripleta> trTrue = new List<Tripleta>();
             List<Tripleta> trFalse = new List<Tripleta>();
 
-            List<Tripleta> trResultado = new List<Tripleta>();
+            //  Definir TIMES como 0, esto en caso de que se halle esta instrucción dentro de una estructura de iteración
+            trCondicional.Add(new Tripleta(0, "TIMES", 0, "ORAS"));
 
 
             //  Definir tripleta condicional, verdadera y falsa
@@ -1158,20 +1162,89 @@ namespace Codext
                 int intCantidadTokens = ObtenerCantidadTokens(arregloString[0].Trim());
                 while (i < intCantidadTokens)
                 {
-                    s = arregloString[0].Substring((i * 4) + i, 4);
+                    s =arregloString[0].Substring((i * 4) + i, 4);
+                    if (cadenaAuxiliar1 != "")
+                    {
+                        cadenaAuxiliar1 += " ";
+                    }
+                    cadenaAuxiliar1 += s;
+                    if (s == "OPAS" ||   /*  +   */
+                        s == "OPAR" ||   /*  -   */
+                        s == "OPAM" ||   /*  *   */
+                        s == "OPAD" ||   /*  /   */
+                        s == "OPAP" ||   /*  **  */
+                        s == "OPAC" ||   /*  %   */
+                        s == "OPRM" ||   /*  >   */
+                        s == "OPRm" ||   /*  <   */
+                        s == "ORMI" ||   /*  >=   */
+                        s == "ORmI" ||   /*  <=   */
+                        s == "OPRD" ||   /*  <>  */
+                        s == "OPRI"      /*  =   */
+                        )
+                    {
+                        cadenaAuxiliar2 = arregloString[0].Substring(((i - 2) * 4) + (i - 2));
+
+                        //  Agregar registros en la tripleta
+                        trCondicional.Add(new Tripleta(intContadorRegistro, "TE" + intContadorTemporales.ToString("##"), cadenaAuxiliar2.Substring(0, 4), "OPAS"));
+                        intContadorRegistro++;
+                        intContadorTemporales++;
+                        trCondicional.Add(new Tripleta(intContadorRegistro, "TE" + intContadorTemporales.ToString("##"), cadenaAuxiliar2.Substring(5, 4), cadenaAuxiliar2.Substring(10)));
+                        intContadorRegistro++;
+                        intContadorTemporales++;
+
+                        cadenaAuxiliar1 = Regex.Replace(cadenaAuxiliar1, cadenaAuxiliar2, "TE" + intContadorTemporales.ToString("##"));
+                    }
+                    if (s == "OPLN")
+                    {
+                        cadenaAuxiliar2 = arregloString[0].Substring(((i - 1) * 4) + (i - 1));
+
+                        //  Agregar registros en la tripleta
+                        trCondicional.Add(new Tripleta(intContadorRegistro, "TE" + intContadorTemporales.ToString("##"), cadenaAuxiliar2.Substring(0, 4), "OPLN"));
+                        intContadorRegistro++;
+                        intContadorTemporales++;
+
+                        cadenaAuxiliar1 = Regex.Replace(cadenaAuxiliar1, cadenaAuxiliar2, "TE" + intContadorTemporales.ToString("##"));
+                    }
+                    if (s == "OPLA")
+                    {
+                        cadenaAuxiliar2 = arregloString[0].Substring(((i - 2) * 4) + (i - 2));
+
+                        trCondicional.Add(new Tripleta(intContadorRegistro, cadenaAuxiliar2.Substring(0, 4), cadenaAuxiliar2.Substring(5, 4), "OPLA"));
+                        intContadorRegistro++;
+
+                        trCondicional.Add(new Tripleta(intContadorRegistro, intContadorTemporalesRelacionales.ToString("##"), "TRUE", "ETIQT"));
+                        trCondicional.Add(new Tripleta(intContadorRegistro, intContadorTemporalesRelacionales.ToString("##"), "FALSE", "ETIQF"));
+                        intContadorTemporalesRelacionales++;
+
+                        cadenaAuxiliar1 = Regex.Replace(cadenaAuxiliar1, cadenaAuxiliar2, "TE" + intContadorTemporales.ToString("##"));
+                    }
+                    if (s == "OPLO")
+                    {
+                        cadenaAuxiliar2 = arregloString[0].Substring(((i - 2) * 4) + (i - 2));
+
+                        trCondicional.Add(new Tripleta(intContadorRegistro, cadenaAuxiliar2.Substring(0, 4), cadenaAuxiliar2.Substring(5, 4), "OPLO"));
+                        intContadorRegistro++;
+
+                        trCondicional.Add(new Tripleta(intContadorRegistro, intContadorTemporalesRelacionales.ToString("##"), "TRUE", "ETIQT"));
+                        trCondicional.Add(new Tripleta(intContadorRegistro, intContadorTemporalesRelacionales.ToString("##"), "FALSE", "ETIQF"));
+                        intContadorTemporalesRelacionales++;
+
+                        cadenaAuxiliar1 = Regex.Replace(cadenaAuxiliar1, cadenaAuxiliar2, "TE" + intContadorTemporales.ToString("##"));
+                    }
+                    intCantidadTokens++;
                 }
-                
-                
+
+
             }
             else
             {
                 //  Condición simple
-                trCondicional.Add(new Tripleta(0, "TE01", arregloString[0].Substring(5, 4), "ORAS"));
-                trCondicional.Add(new Tripleta(1, "TE01", arregloString[0].Substring(10, 4), "ORAS"));
-                trCondicional.Add(new Tripleta(2, "TE01", "TE02", arregloString[0].Substring(15, 4)));
-                trCondicional.Add(new Tripleta(3, "TER1", "TRUE", 6));
-                trCondicional.Add(new Tripleta(4, "TER1", "FALSE", 8));
-                intContadorRegistro = 5;
+                trCondicional.Add(new Tripleta(1, "TE01", arregloString[0].Substring(5, 4), "ORAS"));
+                trCondicional.Add(new Tripleta(2, "TE02", arregloString[0].Substring(10, 4), "ORAS"));
+                trCondicional.Add(new Tripleta(3, "TE01", "TE02", arregloString[0].Substring(15, 4)));
+                trCondicional.Add(new Tripleta(4, "TR01", "TRUE", "ETIQT"));
+                trCondicional.Add(new Tripleta(5, "TR01", "FALSE", "ETIQF"));
+                intContadorRegistro = 6;
             }
 
             //  Obtener tripleta verdadera
@@ -1202,12 +1275,12 @@ namespace Codext
 
 
             //  Agregar etiquetas a la tripleta condicional
-            trCondicional.Add(new Tripleta(intContadorRegistro, "ETIQ", trTrue, null));
+            trCondicional.Add(new Tripleta(intContadorRegistro, "ETIQT", trTrue, null));
             trCondicional.Add(new Tripleta(intContadorRegistro, "ETIQ", null, intContadorRegistro + 2));
-            trCondicional.Add(new Tripleta(intContadorRegistro, "ETIQ", trFalse, null));
+            trCondicional.Add(new Tripleta(intContadorRegistro, "ETIQF", trFalse, null));
             trCondicional.Add(new Tripleta(intContadorRegistro, "FIN", null, null));
 
-            return trResultado;
+            return trCondicional;
         }
 
         public List<Tripleta> TripletaExpresionIteracion(string instruccionIteracion)
