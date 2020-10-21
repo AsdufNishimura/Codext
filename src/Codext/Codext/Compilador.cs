@@ -1092,12 +1092,14 @@ namespace Codext
              */
 
             List<Tripleta> trResultado = new List<Tripleta>();
+            //  Definir TIMES como 1, esto en caso de que se halle esta instrucción dentro de una estructura de iteración
+            trResultado.Add(new Tripleta(0, "TIMES", 1, "ORAS"));
 
             string s;
             string cadenaAuxiliar1 = "";
             string cadenaAuxiliar2;
             int i = 0;
-            int intContadorRegistro = 0;
+            int intContadorRegistro = 1;
             int intContadorTemporales = 0;
             int intCantidadTokens = ObtenerCantidadTokens(cadenaOriginal.Trim());
 
@@ -1144,8 +1146,8 @@ namespace Codext
             List<Tripleta> trTrue = new List<Tripleta>();
             List<Tripleta> trFalse = new List<Tripleta>();
 
-            //  Definir TIMES como 0, esto en caso de que se halle esta instrucción dentro de una estructura de iteración
-            trCondicional.Add(new Tripleta(0, "TIMES", 0, "ORAS"));
+            //  Definir TIMES como 1, esto en caso de que se halle esta instrucción dentro de una estructura de iteración
+            trCondicional.Add(new Tripleta(0, "TIMES", 1, "ORAS"));
 
 
             //  Definir tripleta condicional, verdadera y falsa
@@ -1286,6 +1288,61 @@ namespace Codext
         public List<Tripleta> TripletaExpresionIteracion(string instruccionIteracion)
         {
             List<Tripleta> trResultado = new List<Tripleta>();
+
+            string[] arregloString = instruccionIteracion.Split('\n');
+
+            string temp = "";
+
+            /* 
+             * Se usa una variable temporal para hacer una estructura como la siguiente
+             * TIL ( condicion )
+             * ->
+             *      -Codigo-
+             * <-
+             */
+
+            for (int i = arregloString.Length - 1; i > 0; i--)
+            {
+                if (arregloString[i].Contains("PR04"))
+                    temp += "PR03\n";
+                if (arregloString[i].Contains("PR03"))
+                    temp += "PR04\n";
+                temp += arregloString[i] + "\n";
+            }
+
+            // Se utiliza una tripleta temporal donde se guarda la condición del ciclo
+            List<Tripleta> tempCondicion = TripletaExpresionCondicional(temp);
+
+            // Ciclo para agregar lo obtenido en el método TripletaExpresionCondicional a trResultado
+            foreach (Tripleta tripleta in tempCondicion)
+            {
+                // Solamente se agrega hasta ETIQ trTrue
+                if (tripleta.DatoObjeto.ToString().Equals("ETIQ") && String.IsNullOrEmpty(tripleta.DatoFuente.ToString()))
+                    break;
+
+                trResultado.Add(tripleta);
+
+            }
+
+            // Agregar tripletas faltantes
+            trResultado.Add(new Tripleta(trResultado.Count, "TIMES", 1, "ORAS"));
+            foreach (Tripleta tripleta in trResultado)
+            {
+                // Se agrega la tripleta que volverá al incio de la condición
+                if (tripleta.DatoObjeto.ToString().Equals("TRUE"))
+                {
+                    trResultado.Add(new Tripleta(trResultado.Count, "ETIQ", null, tripleta.Indice - 1));
+                    break;
+                }
+            }
+            trResultado.Add(new Tripleta(trResultado.Count, "FIN", null, null));
+
+            // Ciclo para cambiar el apuntador (operador) de las tripletas que van a FIN
+            trResultado.ForEach(tripleta => {
+                if (tripleta.Operador.ToString().Equals("ETIQF"))
+                    tripleta.Operador = trResultado.Count - 1;
+            });
+
 
             return trResultado;
         }
