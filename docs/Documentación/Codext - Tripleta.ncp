@@ -1,0 +1,57 @@
+<Project>
+  <Name>Codext - Tripleta</Name>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>Tripleta</Name>
+    <Language>CSharp</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>List&lt;Tripleta&gt;</Name>
+        <Access>Public</Access>
+        <Location left="82" top="68" />
+        <Size width="162" height="77" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Tripleta</Name>
+        <Access>Public</Access>
+        <Location left="297" top="68" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">int intIndice</Member>
+        <Member type="Field">Object objDatoObjeto</Member>
+        <Member type="Field">Object objDatoFuente</Member>
+        <Member type="Field">Object objOperador</Member>
+        <Member type="Property">public int Indice { get; set; }</Member>
+        <Member type="Property">public Object DatoObjeto { get; set; }</Member>
+        <Member type="Property">public Object DatoFuente { get; set; }</Member>
+        <Member type="Property">public Object Operador { get; set; }</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Comment">
+        <Text>Esta clase de lista es una lista genérica, de las provistas dentro de .NET Framework, en System.Collections.Generic</Text>
+        <Location left="82" top="191" />
+        <Size width="160" height="93" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>La lista de lista de tripletas no se representa aquí, ya que NClass no lo permite.</Text>
+        <Location left="82" top="323" />
+        <Size width="377" height="50" />
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Comment" first="2" second="0">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="0" second="1">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Composition</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>*</EndMultiplicity>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+</Project>
