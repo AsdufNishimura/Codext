@@ -38,3 +38,13 @@ C:\Users\asduf\Documents\GitHub\Codext\src\Codext\Codext\obj\Debug\Codext.frmCod
 C:\Users\asduf\Documents\GitHub\Codext\src\Codext\Codext\obj\Debug\Codext.Properties.Resources.resources
 C:\Users\asduf\Documents\GitHub\Codext\src\Codext\Codext\obj\Debug\Codext.csproj.GenerateResource.cache
 C:\Users\asduf\Documents\GitHub\Codext\src\Codext\Codext\obj\Debug\Codext.csproj.CoreCompileInputs.cache
+C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\bin\Debug\Codext.exe.config
+C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\bin\Debug\Codext.exe
+C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\bin\Debug\Codext.pdb
+C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\obj\Debug\Codext.csprojAssemblyReference.cache
+C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\obj\Debug\Codext.FrmCodext.resources
+C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\obj\Debug\Codext.Properties.Resources.resources
+C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\obj\Debug\Codext.csproj.GenerateResource.cache
+C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\obj\Debug\Codext.csproj.CoreCompileInputs.cache
+C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\obj\Debug\Codext.exe
+C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\obj\Debug\Codext.pdb
