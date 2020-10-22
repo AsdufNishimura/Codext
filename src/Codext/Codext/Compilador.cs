@@ -63,6 +63,16 @@ namespace Codext
             dgvTripleta.Columns.Add("columnDatoObjeto","Dato objeto");
             dgvTripleta.Columns.Add("columnDatoFuente","Dato fuente");
             dgvTripleta.Columns.Add("columnOperador","Operador");
+
+            dgvTripletaV.Columns.Add("columnIndice", "Índice");
+            dgvTripletaV.Columns.Add("columnDatoObjeto", "Dato objeto");
+            dgvTripletaV.Columns.Add("columnDatoFuente", "Dato fuente");
+            dgvTripletaV.Columns.Add("columnOperador", "Operador");
+
+            dgvTripletaF.Columns.Add("columnIndice", "Índice");
+            dgvTripletaF.Columns.Add("columnDatoObjeto", "Dato objeto");
+            dgvTripletaF.Columns.Add("columnDatoFuente", "Dato fuente");
+            dgvTripletaF.Columns.Add("columnOperador", "Operador");
         }
 
 
@@ -869,6 +879,8 @@ namespace Codext
                         if(!txtTokens.Lines[i].Contains("PR08") && !txtTokens.Lines[i].Contains("PR13"))
                         {
                             txtPostFijo.Text += txtTokens.Lines[i] + "\n";
+                            j = intCantidadTokens;
+                            break;
                         }
                         s = txtTokens.Lines[i].Substring((j * 4) + j, 4);
                         if (banderaSublista == false)
@@ -1074,8 +1086,110 @@ namespace Codext
             
         }
 
+        public List<Tripleta> GenerarTripletas(string instrucciones)
+        {
+            List<Tripleta> tripletaTemp = new List<Tripleta>();
+            string s = "";
+            int contadorLinea = 0;
+            bool banderaSeleccion = false;
+            bool banderaCiclo = false;
+            string cadenaOriginal = "";
+            string[] arregloString = instrucciones.Split('\n');
+
+            while (contadorLinea < arregloString.Count() - 1)
+            {
+                int cantidadTokens = ObtenerCantidadTokens(arregloString[contadorLinea].Trim());
+                int contadorToken = 0;
+                string temp = arregloString[contadorLinea];
+
+                if (!banderaSeleccion && !banderaCiclo)
+                {
+                    while (contadorToken < cantidadTokens && arregloString[contadorLinea] != "")
+                    {
+                        s = arregloString[contadorLinea].Substring((contadorToken * 4) + contadorToken, 4);
+
+                        //  Instruccion
+                        if (s == "PR01" ||
+                            s == "PR02" ||
+                            s == "PR05" ||
+                            s == "PR06" ||
+                            s == "PR07" ||
+                            s == "PR09" ||
+                            s == "PR10" ||
+                            s == "PR17" ||
+                            s == "PR18" ||
+                            s == "PR19")
+                        {
+                            foreach(Tripleta t in TripletaInstruccion(arregloString[contadorLinea]))
+                            {
+                                tripletaTemp.Add(t);
+                            }
+                            //tripletas.Add(TripletaInstruccion(arregloString[contadorLinea]));
+                        }
+
+                        //  Selección
+                        if (s == "PR11")
+                        {
+#pragma warning disable IDE0059 // Asignación innecesaria de un valor
+                            banderaSeleccion = true;
+#pragma warning restore IDE0059 // Asignación innecesaria de un valor
+                        }
+                        //  Iteración
+                        if (s == "PR14")
+                        {
+#pragma warning disable IDE0059 // Asignación innecesaria de un valor
+                            banderaCiclo = true;
+#pragma warning restore IDE0059 // Asignación innecesaria de un valor
+                        }
+                        contadorToken++;
+                    }
+                }
+                else
+                {
+                    if (cadenaOriginal != "")
+                    {
+                        cadenaOriginal += " ";
+                    }
+                    cadenaOriginal += arregloString[contadorLinea - 1].Trim() + "\n";
+
+                    if (arregloString[contadorLinea - 1].Contains("PR04"))
+                    {
+                        if (banderaSeleccion)
+                        {
+                            if (!arregloString[contadorLinea].Contains("PR12"))
+                            {
+                                banderaSeleccion = false;
+                                foreach (Tripleta t in TripletaExpresionCondicional(cadenaOriginal))
+                                {
+                                    tripletaTemp.Add(t);
+                                }
+                                //tripletas.Add(TripletaExpresionCondicional(cadenaOriginal));
+                                contadorLinea--;
+                            }
+                        }
+                        if (banderaCiclo)
+                        {
+                            banderaCiclo = false;
+                            cadenaOriginal += arregloString[contadorLinea] + "\n";
+                            foreach (Tripleta t in TripletaExpresionIteracion(cadenaOriginal))
+                            {
+                                tripletaTemp.Add(t);
+                            }
+                            //tripletas.Add(TripletaExpresionIteracion(cadenaOriginal));
+                        }
+                    }
+
+                }
+                contadorLinea++;
+            }
+            return tripletaTemp;
+        }
+
         public void MostrarTripletas()
         {
+            dgvTripleta.Rows.Clear();
+            dgvTripletaV.Rows.Clear();
+            dgvTripletaF.Rows.Clear();
             foreach(List<Tripleta> lista in tripletas)
             {
                 foreach(Tripleta t in lista)
@@ -1083,8 +1197,8 @@ namespace Codext
                     dgvTripleta.Rows.Add(
                         t.Indice, (t.DatoObjeto == null) ? "" :  t.DatoObjeto.ToString(),
                         (t.DatoFuente == null) ? "" : 
-                        (t.DatoObjeto != null && t.DatoObjeto.ToString().Equals("ETIQT")) ? "trTrue" :
-                        (t.DatoObjeto != null && t.DatoObjeto.ToString().Equals("ETIQF")) ? "trFalse" : 
+                        (t.DatoObjeto != null && t.DatoObjeto.ToString().Equals("ETIQT")) ? t.DatoFuente :
+                        (t.DatoObjeto != null && t.DatoObjeto.ToString().Equals("ETIQF")) ? t.DatoFuente : 
                         t.DatoFuente.ToString(), 
                         (t.Operador == null) ? "" : t.Operador.ToString()
                         );
@@ -1304,8 +1418,20 @@ namespace Codext
 
             }
 
+            
             //  Obtener tripleta verdadera
             int intRenglonRecorrido = 2;
+            //string parteVerdadera = "";
+            //do
+            //{
+            //    parteVerdadera += arregloString[intRenglonRecorrido] + "\n";
+            //    intRenglonRecorrido++;
+            //}
+            //while (!arregloString[intRenglonRecorrido].Contains("PR04"));
+            //foreach(Tripleta t in GenerarTripletas(parteVerdadera))
+            //{
+            //    trTrue.Add(t);
+            //}
             do
             {
                 foreach (Tripleta tr in TripletaInstruccion(arregloString[intRenglonRecorrido]))
@@ -1315,10 +1441,22 @@ namespace Codext
                 intRenglonRecorrido++;
             }
             while (!arregloString[intRenglonRecorrido].Contains("PR04"));
+
             //  Obtener tripleta falsa
             intRenglonRecorrido++;
             if (intRenglonRecorrido != arregloString.Length)
             {
+                //string parteFalsa = "";
+                //do
+                //{
+                //    parteFalsa += arregloString[intRenglonRecorrido] + "\n";
+                //    intRenglonRecorrido++;
+                //}
+                //while (intRenglonRecorrido < arregloString.Length);
+                //foreach(Tripleta t in GenerarTripletas(parteFalsa))
+                //{
+                //    trFalse.Add(t);
+                //}
                 do
                 {
                     foreach (Tripleta tr in TripletaInstruccion(arregloString[intRenglonRecorrido]))
@@ -1409,6 +1547,32 @@ namespace Codext
 
 
             return trResultado;
+        }
+
+        private void dgvTripleta_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                if ((string)dgvTripleta.Rows[e.RowIndex].Cells[1].Value == "ETIQT")
+                {
+                    dgvTripletaV.Rows.Clear();
+                    foreach (Tripleta t in (List<Tripleta>)dgvTripleta.Rows[e.RowIndex].Cells[2].Value)
+                    {
+                        dgvTripletaV.Rows.Add(t.Indice, t.DatoObjeto, t.DatoFuente, t.Operador);
+                    }
+                }
+                if ((string)dgvTripleta.Rows[e.RowIndex].Cells[1].Value == "ETIQF")
+                {
+                    dgvTripletaF.Rows.Clear();
+                    foreach (Tripleta t in (List<Tripleta>)dgvTripleta.Rows[e.RowIndex].Cells[2].Value)
+                    {
+                        dgvTripletaF.Rows.Add(t.Indice, t.DatoObjeto, t.DatoFuente, t.Operador);
+                    }
+                    dgvTripletaV.Rows.Clear();
+                }
+            }
+            catch(Exception ex) { }
+            
         }
 
         public List<Tripleta> TripletaInstruccion(string instruccion)

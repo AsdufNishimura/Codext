@@ -1,0 +1,10 @@
+DOC_START
+DECIDE ( LOGIC ( < , 1# , 2.2# )
+->
+PAGE_JUMP
+<-
+DECFALSE
+->
+NEXT_LINE
+<-
+DOC_END

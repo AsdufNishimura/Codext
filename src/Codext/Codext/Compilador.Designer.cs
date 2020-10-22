@@ -64,10 +64,16 @@
             this.txtPostFijo = new System.Windows.Forms.RichTextBox();
             this.dgvTripleta = new System.Windows.Forms.DataGridView();
             this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.dgvTripletaV = new System.Windows.Forms.DataGridView();
+            this.label17 = new System.Windows.Forms.Label();
+            this.dgvTripletaF = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSConstantesNumericas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSOperadores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSIdentificadores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTripleta)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTripletaV)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTripletaF)).BeginInit();
             this.SuspendLayout();
             // 
             // txtCodigo
@@ -75,7 +81,7 @@
             this.txtCodigo.Location = new System.Drawing.Point(12, 12);
             this.txtCodigo.Name = "txtCodigo";
             this.txtCodigo.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.txtCodigo.Size = new System.Drawing.Size(297, 164);
+            this.txtCodigo.Size = new System.Drawing.Size(297, 200);
             this.txtCodigo.TabIndex = 0;
             this.txtCodigo.Text = "";
             this.txtCodigo.WordWrap = false;
@@ -117,7 +123,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(26, 179);
+            this.label2.Location = new System.Drawing.Point(26, 215);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(110, 13);
             this.label2.TabIndex = 4;
@@ -125,7 +131,7 @@
             // 
             // txtSubcadena
             // 
-            this.txtSubcadena.Location = new System.Drawing.Point(12, 195);
+            this.txtSubcadena.Location = new System.Drawing.Point(12, 231);
             this.txtSubcadena.Name = "txtSubcadena";
             this.txtSubcadena.ReadOnly = true;
             this.txtSubcadena.Size = new System.Drawing.Size(297, 20);
@@ -135,7 +141,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(26, 232);
+            this.label3.Location = new System.Drawing.Point(26, 268);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(103, 13);
             this.label3.TabIndex = 6;
@@ -143,7 +149,7 @@
             // 
             // txtEvaluacion
             // 
-            this.txtEvaluacion.Location = new System.Drawing.Point(12, 248);
+            this.txtEvaluacion.Location = new System.Drawing.Point(12, 284);
             this.txtEvaluacion.Name = "txtEvaluacion";
             this.txtEvaluacion.ReadOnly = true;
             this.txtEvaluacion.Size = new System.Drawing.Size(297, 20);
@@ -151,7 +157,7 @@
             // 
             // txtTokens
             // 
-            this.txtTokens.Location = new System.Drawing.Point(12, 300);
+            this.txtTokens.Location = new System.Drawing.Point(12, 326);
             this.txtTokens.Name = "txtTokens";
             this.txtTokens.ReadOnly = true;
             this.txtTokens.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
@@ -164,7 +170,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(26, 284);
+            this.label4.Location = new System.Drawing.Point(26, 310);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(97, 13);
             this.label4.TabIndex = 9;
@@ -187,7 +193,7 @@
             // txtConsola
             // 
             this.txtConsola.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.txtConsola.Location = new System.Drawing.Point(0, 633);
+            this.txtConsola.Location = new System.Drawing.Point(0, 653);
             this.txtConsola.Name = "txtConsola";
             this.txtConsola.ReadOnly = true;
             this.txtConsola.Size = new System.Drawing.Size(1292, 38);
@@ -198,7 +204,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(324, 484);
+            this.label5.Location = new System.Drawing.Point(324, 504);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(94, 26);
             this.label5.TabIndex = 12;
@@ -208,7 +214,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(521, 484);
+            this.label6.Location = new System.Drawing.Point(521, 504);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(94, 26);
             this.label6.TabIndex = 13;
@@ -220,7 +226,7 @@
             this.dgvTSConstantesNumericas.AllowUserToDeleteRows = false;
             this.dgvTSConstantesNumericas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTSConstantesNumericas.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dgvTSConstantesNumericas.Location = new System.Drawing.Point(327, 513);
+            this.dgvTSConstantesNumericas.Location = new System.Drawing.Point(327, 533);
             this.dgvTSConstantesNumericas.Name = "dgvTSConstantesNumericas";
             this.dgvTSConstantesNumericas.Size = new System.Drawing.Size(181, 114);
             this.dgvTSConstantesNumericas.TabIndex = 14;
@@ -231,7 +237,7 @@
             this.dgvTSOperadores.AllowUserToDeleteRows = false;
             this.dgvTSOperadores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTSOperadores.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dgvTSOperadores.Location = new System.Drawing.Point(524, 513);
+            this.dgvTSOperadores.Location = new System.Drawing.Point(524, 533);
             this.dgvTSOperadores.Name = "dgvTSOperadores";
             this.dgvTSOperadores.Size = new System.Drawing.Size(132, 114);
             this.dgvTSOperadores.TabIndex = 15;
@@ -242,7 +248,7 @@
             this.dgvTSIdentificadores.AllowUserToDeleteRows = false;
             this.dgvTSIdentificadores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTSIdentificadores.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dgvTSIdentificadores.Location = new System.Drawing.Point(12, 513);
+            this.dgvTSIdentificadores.Location = new System.Drawing.Point(12, 533);
             this.dgvTSIdentificadores.Name = "dgvTSIdentificadores";
             this.dgvTSIdentificadores.Size = new System.Drawing.Size(297, 114);
             this.dgvTSIdentificadores.TabIndex = 16;
@@ -251,7 +257,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(9, 484);
+            this.label7.Location = new System.Drawing.Point(9, 504);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(94, 26);
             this.label7.TabIndex = 17;
@@ -293,22 +299,22 @@
             // 
             // txtGramatica
             // 
-            this.txtGramatica.Location = new System.Drawing.Point(657, 32);
+            this.txtGramatica.Location = new System.Drawing.Point(657, 23);
             this.txtGramatica.Name = "txtGramatica";
             this.txtGramatica.ReadOnly = true;
             this.txtGramatica.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.txtGramatica.Size = new System.Drawing.Size(297, 160);
+            this.txtGramatica.Size = new System.Drawing.Size(297, 140);
             this.txtGramatica.TabIndex = 21;
             this.txtGramatica.Text = "";
             this.txtGramatica.WordWrap = false;
             // 
             // txtSintaxis
             // 
-            this.txtSintaxis.Location = new System.Drawing.Point(657, 218);
+            this.txtSintaxis.Location = new System.Drawing.Point(657, 186);
             this.txtSintaxis.Name = "txtSintaxis";
             this.txtSintaxis.ReadOnly = true;
             this.txtSintaxis.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.txtSintaxis.Size = new System.Drawing.Size(297, 167);
+            this.txtSintaxis.Size = new System.Drawing.Size(297, 140);
             this.txtSintaxis.TabIndex = 22;
             this.txtSintaxis.Text = "";
             this.txtSintaxis.WordWrap = false;
@@ -317,7 +323,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.ForeColor = System.Drawing.Color.White;
-            this.label9.Location = new System.Drawing.Point(669, 202);
+            this.label9.Location = new System.Drawing.Point(669, 170);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(43, 13);
             this.label9.TabIndex = 23;
@@ -327,7 +333,7 @@
             // 
             this.label10.AutoSize = true;
             this.label10.ForeColor = System.Drawing.Color.White;
-            this.label10.Location = new System.Drawing.Point(669, 15);
+            this.label10.Location = new System.Drawing.Point(669, 6);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(55, 13);
             this.label10.TabIndex = 24;
@@ -337,7 +343,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.ForeColor = System.Drawing.Color.White;
-            this.label11.Location = new System.Drawing.Point(994, 15);
+            this.label11.Location = new System.Drawing.Point(994, 6);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(96, 13);
             this.label11.TabIndex = 28;
@@ -347,7 +353,7 @@
             // 
             this.label12.AutoSize = true;
             this.label12.ForeColor = System.Drawing.Color.White;
-            this.label12.Location = new System.Drawing.Point(994, 202);
+            this.label12.Location = new System.Drawing.Point(994, 170);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(57, 13);
             this.label12.TabIndex = 27;
@@ -355,22 +361,22 @@
             // 
             // txtSemantica
             // 
-            this.txtSemantica.Location = new System.Drawing.Point(982, 218);
+            this.txtSemantica.Location = new System.Drawing.Point(982, 186);
             this.txtSemantica.Name = "txtSemantica";
             this.txtSemantica.ReadOnly = true;
             this.txtSemantica.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.txtSemantica.Size = new System.Drawing.Size(297, 167);
+            this.txtSemantica.Size = new System.Drawing.Size(297, 140);
             this.txtSemantica.TabIndex = 26;
             this.txtSemantica.Text = "";
             this.txtSemantica.WordWrap = false;
             // 
             // txtReglasSem
             // 
-            this.txtReglasSem.Location = new System.Drawing.Point(982, 32);
+            this.txtReglasSem.Location = new System.Drawing.Point(982, 23);
             this.txtReglasSem.Name = "txtReglasSem";
             this.txtReglasSem.ReadOnly = true;
             this.txtReglasSem.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.txtReglasSem.Size = new System.Drawing.Size(297, 160);
+            this.txtReglasSem.Size = new System.Drawing.Size(297, 140);
             this.txtReglasSem.TabIndex = 25;
             this.txtReglasSem.Text = "";
             this.txtReglasSem.WordWrap = false;
@@ -379,7 +385,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.ForeColor = System.Drawing.Color.White;
-            this.label13.Location = new System.Drawing.Point(341, 284);
+            this.label13.Location = new System.Drawing.Point(341, 310);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(87, 13);
             this.label13.TabIndex = 30;
@@ -387,7 +393,7 @@
             // 
             // txtTipos
             // 
-            this.txtTipos.Location = new System.Drawing.Point(327, 300);
+            this.txtTipos.Location = new System.Drawing.Point(327, 326);
             this.txtTipos.Name = "txtTipos";
             this.txtTipos.ReadOnly = true;
             this.txtTipos.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
@@ -400,7 +406,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.ForeColor = System.Drawing.Color.White;
-            this.label14.Location = new System.Drawing.Point(681, 428);
+            this.label14.Location = new System.Drawing.Point(681, 332);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(149, 13);
             this.label14.TabIndex = 32;
@@ -408,7 +414,7 @@
             // 
             // txtPostFijo
             // 
-            this.txtPostFijo.Location = new System.Drawing.Point(669, 444);
+            this.txtPostFijo.Location = new System.Drawing.Point(669, 348);
             this.txtPostFijo.Name = "txtPostFijo";
             this.txtPostFijo.ReadOnly = true;
             this.txtPostFijo.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
@@ -423,27 +429,77 @@
             this.dgvTripleta.AllowUserToDeleteRows = false;
             this.dgvTripleta.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTripleta.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dgvTripleta.Location = new System.Drawing.Point(971, 444);
+            this.dgvTripleta.Location = new System.Drawing.Point(971, 348);
             this.dgvTripleta.Name = "dgvTripleta";
+            this.dgvTripleta.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvTripleta.Size = new System.Drawing.Size(308, 167);
             this.dgvTripleta.TabIndex = 33;
+            this.dgvTripleta.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvTripleta_CellContentClick);
             // 
             // label15
             // 
             this.label15.AutoSize = true;
             this.label15.ForeColor = System.Drawing.Color.White;
-            this.label15.Location = new System.Drawing.Point(985, 428);
+            this.label15.Location = new System.Drawing.Point(985, 332);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(42, 13);
             this.label15.TabIndex = 34;
             this.label15.Text = "Tripleta";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.ForeColor = System.Drawing.Color.White;
+            this.label16.Location = new System.Drawing.Point(683, 528);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(96, 13);
+            this.label16.TabIndex = 36;
+            this.label16.Text = " Tripleta verdadera";
+            // 
+            // dgvTripletaV
+            // 
+            this.dgvTripletaV.AllowUserToAddRows = false;
+            this.dgvTripletaV.AllowUserToDeleteRows = false;
+            this.dgvTripletaV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTripletaV.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.dgvTripletaV.Location = new System.Drawing.Point(669, 544);
+            this.dgvTripletaV.Name = "dgvTripletaV";
+            this.dgvTripletaV.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvTripletaV.Size = new System.Drawing.Size(297, 103);
+            this.dgvTripletaV.TabIndex = 35;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.ForeColor = System.Drawing.Color.White;
+            this.label17.Location = new System.Drawing.Point(985, 528);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(67, 13);
+            this.label17.TabIndex = 38;
+            this.label17.Text = "Tripleta falsa";
+            // 
+            // dgvTripletaF
+            // 
+            this.dgvTripletaF.AllowUserToAddRows = false;
+            this.dgvTripletaF.AllowUserToDeleteRows = false;
+            this.dgvTripletaF.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTripletaF.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.dgvTripletaF.Location = new System.Drawing.Point(971, 544);
+            this.dgvTripletaF.Name = "dgvTripletaF";
+            this.dgvTripletaF.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvTripletaF.Size = new System.Drawing.Size(308, 103);
+            this.dgvTripletaF.TabIndex = 37;
             // 
             // FrmCodext
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(77)))), ((int)(((byte)(77)))), ((int)(((byte)(77)))));
-            this.ClientSize = new System.Drawing.Size(1292, 671);
+            this.ClientSize = new System.Drawing.Size(1292, 691);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.dgvTripletaF);
+            this.Controls.Add(this.label16);
+            this.Controls.Add(this.dgvTripletaV);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.dgvTripleta);
             this.Controls.Add(this.label14);
@@ -489,6 +545,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSOperadores)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTSIdentificadores)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTripleta)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTripletaV)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTripletaF)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -531,6 +589,10 @@
         private System.Windows.Forms.RichTextBox txtPostFijo;
         private System.Windows.Forms.DataGridView dgvTripleta;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.DataGridView dgvTripletaV;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.DataGridView dgvTripletaF;
     }
 }
 
