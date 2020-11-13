@@ -1652,7 +1652,58 @@ namespace Codext
 
 
 
+        #region Optimizaciones
 
+        public void OptimizacionLocales2() 
+        {
+            List<string> strVariablesUsadas;
+            foreach(List<Tripleta> listTripletas in tripletas) 
+            {
+                foreach(Tripleta t in listTripletas)
+                {
+                    if (!strVariablesUsadas.Contains(t.DatoFuente))
+                    {
+                        strVariablesUsadas.Add(t.DatoFuente)
+                    }
+                }
+            }
+
+            foreach(List<Tripleta> listTripletas in tripletas)
+            {
+                foreach(Tripleta t in listTripletas)
+                {
+                    if(!strVariablesUsadas.Contains(t.DatoObjeto))
+                    {
+                        listTripletas.Remove(t);
+                    }
+                }
+            }
+        }
+
+        public void OptimizacionLocales4()
+        {
+            foreach(List<Tripleta> listTripletas in tripletas)
+            {
+                foreach(Tripleta t in listTripletas)
+                {
+                    if (t.DatoFuente == 0 && t.Operador == "OPAS")
+                    {
+                        listTripletas.Remove(t)
+                    }
+                    else if (t.DatoFuente == 1 && t.Operador == "OPAM")
+                    {
+                        listTripletas.Remove(t)
+                    }
+                    else if (t.DatoFuente == t.DatoObjeto && t.Operador == "OPRI")
+                    {
+                        listTripletas.Remove(t)
+                    }
+                }
+            }
+        }
+        
+        
+        #endregion
 
 
 
