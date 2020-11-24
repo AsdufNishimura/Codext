@@ -54,12 +54,22 @@
     </Compile>
     <Compile Include="Database.cs" />
     <Compile Include="DelegadoInstruccion.cs" />
+    <Compile Include="DocumentView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DocumentView.Designer.cs">
+      <DependentUpon>DocumentView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Instrucción.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test.cs" />
     <Compile Include="Tripleta.cs" />
     <EmbeddedResource Include="Compilador.resx">
       <DependentUpon>Compilador.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentView.resx">
+      <DependentUpon>DocumentView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

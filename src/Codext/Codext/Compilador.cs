@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace Codext
 {
@@ -25,6 +26,7 @@ namespace Codext
         readonly Color colorUnresaltado = Color.FromArgb(255, 240, 240, 240);
         TaskCompletionSource<object> teclaEnter = new TaskCompletionSource<object>();
         List<List<Tripleta>> tripletas = new List<List<Tripleta>>();
+        int intContadorVariablesTripleta = 0;
 
         public FrmCodext()
         {
@@ -1093,6 +1095,7 @@ namespace Codext
             int contadorLinea = 0;
             bool banderaSeleccion = false;
             bool banderaCiclo = false;
+            bool banderaTabla = false;
             string cadenaOriginal = "";
             string[] arregloString = instrucciones.Split('\n');
 
@@ -1102,7 +1105,7 @@ namespace Codext
                 int contadorToken = 0;
                 string temp = arregloString[contadorLinea];
 
-                if (!banderaSeleccion && !banderaCiclo)
+                if (!banderaSeleccion && !banderaCiclo && !banderaTabla)
                 {
                     while (contadorToken < cantidadTokens && arregloString[contadorLinea] != "")
                     {
@@ -1114,8 +1117,6 @@ namespace Codext
                             s == "PR05" ||
                             s == "PR06" ||
                             s == "PR07" ||
-                            s == "PR09" ||
-                            s == "PR10" ||
                             s == "PR17" ||
                             s == "PR18" ||
                             s == "PR19")
@@ -1125,6 +1126,13 @@ namespace Codext
                                 tripletaTemp.Add(t);
                             }
                             //tripletas.Add(TripletaInstruccion(arregloString[contadorLinea]));
+                        }
+
+                        //  Tabla
+                        if (s == "PR09" ||
+                            s == "PR10")
+                        {
+                            banderaTabla = true;
                         }
 
                         //  Selección
@@ -1176,6 +1184,15 @@ namespace Codext
                                 tripletaTemp.Add(t);
                             }
                             //tripletas.Add(TripletaExpresionIteracion(cadenaOriginal));
+                        }
+                        if (banderaTabla)
+                        {
+                            banderaTabla = false;
+                            cadenaOriginal += arregloString[contadorLinea] + "\n";
+                            foreach (Tripleta t in TripletaTabla(cadenaOriginal))
+                            {
+                                tripletaTemp.Add(t);
+                            }
                         }
                     }
 
@@ -1549,6 +1566,56 @@ namespace Codext
             return trResultado;
         }
 
+        public List<Tripleta> TripletaTabla(string instruccionTabla)
+        {
+            int intContadorRegistro = 1;
+
+            List<Tripleta> trResultado = new List<Tripleta>();
+
+
+            //  Definir tripleta condicional, verdadera y falsa
+            string s = "";
+
+            string[] arregloString = instruccionTabla.Split('\n');
+
+            trResultado.Add(new Tripleta(0, "PR09", "<table>", "html"));
+
+            for (int x = 1; x < arregloString.Length - 1; x++)
+            {
+                trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "<tr>", "html"));
+                intContadorRegistro++;
+                int i = 0;
+                int intCantidadTokens = ObtenerCantidadTokens(arregloString[0].Trim());
+                while (i < intCantidadTokens)
+                {
+                    s = arregloString[0].Substring((i * 4) + i, 4);
+                    if (!s.StartsWith("CE") && !s.StartsWith("PR"))
+                    {
+                        string Param = s;
+                        DataGridViewRow d = BuscarEnTablasSimbolos(s);
+                        switch (d.Cells.Count)
+                        {
+                            case 2:
+                                Param = BuscarEnTablasSimbolos(s).Cells[1].Value.ToString();
+                                break;
+                            case 4:
+                                Param = BuscarEnTablasSimbolos(s).Cells[3].Value.ToString();
+                                break;
+                            default:
+                                Param = s;
+                                break;
+                        }
+                        trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "<tr>" + Param + "</tr>", "html"));
+                        intContadorRegistro++;
+                    }
+                }
+                trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "</tr>", "html"));
+                intContadorRegistro++;
+            }
+            trResultado.Add(new Tripleta(intContadorRegistro, "PR09", "</table>", "html"));
+            return trResultado;
+        }
+
         private void dgvTripleta_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             try
@@ -1591,38 +1658,141 @@ namespace Codext
              *  18 -> VALUE
              *  19 -> VIEW
              */
+
+            //  DOC_START
             if (instruccion.Contains("PR01"))
             {
-                trResultado.Add(new Tripleta(0, "PR01", null, null));
+                trResultado.Add(new Tripleta(0, "PR01", 
+                    "<!DOCTYPE html> " +
+                    "<head>" +
+                    "<script src=\"C:\\Codext\\tmpDocumento.js\"></script>" +
+                    "</head>" +
+                    "<body>"
+                    , "html"));
+
             }
+
+            //  DOC_END
             if (instruccion.Contains("PR02"))
             {
-                trResultado.Add(new Tripleta(0, "PR02", null, null));
+                trResultado.Add(new Tripleta(0, "PR02", "</body></html>", "html"));
             }
+
+            /*   TITLE
+            *    Param1 -> Tamaño
+            *    Param2 -> Texto
+            */
             if (instruccion.Contains("PR05"))
             {
-                trResultado.Add(new Tripleta(0, "PR05", null, null));
+                string Param1 = instruccion.Substring(10, 4);
+                string Param2 = instruccion.Substring(15, 4);
+                int CantidadColumnas = BuscarEnTablasSimbolos(Param2).Cells.Count;
+                {
+                    switch (CantidadColumnas)
+                    {
+                        case 2:
+                            Param2 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+                            break;
+                        case 4:
+                            Param2 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                trResultado.Add(new Tripleta(0, "PR18", Param1 + " = " + Param2 + "\n", "js"));
+
             }
+
+            //  PAGE_JUMP
             if (instruccion.Contains("PR06"))
             {
-                trResultado.Add(new Tripleta(0, "PR06", null, null));
+                trResultado.Add(new Tripleta(0, "PR06", "<hr>", "html"));
             }
+
+            /*  NEXT_LINE
+             *  *Param1 -> Cantidad de lineas a saltar
+             */
             if (instruccion.Contains("PR07"))
             {
-                trResultado.Add(new Tripleta(0, "PR07", null, null));
+                int x = 0;
+                try
+                {
+                    string Param1 = instruccion.Substring(10, 4);
+                    int CantidadColumnas = BuscarEnTablasSimbolos(Param1).Cells.Count;
+                    {
+                        switch(CantidadColumnas)
+                        {
+                            case 2:
+                                Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+                                break;
+                            case 4:
+                                Param1 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    for(x = 0; x < int.Parse(Param1); x++)
+                    {
+                        trResultado.Add(new Tripleta(x, "PR07", "<br>", "html"));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    trResultado.Add(new Tripleta(x, "PR07", "<br>", "html"));
+                }                
             }
-            if (instruccion.Contains("PR09"))
-            {
-                trResultado.Add(new Tripleta(0, "PR09", null, null));
-            }
-            if (instruccion.Contains("PR10"))
-            {
-                trResultado.Add(new Tripleta(0, "PR10", null, null));
-            }
+
+            ////  TABLE
+            ////  *Param1 -> Cantidad de col
+            //if (instruccion.Contains("PR09"))
+            //{
+            //    try
+            //    {
+            //        string Param1 = instruccion.Substring(10, 4);
+            //        int CantidadColumnas = BuscarEnTablasSimbolos(Param1).Cells.Count;
+            //        {
+            //            switch (CantidadColumnas)
+            //            {
+            //                case 2:
+            //                    Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+            //                    break;
+            //                case 4:
+            //                    Param1 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+            //                    break;
+            //                default:
+            //                    break;
+            //            }
+            //        }
+            //        for (int x = 0; x < int.Parse(Param1); x++)
+            //        {
+            //            trResultado.Add(new Tripleta(x, "PR07", "<br>", "html"));
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        trResultado.Add(new Tripleta(x, "PR07", "<br>", "html"));
+            //    }
+            //}
+
+            ////  TABLE_ROW
+            //if (instruccion.Contains("PR10"))
+            //{
+            //    trResultado.Add(new Tripleta(0, "PR10", null, null));
+            //}
+
+            //  VAR
+            // Param1 -> Nombre de la variable
             if (instruccion.Contains("PR17"))
             {
-                trResultado.Add(new Tripleta(0, "PR17", null, null));
+                string Param1 = instruccion.Substring(10, 4);
+                trResultado.Add(new Tripleta(0, "PR17", "var " + Param1 + "\n", "js"));
             }
+
+            //  VALUE
+            //  Param1 -> Identificador
+            //  Param2 -> Valor
             if (instruccion.Contains("PR18"))
             {
                 //  Asignación
@@ -1639,31 +1809,86 @@ namespace Codext
                 //        contadorToken++;
                 //    }
                 //}
-                trResultado.Add(new Tripleta(0, "PR18", null, null));
+                string Param1 = instruccion.Substring(10, 4);
+                string Param2 = instruccion.Substring(15, 4);
+                int CantidadColumnas = BuscarEnTablasSimbolos(Param2).Cells.Count;
+                {
+                    switch (CantidadColumnas)
+                    {
+                        case 2:
+                            Param2 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+                            break;
+                        case 4:
+                            Param2 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                trResultado.Add(new Tripleta(0, "PR18", Param1 + " = " + Param2 + "\n", "js"));
             }
+
+            //  VIEW
+            //  Param1 -> Objeto a mostrar
             if (instruccion.Contains("PR19"))
             {
-                trResultado.Add(new Tripleta(0, "PR19", null, null));
+                string Param1 = instruccion.Substring(10, 4);
+                
+                trResultado.Add(new Tripleta(0, "PR19", "<p>  " + Param1 + " </p>", "html"));
             }
             return trResultado;
         }
 
         #endregion
 
+        public DataGridViewRow BuscarEnTablasSimbolos(string Token)
+        {
+            if(Token.StartsWith("CN") || Token.StartsWith("CR"))
+            {
+                foreach(DataGridViewRow d in dgvTSConstantesNumericas.Rows)
+                {
+                    if (d.Cells[0].Value.ToString() == Token)
+                    {
+                        return d;
+                    }
+                }
+            }
+            if(Token.StartsWith("ID"))
+            {
+                foreach (DataGridViewRow d in dgvTSIdentificadores.Rows)
+                {
+                    if (d.Cells[0].Value.ToString() == Token)
+                    {
+                        return d;
+                    }
+                }
+            }
+            return null;
+        }
 
 
+        /**
+         *  Fase de optimización de tripletas 
+         */
         #region Optimizaciones
+
+        public void Optimizaciones()
+        {
+            OptimizacionLocales2();
+            OptimizacionLocales4();
+            MostrarTripletas();
+        }
 
         public void OptimizacionLocales2() 
         {
-            List<string> strVariablesUsadas;
+            List<object> strVariablesUsadas = new List<object>();
             foreach(List<Tripleta> listTripletas in tripletas) 
             {
                 foreach(Tripleta t in listTripletas)
                 {
                     if (!strVariablesUsadas.Contains(t.DatoFuente))
                     {
-                        strVariablesUsadas.Add(t.DatoFuente)
+                        strVariablesUsadas.Add(t.DatoFuente);
                     }
                 }
             }
@@ -1686,470 +1911,115 @@ namespace Codext
             {
                 foreach(Tripleta t in listTripletas)
                 {
-                    if (t.DatoFuente == 0 && t.Operador == "OPAS")
+                    if (int.Parse(t.DatoFuente.ToString()) == 0 && t.Operador.ToString() == "OPAS")
                     {
-                        listTripletas.Remove(t)
+                        listTripletas.Remove(t);
                     }
-                    else if (t.DatoFuente == 1 && t.Operador == "OPAM")
+                    else if (int.Parse(t.DatoFuente.ToString()) == 1 && t.Operador.ToString() == "OPAM")
                     {
-                        listTripletas.Remove(t)
+                        listTripletas.Remove(t);
                     }
-                    else if (t.DatoFuente == t.DatoObjeto && t.Operador == "OPRI")
+                    else if (t.DatoFuente == t.DatoObjeto && t.Operador.ToString() == "OPRI")
                     {
-                        listTripletas.Remove(t)
+                        listTripletas.Remove(t);
                     }
                 }
             }
         }
-        
-        
+
+
         #endregion
-
-
 
 
 
         /**
-         *  Métodos no usados y/o no implementados.
+         *  Fase de código final
          */
-        #region Test
-
-        //public async Task<string> BottomUpPausado(string LineaCodigo, int TokensTotales, int TokensActuales)
-        //{
-        //    txtConsola.Text = "Analizando la línea " + LineaCodigo + " de " + TokensTotales + " de longitud. Buscando producciones de " + TokensActuales + ".";
-        //    await teclaEnter.Task;
-        //    teclaEnter = new TaskCompletionSource<object>();
-
-        //    int VecesIterar = TokensTotales - TokensActuales;
-        //    int CaracteresAEvaluar = LineaCodigo.Length - 5 * (TokensTotales - TokensActuales);
-        //    string SubCadenaEvaluar, CadenaAux = "";
-
-        //    if (LineaCodigo != "S" && LineaCodigo != "ERROR DE SINTAXIS")
-        //    {
-
-        //        for (int i = 0; i <= VecesIterar; i++)
-        //        {
-        //            if (TokensActuales > 1)
-        //            {
-        //                SubCadenaEvaluar = ObtenerSubcadenaEvaluar(LineaCodigo, CaracteresAEvaluar, i * 5);
-        //                CadenaAux = CargarQuery("select Produccion from Sintaxis where Definicion = '" + SubCadenaEvaluar + "' and CantidadTokens = " + TokensActuales);
-        //                if (CadenaAux != "")
-        //                {
-        //                    if (CadenaAux != "S")
-        //                    {
-        //                        txtConsola.Text = "Se ha reducido la subcadena " + SubCadenaEvaluar + " a " + CadenaAux + " de acuerdo a la producción identificada. Continua el analisis sintáctico";
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                        string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, CadenaAux);
-        //                        return NuevaLinea;
-        //                    }
-        //                    else
-        //                    {
-        //                        txtConsola.Text = "Se ha reducido la subadena " + SubCadenaEvaluar + " a S de acuerdo a la producción encontrada. La sintaxis es correcta.";
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                        return "S";
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    if (i < VecesIterar)
-        //                    {
-        //                        txtConsola.Text = "Evaluando siguiente conjunto de tokens.";
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                        continue;
-        //                    }
-        //                    else
-        //                    {
-        //                        txtConsola.Text = "No se ha encontrado una producción válida en la gramática. Se va a reducir la cantidad de tokens seleccionados para buscar producciones más pequeñas..";
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                        await BottomUpPausado(LineaCodigo, TokensTotales, TokensActuales - 1);
-        //                    }
-        //                }
-        //            }
-        //            else
-        //            {
-
-        //                SubCadenaEvaluar = ObtenerSubcadenaEvaluar(LineaCodigo, CaracteresAEvaluar, i * 5);
-        //                if (SubCadenaEvaluar.Contains("CN") && SubCadenaEvaluar != "CNXX")
-        //                {
-        //                    SubCadenaEvaluar = "CNXX";
-        //                    txtConsola.Text = "La subcadena es una constante numérica entera.";
-        //                    await teclaEnter.Task;
-        //                    teclaEnter = new TaskCompletionSource<object>();
-        //                }
-        //                if (SubCadenaEvaluar.Contains("CR") && SubCadenaEvaluar != "CRXX")
-        //                {
-        //                    SubCadenaEvaluar = "CRXX";
-        //                    txtConsola.Text = "La subcadena es una constante numérica real.";
-        //                    await teclaEnter.Task;
-        //                    teclaEnter = new TaskCompletionSource<object>();
-        //                }
-        //                if (SubCadenaEvaluar.Contains("ID") && SubCadenaEvaluar != "IDXX")
-        //                {
-        //                    SubCadenaEvaluar = "IDXX";
-        //                    {
-        //                        SubCadenaEvaluar = "IDXX";
-        //                        txtConsola.Text = "La subcadena es un identificador.";
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                        string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, SubCadenaEvaluar);
-        //                        return NuevaLinea;
-        //                    }
-
-        //                }
-        //                if (SubCadenaEvaluar == "ERRL")
-        //                {
-        //                    txtConsola.Text = "No se ha encontrado una producción válida en la gramática. Esto es un error de sintaxis.";
-        //                    await teclaEnter.Task;
-        //                    teclaEnter = new TaskCompletionSource<object>();
-        //                    return "ERROR DE SINTAXIS";
-        //                }
-
-        //                CadenaAux = CargarQuery("select Produccion from Sintaxis where Definicion LIKE '%" + SubCadenaEvaluar + "%' and CantidadTokens = 1");
-        //                if (CadenaAux != "")
-        //                {
-        //                    if (CadenaAux != "S")
-        //                    {
-        //                        txtConsola.Text = "Se ha reducido la subcadena " + SubCadenaEvaluar + " a " + CadenaAux + " de acuerdo a la producción identificada. Continua el analisis sintáctico";
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                        string NuevaLinea = CambiarLineaCodigo(LineaCodigo, i * 5, (i * 5) + SubCadenaEvaluar.Length - 1, CadenaAux);
-        //                        return NuevaLinea;
-        //                    }
-        //                    else
-        //                    {
-        //                        txtConsola.Text = "Se ha reducido la subadena " + SubCadenaEvaluar + " a S de acuerdo a la producción encontrada. La sintaxis es correcta.";
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                        return "S";
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    if (i < VecesIterar)
-        //                    {
-        //                        txtConsola.Text = "Evaluando siguiente token.";
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                        continue;
-        //                    }
-        //                    else
-        //                    {
-        //                        txtConsola.Text = "No se ha encontrado una producción válida en la totalidad de la gramática. Esto es un error de sintaxis.";
-        //                        await teclaEnter.Task;
-        //                        teclaEnter = new TaskCompletionSource<object>();
-        //                        return "ERROR DE SINTAXIS";
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        // Aquí tengo duda, no entiendo bien por qué esta esto aquí, por si acaso dejo el código de la pausa comentado
-        //        //txtConsola.Text = "Esto se mostrará en la caja de consola, aquí debe ir la indicación del paso que se realizó, o por qué se hizo la pausa.";
-        //        //await teclaEnter.Task;
-        //        //teclaEnter = new TaskCompletionSource<object>();
-        //        return "S";
-        //    }
-        //    else
-        //    {
-        //        // Ni tampoco entendí esto, igual que antes, dejo el código por si acaso
-        //        //txtConsola.Text = "Esto se mostrará en la caja de consola, aquí debe ir la indicación del paso que se realizó, o por qué se hizo la pausa.";
-        //        //await teclaEnter.Task;
-        //        //teclaEnter = new TaskCompletionSource<object>();
-        //        return "";
-        //    }
-        //}
-
-        //public async void AnalisisSintacticoPausado()
-        //{
-        //    txtConsola.Text = "Comenzando análisis léxico";
-        //    await teclaEnter.Task;
-        //    teclaEnter = new TaskCompletionSource<object>();
-
-        //    int CantidadTokens = 1;
-        //    string Linea = "";
-        //    int NumeroLinea = 1;
-
-        //    foreach (string LineaTokens in txtTokens.Lines)
-        //    {
-        //        txtConsola.Text = "Leyendo la línea " + NumeroLinea + " del archivo de tokens.";
-        //        await teclaEnter.Task;
-        //        teclaEnter = new TaskCompletionSource<object>();
-
-        //        if (LineaTokens != "")
-        //        {
-        //            if (LineaTokens[LineaTokens.Length - 1] == ' ')
-        //            {
-        //                for (int i = 0; i < LineaTokens.Length - 1; i++)
-        //                    Linea += LineaTokens[i];
-        //            }
-
-        //        }
-
-        //        if (Linea != "")
-        //        {
-        //            txtGramatica.Text += Linea + "\n";
-        //            do
-        //            {
-        //                Linea = BottomUpPausado(Linea, ObtenerCantidadTokens(Linea), ObtenerCantidadTokens(Linea)).Result;
-        //                //txtConsola.Text = "Leyendo la línea " + NumeroLinea + " del archivo de tokens.";
-        //                //await teclaEnter.Task;
-        //                //teclaEnter = new TaskCompletionSource<object>();
-        //                txtGramatica.Text += Linea + "\n";
-        //            } while (Linea != "S" && Linea != "ERROR DE SINTAXIS");
-        //            txtGramatica.Text += "\n";
-        //            txtSintaxis.Text += Linea + "\n";
-        //            if (Linea == "S")
-        //            {
-        //                txtConsola.Text = "La sintaxis de esta línea es correcta.";
-        //            }
-        //            else
-        //            {
-        //                txtConsola.Text = "Esta línea contiene un error de sintaxis.";
-        //            }
-
-        //            await teclaEnter.Task;
-        //            teclaEnter = new TaskCompletionSource<object>();
-
-        //            txtConsola.Text = "Se terminó de analizar la linea " + NumeroLinea + " del archivo de tokens.";
-        //            await teclaEnter.Task;
-        //            teclaEnter = new TaskCompletionSource<object>();
-        //        }
-
-
-        //        CantidadTokens = 1;
-        //        Linea = "";
-        //        NumeroLinea++;
-        //    }
-        //}
-
-#pragma warning disable IDE0051 // Quitar miembros privados no utilizados
-        private async void AnalisisLexicoPausado()
-#pragma warning restore IDE0051 // Quitar miembros privados no utilizados
+        #region CodigoFinal
+        
+        //  Este método se encarga de recorrer cada registro de la tripleta. Por cada registro, escribe una instrucción
+        //  en el archivo correspondiente, dependiendo de lo que represente ese registro.
+        public void CodigoFinal()
         {
-            txtCodigo.ReadOnly = true;
-            btnSiguientePaso.Enabled = true;
-
-            try
+            if (File.Exists(@"C:\Codext\tmpDocumento.html"))
             {
-                dgvTSIdentificadores.Rows.Clear();
-                dgvTSConstantesNumericas.Rows.Clear();
-                IDXX = 0;
-                CNXX = 0;
-                CRXX = 0;
+                File.Delete(@"C:\Codext\tmpDocumento.html");
+            }
+            File.Create(@"C:\Codext\tmpDocumento.html");
+            StreamWriter swHTML = new StreamWriter(@"C:\Codext\tmpDocumento.html");
 
-                txtConsola.Text = "Comenzando proceso.";
-                txtTokens.Text = "";
-                txtEvaluacion.Text = "";
-                string strTokenAux;
-                ObtenerSubcadenas();
-                int renglonActual = 0;
-                int intPosRenglon = 0;
-                int intPosRenglonTokens = 0;
-                txtRenglones.Text = txtCodigo.Lines.Count().ToString();
-                txtRenglonActual.Text = renglonActual.ToString();
 
-                foreach (List<string> Subcadenas in lstRenglones)
+            if (File.Exists(@"C:\Codext\tmpDocumento.js"))
+            {
+                File.Delete(@"C:\Codext\tmpDocumento.js");
+            }
+            File.Create(@"C:\Codext\tmpDocumento.js");
+            StreamWriter swJS = new StreamWriter(@"C:\Codext\tmpDocumento.js");
+
+            foreach (List<Tripleta> listTripletas in tripletas)
+            {
+                if (listTripletas.ElementAt<Tripleta>(0).DatoObjeto.ToString() == "TIMES")                    
                 {
-                    txtCodigo.BackColor = colorResaltado;
-                    txtRenglonActual.Text = (renglonActual + 1).ToString();
-                    txtConsola.Text = "Leyendo el renglón " + (renglonActual + 1);
-                    txtCodigo.Focus();
-                    txtCodigo.Select(intPosRenglon, txtCodigo.Lines[renglonActual].Length);
-                    //await Task.Delay(2000);
-                    this.Focus();
-                    await teclaEnter.Task;
-                    teclaEnter = new TaskCompletionSource<object>();
-                    //await Task.Run(() =>
-                    //                    {
-                    //                        void frmCodext_KeyDowna(object senderinterno, KeyEventArgs einterno)
-                    //                        {
-                    //                            if (einterno.KeyCode == Keys.Enter)
-                    //                                return;
-                    //                        }
-                    //                    });
-                    txtCodigo.BackColor = Color.FromArgb(255, 240, 240, 240);
-                    foreach (string Subcadena in Subcadenas)
+                    int contadorRegistro = 0;
+                    //  Si es una condición
+                    if()
+                    for(contadorRegistro = 0; contadorRegistro < listTripletas.Count; contadorRegistro++)
                     {
-                        //Aquí debería pausar xd creo
-                        txtSubcadena.Text = Subcadena;
-                        txtSubcadena.BackColor = colorResaltado;
-                        txtConsola.Text = "Leyendo la subcadena " + Subcadena;
-                        //await Task.Delay(2000);
-                        this.Focus();
-                        await teclaEnter.Task;
-                        teclaEnter = new TaskCompletionSource<object>();
-                        txtSubcadena.BackColor = Color.FromArgb(255, 240, 240, 240);
 
-                        miInstruccion = new Instrucción
-                        {
-                            Cadena = Subcadena
-                        };
-
-
-                        string tsres;
-
-                        if (Subcadena.Contains("_"))
-                        {
-                            tsres = VerificarTablasDeSimbolos("ID");
-
-                            if (tsres != "")
-                            {
-                                strTokenAux = tsres;
-                                dgvTSIdentificadores.Select();
-                                txtEvaluacion.Text += strTokenAux + " ";
-                                txtEvaluacion.BackColor = colorResaltado;
-                                txtConsola.Text = "Se encontró el identificador en la tabla de símbolos, su token es " + strTokenAux;
-                                //await Task.Delay(2000);
-                                this.Focus();
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                                txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-                                break;
-                            }
-                        }
-
-                        if (Subcadena.Contains("#"))
-                        {
-                            if (Subcadena.Contains(".") || Subcadena.Contains("E"))
-                            {
-                                tsres = VerificarTablasDeSimbolos("CR");
-                                if (tsres != "")
-                                {
-                                    strTokenAux = tsres;
-                                    dgvTSConstantesNumericas.Select();
-                                    txtEvaluacion.Text += strTokenAux + " ";
-                                    txtEvaluacion.BackColor = colorResaltado;
-                                    txtConsola.Text = "Se encontró la constante numérica real en la tabla de símbolos, su token es " + strTokenAux;
-                                    //await Task.Delay(2000);
-                                    this.Focus();
-                                    await teclaEnter.Task;
-                                    teclaEnter = new TaskCompletionSource<object>();
-                                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                tsres = VerificarTablasDeSimbolos("CN");
-                                if (tsres != "")
-                                {
-                                    strTokenAux = tsres;
-                                    dgvTSConstantesNumericas.Select();
-                                    txtEvaluacion.Text += strTokenAux + " ";
-                                    txtEvaluacion.BackColor = colorResaltado;
-                                    txtConsola.Text = "Se encontró la constante numérica entera en la tabla de símbolos, su token es " + strTokenAux;
-                                    //await Task.Delay(2000);
-                                    this.Focus();
-                                    await teclaEnter.Task;
-                                    teclaEnter = new TaskCompletionSource<object>();
-                                    txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-                                    break;
-                                }
-                            }
-
-                        }
-
-                        strTokenAux = EncontrarToken(miInstruccion, 0, "0");
-
-                        if (strTokenAux == "ERRL")
-                        {
-                            txtEvaluacion.Text += strTokenAux + " ";
-                            txtEvaluacion.BackColor = colorResaltado;
-                            txtConsola.Text = "Error detectado: no se reconoció el elemento. Se asignará un token de error léxico (ERRL)";
-                            //await Task.Delay(2000);
-                            this.Focus();
-                            await teclaEnter.Task;
-                            teclaEnter = new TaskCompletionSource<object>();
-                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-                        }
-                        else
-                        {
-                            //Aquí también  
-                            txtEvaluacion.Text += strTokenAux + " ";
-                            txtEvaluacion.BackColor = colorResaltado;
-                            txtConsola.Text = "Se identifico la subcadena " + Subcadena + " con el token " + strTokenAux;
-                            //await Task.Delay(2000);
-                            this.Focus();
-                            await teclaEnter.Task;
-                            teclaEnter = new TaskCompletionSource<object>();
-                            txtEvaluacion.BackColor = Color.FromArgb(255, 240, 240, 240);
-
-                            string tipoToken = strTokenAux.Substring(0, 2);
-                            string numToken = strTokenAux.Substring(2, 2);
-
-                            if (tipoToken == "ID")
-                            {
-                                dgvTSIdentificadores.Rows.Add(numToken, Subcadena, "-", "-");
-                                dgvTSIdentificadores.Select();
-                                txtConsola.Text = "Se agregó el identificador con el token " + strTokenAux + " a la tabla de símbolos.";
-                                //await Task.Delay(2000);
-                                this.Focus();
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                            }
-                            else if (tipoToken == "CN")
-                            {
-                                dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
-                                dgvTSConstantesNumericas.Select();
-                                txtConsola.Text = "Se agregó la constante numérica entera con el token " + strTokenAux + " a la tabla de símbolos.";
-                                //await Task.Delay(2000);
-                                this.Focus();
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                            }
-                            else if (tipoToken == "CR")
-                            {
-                                dgvTSConstantesNumericas.Rows.Add(numToken, Subcadena.Substring(0, Subcadena.Length - 1));
-                                dgvTSConstantesNumericas.Select();
-                                txtConsola.Text = "Se agregó la constante numérica real con el token " + strTokenAux + " a la tabla de símbolos.";
-                                //await Task.Delay(2000);
-                                this.Focus();
-                                await teclaEnter.Task;
-                                teclaEnter = new TaskCompletionSource<object>();
-                            }
-
-
-                            txtSubcadena.Text = "";
-                        }
                     }
-                    //Aquí pausa igual                    
-                    txtTokens.Text += txtEvaluacion.Text + "\n";
-                    txtTokens.BackColor = colorResaltado;
-                    txtConsola.Text = "Se ha llegado al final del renglón " + (renglonActual + 1);
-                    txtTokens.Focus();
-                    txtTokens.Select(intPosRenglonTokens, txtTokens.Lines[renglonActual].Length);
-                    //await Task.Delay(2000);
-                    this.Focus();
-                    await teclaEnter.Task;
-                    teclaEnter = new TaskCompletionSource<object>();
-                    txtTokens.BackColor = Color.FromArgb(255, 240, 240, 240);
+                    //  Si es un ciclo
+                    if ()
+                    for (contadorRegistro = 0; contadorRegistro < listTripletas.Count; contadorRegistro++)
+                    {
 
-                    txtEvaluacion.Text = "";
-
-                    intPosRenglon += (txtCodigo.Lines[renglonActual].Length + 1);
-                    intPosRenglonTokens += (txtTokens.Lines[renglonActual].Length + 1);
-                    renglonActual++;
-
+                    }
                 }
-                txtConsola.Text = "Ha finalizado el análisis léxico.";
-                this.Focus();
-                return;
+                else
+                {
+                    //if (t.DatoObjeto.ToString() == "TIMES")
+                    //{
+                    //    //  Si es una condición
+
+
+                    //    //  Si es un ciclo
+                    //}
+
+                    foreach (Tripleta t in listTripletas)
+                    {
+
+                        //  Si es una instrucción (incluyendo tabla)
+                        if (t.DatoObjeto.ToString().StartsWith("PR"))
+                        {
+                            switch (t.Operador.ToString())
+                            {
+                                case "html":
+                                    swHTML.WriteLine(t.DatoFuente.ToString());
+                                    break;
+                                case "js":
+                                    swJS.WriteLine(t.DatoFuente.ToString());
+                                    break;
+                            }
+                        }
+
+
+                        //  Si es una operación
+                        if (t.Operador.ToString().StartsWith(""))
+                        {
+                            swJS.WriteLine(t.DatoObjeto + "=" + t.DatoObjeto + t.Operador + t.DatoFuente);
+                        }
+
+                    }
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtConsola.Text = "Ocurrió un error inesperado.";
-                return;
-            }
-#pragma warning disable CS0162 // Se detectó código inaccesible
-            txtCodigo.ReadOnly = false;
-#pragma warning restore CS0162 // Se detectó código inaccesible
-            btnSiguientePaso.Enabled = false;
+            swHTML.Close();
+            swJS.Close();
+
+
+            DocumentView dv = new DocumentView();
+            dv.ShowDialog();
         }
 
         #endregion
+
     }
 }
