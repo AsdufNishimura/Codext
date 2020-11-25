@@ -1279,7 +1279,7 @@ namespace Codext
 
         public List<Tripleta> TripletaExpresionCondicional(string instruccionCondicional)
         {
-            int intContadorRegistro = 1;
+            int intContadorRegistro = 2;
             int intContadorTemporales = 0;
             int intContadorTemporalesRelacionales = 0;
             string cadenaAuxiliar1 = "";
@@ -1291,6 +1291,7 @@ namespace Codext
 
             //  Definir TIMES como 1, esto en caso de que se halle esta instrucción dentro de una estructura de iteración
             trCondicional.Add(new Tripleta(0, "TIMES", 1, "ORAS"));
+            trCondicional.Add(new Tripleta(0, "PR11", null, null));
 
 
             //  Definir tripleta condicional, verdadera y falsa
@@ -1960,19 +1961,98 @@ namespace Codext
             {
                 if (listTripletas.ElementAt<Tripleta>(0).DatoObjeto.ToString() == "TIMES")                    
                 {
-                    int contadorRegistro = 0;
-                    //  Si es una condición
-                    if()
-                    for(contadorRegistro = 0; contadorRegistro < listTripletas.Count; contadorRegistro++)
-                    {
+                    int contadorRegistro = 1;
+                    bool banderaCondicion;
+                    bool banderaCiclo;
 
+                    if (listTripletas.ElementAt<Tripleta>(1).DatoObjeto.ToString() == "PR11")
+                    {
+                        swJS.WriteLine("if(");
+                        for (contadorRegistro = 1; contadorRegistro < listTripletas.Count; contadorRegistro++)
+                        {
+                            if (listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto.ToString().StartsWith("PR"))
+                            {
+                                switch (listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador.ToString())
+                                {
+                                    case "html":
+                                        swHTML.WriteLine(listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente.ToString());
+                                        break;
+                                    case "js":
+                                        swJS.WriteLine(listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente.ToString());
+                                        break;
+                                }
+                            }
+                            if (listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador.ToString().StartsWith("O"))
+                            {
+                                swJS.WriteLine(listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto + "=" + listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto + listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador + listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente);
+                            }
+                            if (listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto.ToString() == "ETIQT")
+                            {
+                                swJS.WriteLine(") {");
+                                List<Tripleta> trTrue = (List<Tripleta>)listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente;
+                                foreach(Tripleta t1 in trTrue)
+                                {
+                                    if (t1.DatoObjeto.ToString().StartsWith("PR"))
+                                    {
+                                        switch (t1.Operador.ToString())
+                                        {
+                                            case "html":
+                                                swHTML.WriteLine(t1.DatoFuente.ToString());
+                                                break;
+                                            case "js":
+                                                swJS.WriteLine(t1.DatoFuente.ToString());
+                                                break;
+                                        }
+                                    }
+                                    if (t1.Operador.ToString().StartsWith("O"))
+                                    {
+                                        swJS.WriteLine(t1.DatoObjeto + "=" + t1.DatoObjeto + t1.Operador + t1.DatoFuente);
+                                    }
+                                }
+                                swJS.WriteLine("}");
+                            }
+                            if (listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto.ToString() == "ETIQF")
+                            {
+                                swJS.WriteLine("else {");
+                                List<Tripleta> trFalse = (List<Tripleta>)listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente;
+                                foreach (Tripleta t2 in trFalse)
+                                {
+                                    if (t2.DatoObjeto.ToString().StartsWith("PR"))
+                                    {
+                                        switch (t2.Operador.ToString())
+                                        {
+                                            case "html":
+                                                swHTML.WriteLine(t2.DatoFuente.ToString());
+                                                break;
+                                            case "js":
+                                                swJS.WriteLine(t2.DatoFuente.ToString());
+                                                break;
+                                        }
+                                    }
+                                    if (t2.Operador.ToString().StartsWith("O"))
+                                    {
+                                        swJS.WriteLine(t2.DatoObjeto + "=" + t2.DatoObjeto + t2.Operador + t2.DatoFuente);
+                                    }
+                                }
+                                swJS.WriteLine("}");
+                            }
+                            contadorRegistro++;
+                        }
                     }
+
+                    ////  Si es una condición
+                    //if()
+                    //for(contadorRegistro = 0; contadorRegistro < listTripletas.Count; contadorRegistro++)
+                    //{
+
+                    //}
+
                     //  Si es un ciclo
-                    if ()
-                    for (contadorRegistro = 0; contadorRegistro < listTripletas.Count; contadorRegistro++)
-                    {
+                    //if ()
+                    //for (contadorRegistro = 0; contadorRegistro < listTripletas.Count; contadorRegistro++)
+                    //{
 
-                    }
+                    //}
                 }
                 else
                 {
@@ -2003,7 +2083,7 @@ namespace Codext
 
 
                         //  Si es una operación
-                        if (t.Operador.ToString().StartsWith(""))
+                        if (t.Operador.ToString().StartsWith("O"))
                         {
                             swJS.WriteLine(t.DatoObjeto + "=" + t.DatoObjeto + t.Operador + t.DatoFuente);
                         }
