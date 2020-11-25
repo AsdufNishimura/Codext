@@ -1502,6 +1502,9 @@ namespace Codext
 
             string[] arregloString = instruccionIteracion.Split('\n');
 
+            arregloString[0] = arregloString[arregloString.Length - 2];
+            arregloString[arregloString.Length - 2] = "";
+
             string temp = "";
 
             /* 
@@ -1511,23 +1514,10 @@ namespace Codext
              *      -Codigo-
              * <-
              */
-
-            for (int i = arregloString.Length - 1; i > 0; i--)
+            foreach (string linea in arregloString)
             {
-                if (arregloString[i].Contains("PR04"))
-                {
-                    temp += "PR03\n";
-                    continue;
-                }
-                    
-                if (arregloString[i].Contains("PR03"))
-                {
-                    temp += "PR04\n";
-                    continue;
-                }
-                if (arregloString[i] == "")
-                    continue;
-                temp += arregloString[i] + "\n";
+                if (!String.IsNullOrEmpty(linea))
+                    temp += linea + "\n";
             }
 
             // Se utiliza una tripleta temporal donde se guarda la condición del ciclo
@@ -1908,25 +1898,29 @@ namespace Codext
 
         public void OptimizacionLocales4()
         {
-            foreach(List<Tripleta> listTripletas in tripletas)
+            foreach (List<Tripleta> listTripletas in tripletas)
             {
-                foreach(Tripleta t in listTripletas)
+                foreach (Tripleta t in listTripletas)
                 {
-                    if (int.Parse(t.DatoFuente.ToString()) == 0 && t.Operador.ToString() == "OPAS")
+                    if (t.DatoFuente != null && t.Operador != null)
                     {
-                        listTripletas.Remove(t);
-                    }
-                    else if (int.Parse(t.DatoFuente.ToString()) == 1 && t.Operador.ToString() == "OPAM")
-                    {
-                        listTripletas.Remove(t);
-                    }
-                    else if (t.DatoFuente == t.DatoObjeto && t.Operador.ToString() == "OPRI")
-                    {
-                        listTripletas.Remove(t);
+                        if (t.DatoFuente is int && (int)t.DatoFuente == 0 && t.Operador.ToString() == "OPAS")
+                        {
+                            listTripletas.Remove(t);
+                        }
+                        else if (t.DatoFuente is int && (int)t.DatoFuente == 1 && t.Operador.ToString() == "OPAM")
+                        {
+                            listTripletas.Remove(t);
+                        }
+                        else if (t.DatoFuente == t.DatoObjeto && t.Operador.ToString() == "OPRI")
+                        {
+                            listTripletas.Remove(t);
+                        }
                     }
                 }
             }
         }
+
 
 
         #endregion
@@ -1937,7 +1931,7 @@ namespace Codext
          *  Fase de código final
          */
         #region CodigoFinal
-        
+
         //  Este método se encarga de recorrer cada registro de la tripleta. Por cada registro, escribe una instrucción
         //  en el archivo correspondiente, dependiendo de lo que represente ese registro.
         public void CodigoFinal()
