@@ -1530,7 +1530,8 @@ namespace Codext
                 // Solamente se agrega hasta ETIQ trTrue
                 if (tripleta.DatoObjeto.ToString().Equals("ETIQ") && tripleta.DatoFuente == null)
                     break;
-
+                if (tripleta.DatoObjeto.ToString().Equals("PR11"))
+                    tripleta.DatoObjeto = "PR14";
                 trResultado.Add(tripleta);
 
             }
@@ -1871,7 +1872,7 @@ namespace Codext
             {
                 foreach(DataGridViewRow d in dgvTSConstantesNumericas.Rows)
                 {
-                    if (d.Cells[0].Value.ToString() == Token)
+                    if (d.Cells[0].Value.ToString() == Token.Substring(2,2))
                     {
                         return d;
                     }
@@ -1881,7 +1882,7 @@ namespace Codext
             {
                 foreach (DataGridViewRow d in dgvTSIdentificadores.Rows)
                 {
-                    if (d.Cells[0].Value.ToString() == Token)
+                    if (d.Cells[0].Value.ToString() == Token.Substring(2, 2))
                     {
                         return d;
                     }
@@ -2008,9 +2009,10 @@ namespace Codext
             //    }
             //    File.Create(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html");
             //}
-            StreamWriter swHTML = new StreamWriter(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html", false);
+            string usuario = "Eliseo Zepeda";
+            StreamWriter swHTML = new StreamWriter(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.html", false);
             swHTML.Close();
-            swHTML = new StreamWriter(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html", true);
+            swHTML = new StreamWriter(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.html", true);
 
 
             //using (File.OpenRead(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html"))
@@ -2021,9 +2023,10 @@ namespace Codext
             //    }
             //    File.Create(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html");
             //}
-            StreamWriter swJS = new StreamWriter(@"C:\Users\asduf\Documents\Codext\tmpDocumento.js", false);
+            
+            StreamWriter swJS = new StreamWriter(@"C:\Users\"+usuario+@"\Documents\Codext\tmpDocumento.js", false);
             swJS.Close();
-            swJS = new StreamWriter(@"C:\Users\asduf\Documents\Codext\tmpDocumento.js", true);
+            swJS = new StreamWriter(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.js", true);
 
             foreach (List<Tripleta> listTripletas in tripletas)
             {
@@ -2108,6 +2111,115 @@ namespace Codext
                         }
                     }
 
+                    if(listTripletas.ElementAt<Tripleta>(1).DatoObjeto.ToString() == "PR14")
+                    {
+                        List<List<object>> variables = new List<List<object>>();
+                        string temp = "";
+                        swJS.WriteLine("do{");
+                        for (contadorRegistro = 1; contadorRegistro < listTripletas.Count; contadorRegistro++)
+                        {
+                            if(listTripletas[contadorRegistro].Operador != null)
+                            {
+                                if (listTripletas[contadorRegistro].Operador.ToString() == "OPAS" || listTripletas[contadorRegistro].Operador.ToString() == "OPRI")
+                                {
+                                    if (listTripletas[contadorRegistro].DatoFuente != null && listTripletas[contadorRegistro].DatoFuente.ToString().StartsWith("CN") || listTripletas[contadorRegistro].DatoFuente.ToString().StartsWith("CR") || listTripletas[contadorRegistro].DatoFuente.ToString().StartsWith("ID"))
+                                    {
+
+                                        int CantidadColumnas = BuscarEnTablasSimbolos(listTripletas[contadorRegistro].DatoFuente.ToString()) != null ? BuscarEnTablasSimbolos(listTripletas[contadorRegistro].DatoFuente.ToString()).Cells.Count : 0;
+                                        {
+                                            switch (CantidadColumnas)
+                                            {
+                                                case 2:
+                                                    listTripletas[contadorRegistro].DatoFuente = BuscarEnTablasSimbolos(listTripletas[contadorRegistro].DatoFuente.ToString()).Cells[1].Value.ToString();
+                                                    break;
+                                                case 4:
+                                                    listTripletas[contadorRegistro].DatoFuente = BuscarEnTablasSimbolos(listTripletas[contadorRegistro].DatoFuente.ToString()).Cells[3].Value.ToString();
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                        }
+                                        List<object> variable = new List<object>();
+                                        //Nombre
+                                        variable.Add(listTripletas[contadorRegistro].DatoObjeto);
+                                        //Valir
+                                        variable.Add(listTripletas[contadorRegistro].DatoFuente);
+                                        variables.Add(variable);
+                                    }
+                                }
+
+                            }
+                            if (listTripletas[contadorRegistro].DatoObjeto != null && listTripletas[contadorRegistro].DatoFuente != null && listTripletas[contadorRegistro].DatoFuente.ToString().StartsWith("TE") && listTripletas[contadorRegistro].DatoObjeto.ToString().StartsWith("TE"))
+                            {
+                                string operador = "";
+                                switch (listTripletas[contadorRegistro].Operador.ToString())
+                                {
+                                    case "OPRI":
+                                        operador = "=";
+                                        break;
+                                    case "OPRM":
+                                        operador = ">";
+                                        break;
+                                    case "OPRm":
+                                        operador = "<";
+                                        break;
+                                    case "OPRD":
+                                        operador = "<>";
+                                        break;
+                                    case "OPMI":
+                                        operador = ">=";
+                                        break;
+                                    case "OPmI":
+                                        operador = "<=";
+                                        break;
+                                    case "OPLA":
+                                        operador = "&";
+                                        break;
+                                    case "OPLO":
+                                        operador = "|";
+                                        break;
+                                    case "OPLN":
+                                        operador = "!";
+                                        break;
+
+                                }
+                                foreach (List<object> objetos in variables)
+                                {
+                                    if (temp != "")
+                                        temp += operador;
+                                    temp += objetos[1].ToString();
+                                }
+                            }
+                            if(listTripletas[contadorRegistro].DatoObjeto != null && listTripletas[contadorRegistro].DatoObjeto.ToString() == "ETIQT")
+                            {
+                                if(listTripletas[contadorRegistro].DatoFuente != null && listTripletas[contadorRegistro].DatoFuente is List<Tripleta>)
+                                {
+                                    foreach (Tripleta t1 in (List<Tripleta>)listTripletas[contadorRegistro].DatoFuente)
+                                    {
+                                        if (t1.DatoObjeto.ToString().StartsWith("PR"))
+                                        {
+                                            switch (t1.Operador.ToString())
+                                            {
+                                                case "html":
+                                                    swHTML.WriteLine(t1.DatoFuente.ToString());
+                                                    break;
+                                                case "js":
+                                                    swJS.WriteLine(t1.DatoFuente.ToString());
+                                                    break;
+                                            }
+                                        }
+                                        if (t1.Operador.ToString().StartsWith("O"))
+                                        {
+                                            swJS.WriteLine(t1.DatoObjeto + "=" + t1.DatoObjeto + t1.Operador + t1.DatoFuente);
+                                        }
+                                    }
+                                    swJS.WriteLine("}");
+                                }
+                            }
+                           
+                        }
+                        swJS.WriteLine("while("+temp+")");
+                    }
                     ////  Si es una condición
                     //if()
                     //for(contadorRegistro = 0; contadorRegistro < listTripletas.Count; contadorRegistro++)
@@ -2165,7 +2277,7 @@ namespace Codext
 
             using (DocumentView dv = new DocumentView())
             {
-                dv.EstablecerUrl(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html");
+                dv.EstablecerUrl(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.html");
                 dv.ShowDialog();
             }
         }
