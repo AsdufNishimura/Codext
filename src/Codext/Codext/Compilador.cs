@@ -1852,8 +1852,20 @@ namespace Codext
             //  Param1 -> Objeto a mostrar
             if (instruccion.Contains("PR19"))
             {
-                string Param1 = instruccion.Substring(10, 4);
+                string Param1 = instruccion.Substring(11, 4);
 
+                int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
+                switch (CantidadColumnas)
+                {
+                    case 2:
+                        Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+                        break;
+                    case 4:
+                        Param1 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+                        break;
+                    default:
+                        break;
+                }
                 trResultado.Add(new Tripleta(0, "PR19", "<p>  " + Param1 + " </p>", "html"));
             }
 
@@ -2030,7 +2042,7 @@ namespace Codext
 
             foreach (List<Tripleta> listTripletas in tripletas)
             {
-                if (listTripletas.ElementAt<Tripleta>(0).DatoObjeto.ToString() == "TIMES")                    
+                if (listTripletas.Count > 0 && listTripletas.ElementAt<Tripleta>(0).DatoObjeto.ToString() == "TIMES")                    
                 {
                     int contadorRegistro = 1;
                     bool banderaCondicion;
@@ -2043,21 +2055,25 @@ namespace Codext
                         {
                             if (listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto.ToString().StartsWith("PR"))
                             {
-                                switch (listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador.ToString())
+                                if(listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador != null)
                                 {
-                                    case "html":
-                                        swHTML.WriteLine(listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente.ToString());
-                                        break;
-                                    case "js":
-                                        swJS.WriteLine(listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente.ToString());
-                                        break;
+                                    switch (listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador.ToString())
+                                    {
+                                        case "html":
+                                            swHTML.WriteLine(listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente.ToString());
+                                            break;
+                                        case "js":
+                                            swJS.WriteLine(listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente.ToString());
+                                            break;
+                                    }
                                 }
+                                
                             }
-                            if (listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador.ToString().StartsWith("O"))
+                            if (listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador != null && listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador.ToString().StartsWith("O"))
                             {
                                 swJS.WriteLine(listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto + "=" + listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto + listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador + listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente);
                             }
-                            if (listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto.ToString() == "ETIQT")
+                            if (listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto != null && listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto.ToString() == "ETIQT")
                             {
                                 swJS.WriteLine(") {");
                                 List<Tripleta> trTrue = (List<Tripleta>)listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente;
@@ -2075,7 +2091,7 @@ namespace Codext
                                                 break;
                                         }
                                     }
-                                    if (t1.Operador.ToString().StartsWith("O"))
+                                    if (t1.Operador != null && t1.Operador.ToString().StartsWith("O"))
                                     {
                                         swJS.WriteLine(t1.DatoObjeto + "=" + t1.DatoObjeto + t1.Operador + t1.DatoFuente);
                                     }
