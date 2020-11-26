@@ -1654,7 +1654,7 @@ namespace Codext
             //  DOC_START
             if (instruccion.Contains("PR01"))
             {
-                trResultado.Add(new Tripleta(0, "PR01", 
+                trResultado.Add(new Tripleta(0, "PR01",
                     "<!DOCTYPE html> " +
                     "<head>" +
                     "<script src=\"C:\\Codext\\tmpDocumento.js\"></script>" +
@@ -1677,7 +1677,14 @@ namespace Codext
             if (instruccion.Contains("PR05"))
             {
                 string Param1 = instruccion.Substring(10, 4);
-                string Param2 = instruccion.Substring(15, 4);
+                string Param2 = instruccion.Substring(20, 4);
+
+                if (Param1 == "POST")
+                {
+                    List<Tripleta> arit = TripletaExpresionAritmetica(instruccion.Substring(10, instruccion.Length - 15));
+                    trResultado.Add(new Tripleta(0, "PR05", arit, "OPRI"));
+                }
+
                 int CantidadColumnas = BuscarEnTablasSimbolos(Param2) != null ? BuscarEnTablasSimbolos(Param2).Cells.Count : 0;
                 {
                     switch (CantidadColumnas)
@@ -1692,7 +1699,8 @@ namespace Codext
                             break;
                     }
                 }
-                trResultado.Add(new Tripleta(0, "PR18", Param1 + " = " + Param2 + "\n", "js"));
+                trResultado.Add(new Tripleta(0, "PR05", Param2, "OPRI"));
+                trResultado.Add(new Tripleta(1, "PR18", Param1 + " = " + Param2 + "\n", "js"));
 
             }
 
@@ -1711,9 +1719,16 @@ namespace Codext
                 try
                 {
                     string Param1 = instruccion.Substring(10, 4);
+
+                    if (Param1 == "POST")
+                    {
+                        List<Tripleta> arit = TripletaExpresionAritmetica(instruccion.Substring(10, instruccion.Length - 5));
+                        trResultado.Add(new Tripleta(0, "PR07", arit, "OPRI"));
+                    }
+
                     int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
                     {
-                        switch(CantidadColumnas)
+                        switch (CantidadColumnas)
                         {
                             case 2:
                                 Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
@@ -1725,15 +1740,16 @@ namespace Codext
                                 break;
                         }
                     }
-                    for(x = 0; x < int.Parse(Param1); x++)
+                    trResultado.Add(new Tripleta(0, "PR07", Param1, "OPRI"));
+                    for (x = 0; x < int.Parse(Param1); x++)
                     {
-                        trResultado.Add(new Tripleta(x, "PR07", "<br>", "html"));
+                        trResultado.Add(new Tripleta(x + 1, "PR07", "<br>", "html"));
                     }
                 }
                 catch (Exception ex)
                 {
-                    trResultado.Add(new Tripleta(x, "PR07", "<br>", "html"));
-                }                
+                    trResultado.Add(new Tripleta(x + 1, "PR07", "<br>", "html"));
+                }
             }
 
             ////  TABLE
@@ -1801,23 +1817,34 @@ namespace Codext
                 //        contadorToken++;
                 //    }
                 //}
+                bool esAritmetica = instruccion.Contains("POST");
                 string Param1 = instruccion.Substring(10, 4);
-                string Param2 = instruccion.Substring(15, 4);
-                int CantidadColumnas = BuscarEnTablasSimbolos(Param2) != null ? BuscarEnTablasSimbolos(Param2).Cells.Count : 0;
+                string Param2 = instruccion.Substring(20, 4);
+
+                if (Param2 == "POST")
                 {
-                    switch (CantidadColumnas)
-                    {
-                        case 2:
-                            Param2 = BuscarEnTablasSimbolos(Param2).Cells[1].Value.ToString();
-                            break;
-                        case 4:
-                            Param2 = BuscarEnTablasSimbolos(Param2).Cells[3].Value.ToString();
-                            break;
-                        default:
-                            break;
-                    }
+                    List<Tripleta> arit = TripletaExpresionAritmetica(instruccion.Substring(20, instruccion.Length - 25));
+                    trResultado.Add(new Tripleta(0, "PR18", arit, "OPRI"));
+                    Param2 = instruccion.Substring(30, 4);
                 }
-                trResultado.Add(new Tripleta(0, "PR18", Param1 + " = " + Param2 + "\n", "js"));
+
+                int CantidadColumnas = BuscarEnTablasSimbolos(Param2) != null ? BuscarEnTablasSimbolos(Param2).Cells.Count : 0;
+                switch (CantidadColumnas)
+                {
+                    case 2:
+                        Param2 = BuscarEnTablasSimbolos(Param2).Cells[1].Value.ToString();
+                        break;
+                    case 4:
+                        Param2 = BuscarEnTablasSimbolos(Param2).Cells[3].Value.ToString();
+                        break;
+                    default:
+                        break;
+                }
+                if (!esAritmetica)
+                    trResultado.Add(new Tripleta(0, "PR18", Param2, "OPRI"));
+                trResultado.Add(new Tripleta(1, "PR18", Param1 + " = " + Param2 + "\n", "js"));
+
+
             }
 
             //  VIEW
@@ -1826,22 +1853,12 @@ namespace Codext
             {
                 string Param1 = instruccion.Substring(10, 4);
 
-                int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
-                {
-                    switch (CantidadColumnas)
-                    {
-                        case 2:
-                            Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
-                            break;
-                        case 4:
-                            Param1 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
                 trResultado.Add(new Tripleta(0, "PR19", "<p>  " + Param1 + " </p>", "html"));
+            }
+
+            foreach (Tripleta t in trResultado)
+            {
+                t.EsInstruccion = true;
             }
             return trResultado;
         }
@@ -1886,27 +1903,34 @@ namespace Codext
             MostrarTripletas();
         }
 
-        public void OptimizacionLocales2() 
+        public void OptimizacionLocales2()
         {
-            List<object> strVariablesUsadas = new List<object>();
-            foreach(List<Tripleta> listTripletas in tripletas) 
+            List<object> objVariablesUsadas = new List<object>();
+            foreach (List<Tripleta> listTripletas in tripletas)
             {
-                foreach(Tripleta t in listTripletas)
+                foreach (Tripleta t in listTripletas)
                 {
-                    if (!strVariablesUsadas.Contains(t.DatoFuente))
+                    if (!objVariablesUsadas.Contains(t.DatoFuente))
                     {
-                        strVariablesUsadas.Add(t.DatoFuente);
+                        objVariablesUsadas.Add(t.DatoFuente);
                     }
                 }
             }
 
-            foreach(List<Tripleta> listTripletas in tripletas)
+            foreach (List<Tripleta> listTripletas in tripletas)
             {
-                foreach(Tripleta t in listTripletas)
+                for (int i = 0; i <= listTripletas.Count - 1; i++)
                 {
-                    if(!strVariablesUsadas.Contains(t.DatoObjeto))
+                    if (!objVariablesUsadas.Contains(listTripletas[i].DatoObjeto) &&
+                        !listTripletas[i].EsInstruccion &&
+                        listTripletas[i].DatoObjeto != null &&
+                        !(listTripletas[i].DatoObjeto.ToString() == "FIN" ||
+                        listTripletas[i].DatoObjeto.ToString() == "ETIQ" ||
+                        listTripletas[i].DatoObjeto.ToString() == "ETIQT" ||
+                        listTripletas[i].DatoObjeto.ToString() == "ETIQF"))
                     {
-                        listTripletas.Remove(t);
+                        listTripletas.Remove(listTripletas[i]);
+                        i--;
                     }
                 }
             }
@@ -1916,21 +1940,45 @@ namespace Codext
         {
             foreach (List<Tripleta> listTripletas in tripletas)
             {
-                foreach (Tripleta t in listTripletas)
+                for (int i = 0; i <= listTripletas.Count - 1; i++)
                 {
-                    if (t.DatoFuente != null && t.Operador != null)
+                    if (listTripletas[i].DatoFuente != null && listTripletas[i].Operador != null)
                     {
-                        if (t.DatoFuente is int && (int)t.DatoFuente == 0 && t.Operador.ToString() == "OPAS")
+                        if (listTripletas[i].DatoFuente is List<Tripleta>)
                         {
-                            listTripletas.Remove(t);
+                            foreach (Tripleta t in (List<Tripleta>)listTripletas[i].DatoFuente)
+                            {
+                                if (t.DatoFuente is int && (int)t.DatoFuente == 0 && t.Operador.ToString() == "OPAS")
+                                {
+                                    listTripletas.Remove(listTripletas[i]);
+                                    i--;
+                                }
+                                else if (t.DatoFuente is int && (int)t.DatoFuente == 1 && t.Operador.ToString() == "OPAM")
+                                {
+                                    listTripletas.Remove(listTripletas[i]);
+                                    i--;
+                                }
+                                else if (t.DatoFuente == t.DatoObjeto && t.Operador.ToString() == "OPRI")
+                                {
+                                    listTripletas.Remove(listTripletas[i]);
+                                    i--;
+                                }
+                            }
                         }
-                        else if (t.DatoFuente is int && (int)t.DatoFuente == 1 && t.Operador.ToString() == "OPAM")
+                        if (listTripletas[i].DatoFuente is int && (int)listTripletas[i].DatoFuente == 0 && listTripletas[i].Operador.ToString() == "OPAS")
                         {
-                            listTripletas.Remove(t);
+                            listTripletas.Remove(listTripletas[i]);
+                            i--;
                         }
-                        else if (t.DatoFuente == t.DatoObjeto && t.Operador.ToString() == "OPRI")
+                        else if (listTripletas[i].DatoFuente is int && (int)listTripletas[i].DatoFuente == 1 && listTripletas[i].Operador.ToString() == "OPAM")
                         {
-                            listTripletas.Remove(t);
+                            listTripletas.Remove(listTripletas[i]);
+                            i--;
+                        }
+                        else if (listTripletas[i].DatoFuente == listTripletas[i].DatoObjeto && listTripletas[i].Operador.ToString() == "OPRI")
+                        {
+                            listTripletas.Remove(listTripletas[i]);
+                            i--;
                         }
                     }
                 }

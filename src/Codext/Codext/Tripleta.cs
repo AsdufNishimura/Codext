@@ -12,6 +12,7 @@ namespace Codext
         Object objDatoObjeto;
         Object objDatoFuente;
         Object objOperador;
+        bool esInstruccion;
 
         public int Indice
         {
@@ -32,6 +33,11 @@ namespace Codext
         {
             get { return objOperador; }
             set { objOperador = value; }
+        }
+        public bool EsInstruccion
+        {
+            get { return esInstruccion; }
+            set { esInstruccion = value; }
         }
 
         public Tripleta() { }
