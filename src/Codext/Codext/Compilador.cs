@@ -125,6 +125,7 @@ namespace Codext
             //if(resultado_léxico) { AnalisisSintacticoPausado(); } else { return; } 
             AnalisisSemantico();
             CodigoIntermedio();
+            CodigoFinal();
 
             //  Compilador
 
@@ -1539,7 +1540,7 @@ namespace Codext
             foreach (Tripleta tripleta in trResultado)
             {
                 // Se agrega la tripleta que volverá al incio de la condición
-                if (tripleta.DatoFuente.ToString().Equals("TRUE"))
+                if (tripleta.DatoFuente != null && tripleta.DatoFuente.ToString().Equals("TRUE"))
                 {
                     trResultado.Add(new Tripleta(trResultado.Count, "ETIQ", null, tripleta.Indice - 1));
                     break;
@@ -1677,7 +1678,7 @@ namespace Codext
             {
                 string Param1 = instruccion.Substring(10, 4);
                 string Param2 = instruccion.Substring(15, 4);
-                int CantidadColumnas = BuscarEnTablasSimbolos(Param2).Cells.Count;
+                int CantidadColumnas = BuscarEnTablasSimbolos(Param2) != null ? BuscarEnTablasSimbolos(Param2).Cells.Count : 0;
                 {
                     switch (CantidadColumnas)
                     {
@@ -1710,7 +1711,7 @@ namespace Codext
                 try
                 {
                     string Param1 = instruccion.Substring(10, 4);
-                    int CantidadColumnas = BuscarEnTablasSimbolos(Param1).Cells.Count;
+                    int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
                     {
                         switch(CantidadColumnas)
                         {
@@ -1802,15 +1803,15 @@ namespace Codext
                 //}
                 string Param1 = instruccion.Substring(10, 4);
                 string Param2 = instruccion.Substring(15, 4);
-                int CantidadColumnas = BuscarEnTablasSimbolos(Param2).Cells.Count;
+                int CantidadColumnas = BuscarEnTablasSimbolos(Param2) != null ? BuscarEnTablasSimbolos(Param2).Cells.Count : 0;
                 {
                     switch (CantidadColumnas)
                     {
                         case 2:
-                            Param2 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+                            Param2 = BuscarEnTablasSimbolos(Param2).Cells[1].Value.ToString();
                             break;
                         case 4:
-                            Param2 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+                            Param2 = BuscarEnTablasSimbolos(Param2).Cells[3].Value.ToString();
                             break;
                         default:
                             break;
@@ -1824,7 +1825,22 @@ namespace Codext
             if (instruccion.Contains("PR19"))
             {
                 string Param1 = instruccion.Substring(10, 4);
-                
+
+                int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
+                {
+                    switch (CantidadColumnas)
+                    {
+                        case 2:
+                            Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+                            break;
+                        case 4:
+                            Param1 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
                 trResultado.Add(new Tripleta(0, "PR19", "<p>  " + Param1 + " </p>", "html"));
             }
             return trResultado;
@@ -1936,20 +1952,30 @@ namespace Codext
         //  en el archivo correspondiente, dependiendo de lo que represente ese registro.
         public void CodigoFinal()
         {
-            if (File.Exists(@"C:\Codext\tmpDocumento.html"))
-            {
-                File.Delete(@"C:\Codext\tmpDocumento.html");
-            }
-            File.Create(@"C:\Codext\tmpDocumento.html");
-            StreamWriter swHTML = new StreamWriter(@"C:\Codext\tmpDocumento.html");
+            //using (File.OpenRead(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html"))
+            ////{
+            //    if (File.Exists(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html"))
+            //    {
+            //        File.Delete(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html");
+            //    }
+            //    File.Create(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html");
+            //}
+            StreamWriter swHTML = new StreamWriter(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html", false);
+            swHTML.Close();
+            swHTML = new StreamWriter(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html", true);
 
 
-            if (File.Exists(@"C:\Codext\tmpDocumento.js"))
-            {
-                File.Delete(@"C:\Codext\tmpDocumento.js");
-            }
-            File.Create(@"C:\Codext\tmpDocumento.js");
-            StreamWriter swJS = new StreamWriter(@"C:\Codext\tmpDocumento.js");
+            //using (File.OpenRead(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html"))
+            //{
+            //    if (File.Exists(@"C:\Users\asduf\Documents\Codext\tmpDocumento.js"))
+            //    {
+            //        File.Delete(@"C:\Users\asduf\Documents\Codext\tmpDocumento.js");
+            //    }
+            //    File.Create(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html");
+            //}
+            StreamWriter swJS = new StreamWriter(@"C:\Users\asduf\Documents\Codext\tmpDocumento.js", false);
+            swJS.Close();
+            swJS = new StreamWriter(@"C:\Users\asduf\Documents\Codext\tmpDocumento.js", true);
 
             foreach (List<Tripleta> listTripletas in tripletas)
             {
@@ -2089,8 +2115,11 @@ namespace Codext
             swJS.Close();
 
 
-            DocumentView dv = new DocumentView();
-            dv.ShowDialog();
+            using (DocumentView dv = new DocumentView())
+            {
+                dv.EstablecerUrl(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html");
+                dv.ShowDialog();
+            }
         }
 
         #endregion

@@ -21,5 +21,10 @@ namespace Codext
         {
             this.Close();
         }
+
+        public void EstablecerUrl(string strUrl)
+        {
+            webBrowser1.Url = new Uri(strUrl);
+        }
     }
 }

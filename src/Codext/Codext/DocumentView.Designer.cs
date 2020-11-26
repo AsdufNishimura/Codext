@@ -41,7 +41,7 @@ namespace Codext
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.Size = new System.Drawing.Size(859, 492);
             this.webBrowser1.TabIndex = 0;
-            this.webBrowser1.Url = new System.Uri("C:\\Codext\\tmpDocumento.html", System.UriKind.Absolute);
+            this.webBrowser1.Url = new System.Uri("", System.UriKind.Relative);
             // 
             // btnRegresar
             // 

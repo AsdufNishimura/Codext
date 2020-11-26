@@ -48,3 +48,4 @@ C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 
 C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\obj\Debug\Codext.csproj.CoreCompileInputs.cache
 C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\obj\Debug\Codext.exe
 C:\Users\Eliseo Zepeda\Documents\Escuela\Séptimo Semestre\Lenguaje y Automatas 2\Codext\AsdufNishimura\Codext\src\Codext\Codext\obj\Debug\Codext.pdb
+C:\Users\asduf\Documents\GitHub\Codext\src\Codext\Codext\obj\Debug\Codext.DocumentView.resources

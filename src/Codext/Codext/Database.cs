@@ -16,7 +16,7 @@ namespace Codext
         //    get { return tabla; }
         //}
 
-        const string nombreServidor = @"ASDUF\SQLEXPRESS";
+        const string nombreServidor = @"localhost";
         const string nombreBD = "Codext";
 
 
