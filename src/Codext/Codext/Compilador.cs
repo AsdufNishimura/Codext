@@ -1658,9 +1658,11 @@ namespace Codext
                 trResultado.Add(new Tripleta(0, "PR01",
                     "<!DOCTYPE html> " +
                     "<head>" +
-                    "<script src=\"C:\\Codext\\tmpDocumento.js\"></script>" +
+                    "<link href=\"\\tmpDocumento.css\" rel=\"stylesheet\"></style>" +
+                    "<script src=\"\\tmpDocumento.js\"></script>" +
                     "</head>" +
-                    "<body>"
+                    "<body>" +
+                    "<button onclick=\"graficar()\"> Comenzar animación </button>"  
                     , "html"));
 
             }
@@ -2013,32 +2015,19 @@ namespace Codext
         //  en el archivo correspondiente, dependiendo de lo que represente ese registro.
         public void CodigoFinal()
         {
-            //using (File.OpenRead(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html"))
-            ////{
-            //    if (File.Exists(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html"))
-            //    {
-            //        File.Delete(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html");
-            //    }
-            //    File.Create(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html");
-            //}
-            string usuario = "Eliseo Zepeda";
+            
+            string usuario = "asduf";
             StreamWriter swHTML = new StreamWriter(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.html", false);
             swHTML.Close();
             swHTML = new StreamWriter(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.html", true);
 
+            swHTML.WriteLine("<>");
 
-            //using (File.OpenRead(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html"))
-            //{
-            //    if (File.Exists(@"C:\Users\asduf\Documents\Codext\tmpDocumento.js"))
-            //    {
-            //        File.Delete(@"C:\Users\asduf\Documents\Codext\tmpDocumento.js");
-            //    }
-            //    File.Create(@"C:\Users\asduf\Documents\Codext\tmpDocumento.html");
-            //}
-            
             StreamWriter swJS = new StreamWriter(@"C:\Users\"+usuario+@"\Documents\Codext\tmpDocumento.js", false);
             swJS.Close();
             swJS = new StreamWriter(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.js", true);
+
+            swJS.WriteLine("function graficar() {");
 
             foreach (List<Tripleta> listTripletas in tripletas)
             {
@@ -2060,7 +2049,7 @@ namespace Codext
                                     switch (listTripletas.ElementAt<Tripleta>(contadorRegistro).Operador.ToString())
                                     {
                                         case "html":
-                                            swHTML.WriteLine(listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente.ToString());
+                                            swJS.WriteLine("document.write(\"" + listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente.ToString() + "\");");
                                             break;
                                         case "js":
                                             swJS.WriteLine(listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoFuente.ToString());
@@ -2084,7 +2073,7 @@ namespace Codext
                                         switch (t1.Operador.ToString())
                                         {
                                             case "html":
-                                                swHTML.WriteLine(t1.DatoFuente.ToString());
+                                                swJS.WriteLine("document.write(\"" + t1.DatoFuente.ToString() + "\");");
                                                 break;
                                             case "js":
                                                 swJS.WriteLine(t1.DatoFuente.ToString());
@@ -2109,7 +2098,7 @@ namespace Codext
                                         switch (t2.Operador.ToString())
                                         {
                                             case "html":
-                                                swHTML.WriteLine(t2.DatoFuente.ToString());
+                                                swJS.WriteLine("document.write(\"" + t2.DatoFuente.ToString() + "\");");
                                                 break;
                                             case "js":
                                                 swJS.WriteLine(t2.DatoFuente.ToString());
@@ -2158,7 +2147,7 @@ namespace Codext
                                         List<object> variable = new List<object>();
                                         //Nombre
                                         variable.Add(listTripletas[contadorRegistro].DatoObjeto);
-                                        //Valir
+                                        //Valor
                                         variable.Add(listTripletas[contadorRegistro].DatoFuente);
                                         variables.Add(variable);
                                     }
@@ -2217,7 +2206,7 @@ namespace Codext
                                             switch (t1.Operador.ToString())
                                             {
                                                 case "html":
-                                                    swHTML.WriteLine(t1.DatoFuente.ToString());
+                                                    swJS.WriteLine("document.write(\"" + t1.DatoFuente.ToString() + "\");");
                                                     break;
                                                 case "js":
                                                     swJS.WriteLine(t1.DatoFuente.ToString());
@@ -2234,46 +2223,31 @@ namespace Codext
                             }
                            
                         }
-                        swJS.WriteLine("while("+temp+")");
-                    }
-                    ////  Si es una condición
-                    //if()
-                    //for(contadorRegistro = 0; contadorRegistro < listTripletas.Count; contadorRegistro++)
-                    //{
-
-                    //}
-
-                    //  Si es un ciclo
-                    //if ()
-                    //for (contadorRegistro = 0; contadorRegistro < listTripletas.Count; contadorRegistro++)
-                    //{
-
-                    //}
+                        swJS.WriteLine("while("+temp+");");
+                    }                    
                 }
                 else
-                {
-                    //if (t.DatoObjeto.ToString() == "TIMES")
-                    //{
-                    //    //  Si es una condición
-
-
-                    //    //  Si es un ciclo
-                    //}
-
+                {     
                     foreach (Tripleta t in listTripletas)
                     {
-
                         //  Si es una instrucción (incluyendo tabla)
                         if (t.DatoObjeto.ToString().StartsWith("PR"))
                         {
-                            switch (t.Operador.ToString())
+                            if (t.DatoObjeto.ToString().StartsWith("PR01"))
                             {
-                                case "html":
-                                    swHTML.WriteLine(t.DatoFuente.ToString());
-                                    break;
-                                case "js":
-                                    swJS.WriteLine(t.DatoFuente.ToString());
-                                    break;
+                                swHTML.WriteLine(t.DatoFuente.ToString());
+                            }
+                            else 
+                            {
+                                switch (t.Operador.ToString())
+                                {
+                                    case "html":
+                                        swJS.WriteLine("document.write(\"" + t.DatoFuente.ToString() + "\")");
+                                        break;
+                                    case "js":
+                                        swJS.WriteLine(t.DatoFuente.ToString());
+                                        break;
+                                }
                             }
                         }
 
@@ -2288,8 +2262,8 @@ namespace Codext
                 }
             }
             swHTML.Close();
+            swJS.WriteLine("}");
             swJS.Close();
-
 
             using (DocumentView dv = new DocumentView())
             {
