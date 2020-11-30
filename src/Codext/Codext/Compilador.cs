@@ -27,6 +27,7 @@ namespace Codext
         TaskCompletionSource<object> teclaEnter = new TaskCompletionSource<object>();
         List<List<Tripleta>> tripletas = new List<List<Tripleta>>();
         int intContadorVariablesTripleta = 0;
+        string usuario = "asduf";
 
         public FrmCodext()
         {
@@ -1637,6 +1638,8 @@ namespace Codext
 
         public List<Tripleta> TripletaInstruccion(string instruccion)
         {
+            //string css = "animation: type 3s steps(22);overflow: hidden;white-space: nowrap;width: 22ch;"
+
             List<Tripleta> trResultado = new List<Tripleta>();
             /*
              *  Las palabras reservadas que generarán tripletas son:
@@ -1656,13 +1659,14 @@ namespace Codext
             if (instruccion.Contains("PR01"))
             {
                 trResultado.Add(new Tripleta(0, "PR01",
-                    "<!DOCTYPE html> " +
-                    "<head>" +
-                    "<link href=\"\\tmpDocumento.css\" rel=\"stylesheet\"></style>" +
-                    "<script src=\"\\tmpDocumento.js\"></script>" +
-                    "</head>" +
-                    "<body>" +
-                    "<button onclick=\"graficar()\"> Comenzar animación </button>"  
+                    "<!DOCTYPE html>\n" +
+                        "<head>\n" +
+                            "<link href=\"C:\\Users\\" + usuario + "\\Documents\\Codext\\tmpDocumento.css\" rel=\"stylesheet\">\n" +
+                            "<script src=\"C:\\Users\\" + usuario + "\\Documents\\Codext\\tmpDocumento.js\"></script>\n" +
+                        "</head>\n" +
+                    "<body>\n" +
+                        //"<button onclick=\"graficar()\"> Comenzar animacion </button>\n" +
+                        "<div>\n"
                     , "html"));
 
             }
@@ -1670,7 +1674,7 @@ namespace Codext
             //  DOC_END
             if (instruccion.Contains("PR02"))
             {
-                trResultado.Add(new Tripleta(0, "PR02", "</body></html>", "html"));
+                trResultado.Add(new Tripleta(0, "PR02", "</div></body></html>", "html"));
             }
 
             /*   TITLE
@@ -1710,7 +1714,7 @@ namespace Codext
             //  PAGE_JUMP
             if (instruccion.Contains("PR06"))
             {
-                trResultado.Add(new Tripleta(0, "PR06", "<hr>", "html"));
+                trResultado.Add(new Tripleta(0, "PR06", "</div><hr><div>", "html"));
             }
 
             /*  NEXT_LINE
@@ -1841,20 +1845,19 @@ namespace Codext
                         Param2 = BuscarEnTablasSimbolos(Param2).Cells[3].Value.ToString();
                         break;
                     default:
+                        Param2 = "\"" + Param2 + "\"";
                         break;
                 }
                 if (!esAritmetica)
                     trResultado.Add(new Tripleta(0, "PR18", Param2, "OPRI"));
                 trResultado.Add(new Tripleta(1, "PR18", Param1 + " = " + Param2 + "\n", "js"));
-
-
             }
 
             //  VIEW
             //  Param1 -> Objeto a mostrar
             if (instruccion.Contains("PR19"))
             {
-                string Param1 = instruccion.Substring(11, 4);
+                string Param1 = instruccion.Substring(10, 4);
 
                 int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
                 switch (CantidadColumnas)
@@ -1868,6 +1871,13 @@ namespace Codext
                     default:
                         break;
                 }
+                string a = "\\";
+                string b = "\"";
+                Param1 = Regex.Replace(Param1, "<", "");
+                Param1 = Regex.Replace(Param1, ">", "");
+                Param1 = Regex.Replace(Param1, b, "");
+                Param1 = Regex.Replace(Param1, "#", "");
+
                 trResultado.Add(new Tripleta(0, "PR19", "<p>  " + Param1 + " </p>", "html"));
             }
 
@@ -2015,19 +2025,22 @@ namespace Codext
         //  en el archivo correspondiente, dependiendo de lo que represente ese registro.
         public void CodigoFinal()
         {
-            
-            string usuario = "asduf";
             StreamWriter swHTML = new StreamWriter(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.html", false);
             swHTML.Close();
             swHTML = new StreamWriter(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.html", true);
-
-            swHTML.WriteLine("<>");
 
             StreamWriter swJS = new StreamWriter(@"C:\Users\"+usuario+@"\Documents\Codext\tmpDocumento.js", false);
             swJS.Close();
             swJS = new StreamWriter(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.js", true);
 
             swJS.WriteLine("function graficar() {");
+            swJS.WriteLine("document.write(\"<!DOCTYPE html>" +
+                        "<head>" +
+                            "<link href='C:\\\\Users\\\\" + usuario + "\\\\Documents\\\\Codext\\\\tmpDocumento.css' rel='stylesheet'>" +
+                            "<script src='C:\\\\Users\\\\" + usuario + "\\\\Documents\\\\Codext\\\\tmpDocumento.js'></script>" +
+                        "</head>" +
+                    "<body>" +
+                        "<div>\")");
 
             foreach (List<Tripleta> listTripletas in tripletas)
             {
@@ -2223,7 +2236,7 @@ namespace Codext
                             }
                            
                         }
-                        swJS.WriteLine("while("+temp+");");
+                        swJS.WriteLine("while(" + temp + ");");
                     }                    
                 }
                 else
@@ -2251,9 +2264,8 @@ namespace Codext
                             }
                         }
 
-
                         //  Si es una operación
-                        if (t.Operador.ToString().StartsWith("O"))
+                        if (t.Operador.ToString().StartsWith("O") && !t.DatoObjeto.ToString().StartsWith("PR"))
                         {
                             swJS.WriteLine(t.DatoObjeto + "=" + t.DatoObjeto + t.Operador + t.DatoFuente);
                         }
@@ -2262,14 +2274,19 @@ namespace Codext
                 }
             }
             swHTML.Close();
+
             swJS.WriteLine("}");
+            swJS.WriteLine("window.onload = graficar;");
             swJS.Close();
 
-            using (DocumentView dv = new DocumentView())
-            {
-                dv.EstablecerUrl(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.html");
-                dv.ShowDialog();
-            }
+
+            System.Diagnostics.Process.Start(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.html");
+
+            //using (DocumentView dv = new DocumentView())
+            //{
+            //    dv.EstablecerUrl(@"C:\Users\" + usuario + @"\Documents\Codext\tmpDocumento.html");
+            //    dv.ShowDialog();
+            //}
         }
 
         #endregion
