@@ -1576,34 +1576,63 @@ namespace Codext
 
             for (int x = 1; x < arregloString.Length - 1; x++)
             {
-                trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "<tr>", "html"));
-                intContadorRegistro++;
-                int i = 0;
-                int intCantidadTokens = ObtenerCantidadTokens(arregloString[0].Trim());
-                while (i < intCantidadTokens)
+                if (arregloString[x].Contains("PR14"))
                 {
-                    s = arregloString[0].Substring((i * 4) + i, 4);
-                    if (!s.StartsWith("CE") && !s.StartsWith("PR"))
+                    string ciclo = "";
+                    while (!arregloString[x].Contains("PR15"))
                     {
-                        string Param = s;
-                        DataGridViewRow d = BuscarEnTablasSimbolos(s);
-                        switch (d.Cells.Count)
-                        {
-                            case 2:
-                                Param = BuscarEnTablasSimbolos(s).Cells[1].Value.ToString();
-                                break;
-                            case 4:
-                                Param = BuscarEnTablasSimbolos(s).Cells[3].Value.ToString();
-                                break;
-                            default:
-                                Param = s;
-                                break;
-                        }
-                        trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "<tr>" + Param + "</tr>", "html"));
-                        intContadorRegistro++;
+                        ciclo = ciclo + arregloString[x] + "\n";
+                        x++;
+                    }
+                    x++;
+                    ciclo = ciclo + arregloString[x] + "\n";
+                    foreach (Tripleta t in TripletaExpresionIteracion(ciclo))
+                    {
+                        trResultado.Add(t);
                     }
                 }
-                trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "</tr>", "html"));
+                //if (arregloString[x].Contains("PR14"))
+                //{
+                //    trResultado.Add(new Tripleta(0, "PR14", "do {", "js"));
+                //}
+                //if (arregloString[x].Contains("PR15"))
+                //{
+                //    trResultado.Add(new Tripleta(0, "PR15", "} while (", "js"));
+                //    //
+                //    trTr
+                //}
+                else
+                {
+                    trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "<tr>", "html"));
+                    intContadorRegistro++;
+                    int i = 0;
+                    int intCantidadTokens = ObtenerCantidadTokens(arregloString[x].Trim());
+                    while (i < intCantidadTokens)
+                    {
+                        s = arregloString[0].Substring((i * 4) + i, 4);
+                        if (!s.StartsWith("CE") && !s.StartsWith("PR"))
+                        {
+                            string Param = s;
+                            DataGridViewRow d = BuscarEnTablasSimbolos(s);
+                            switch (d.Cells.Count)
+                            {
+                                case 2:
+                                    Param = BuscarEnTablasSimbolos(s).Cells[1].Value.ToString();
+                                    break;
+                                case 4:
+                                    Param = BuscarEnTablasSimbolos(s).Cells[3].Value.ToString();
+                                    break;
+                                default:
+                                    Param = s;
+                                    break;
+                            }
+                            trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "<td>" + Param + "</td>", "html"));
+                            intContadorRegistro++;
+                        }
+                    }
+                    trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "</tr>", "html"));
+                }
+                
                 intContadorRegistro++;
             }
             trResultado.Add(new Tripleta(intContadorRegistro, "PR09", "</table>", "html"));
@@ -1665,7 +1694,6 @@ namespace Codext
                             "<script src=\"C:\\Users\\" + usuario + "\\Documents\\Codext\\tmpDocumento.js\"></script>\n" +
                         "</head>\n" +
                     "<body>\n" +
-                        //"<button onclick=\"graficar()\"> Comenzar animacion </button>\n" +
                         "<div>\n"
                     , "html"));
 
@@ -1686,28 +1714,54 @@ namespace Codext
                 string Param1 = instruccion.Substring(10, 4);
                 string Param2 = instruccion.Substring(20, 4);
 
-                if (Param1 == "POST")
-                {
-                    List<Tripleta> arit = TripletaExpresionAritmetica(instruccion.Substring(10, instruccion.Length - 15));
-                    trResultado.Add(new Tripleta(0, "PR05", arit, "OPRI"));
-                }
+                //if (Param1 == "POST")
+                //{
+                //    List<Tripleta> arit = TripletaExpresionAritmetica(instruccion.Substring(10, instruccion.Length - 15));
+                    
+                //    trResultado.Add(new Tripleta(0, "PR05", "do { documen.write(\"<br>\")"arit., "js"));
+                //}
 
-                int CantidadColumnas = BuscarEnTablasSimbolos(Param2) != null ? BuscarEnTablasSimbolos(Param2).Cells.Count : 0;
+                int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
                 {
                     switch (CantidadColumnas)
                     {
                         case 2:
-                            Param2 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+                            Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
                             break;
                         case 4:
-                            Param2 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+                            Param1 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
                             break;
                         default:
                             break;
                     }
                 }
-                trResultado.Add(new Tripleta(0, "PR05", Param2, "OPRI"));
-                trResultado.Add(new Tripleta(1, "PR18", Param1 + " = " + Param2 + "\n", "js"));
+                CantidadColumnas = BuscarEnTablasSimbolos(Param2) != null ? BuscarEnTablasSimbolos(Param2).Cells.Count : 0;
+                {
+                    switch (CantidadColumnas)
+                    {
+                        case 2:
+                            Param2 = BuscarEnTablasSimbolos(Param2).Cells[1].Value.ToString();
+                            break;
+                        case 4:
+                            Param2 = BuscarEnTablasSimbolos(Param2).Cells[3].Value.ToString();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                string a = "\\";
+                string b = "\"";
+                Param1 = Regex.Replace(Param1, "<", "");
+                Param1 = Regex.Replace(Param1, ">", "");
+                Param1 = Regex.Replace(Param1, b, "");
+                Param1 = Regex.Replace(Param1, "#", "");
+
+                Param2 = Regex.Replace(Param2, "<", "");
+                Param2 = Regex.Replace(Param2, ">", "");
+                Param2 = Regex.Replace(Param2, b, "");
+                Param2 = Regex.Replace(Param2, "#", "");
+
+                trResultado.Add(new Tripleta(0, "PR05", "<p style='font-size:" + Param1 + ";'>" + Param2 + "</p>", "html")) ;
 
             }
 
@@ -1722,16 +1776,9 @@ namespace Codext
              */
             if (instruccion.Contains("PR07"))
             {
-                int x = 0;
                 try
                 {
                     string Param1 = instruccion.Substring(10, 4);
-
-                    if (Param1 == "POST")
-                    {
-                        List<Tripleta> arit = TripletaExpresionAritmetica(instruccion.Substring(10, instruccion.Length - 5));
-                        trResultado.Add(new Tripleta(0, "PR07", arit, "OPRI"));
-                    }
 
                     int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
                     {
@@ -1747,55 +1794,129 @@ namespace Codext
                                 break;
                         }
                     }
-                    trResultado.Add(new Tripleta(0, "PR07", Param1, "OPRI"));
-                    for (x = 0; x < int.Parse(Param1); x++)
-                    {
-                        trResultado.Add(new Tripleta(x + 1, "PR07", "<br>", "html"));
-                    }
                 }
                 catch (Exception ex)
                 {
-                    trResultado.Add(new Tripleta(x + 1, "PR07", "<br>", "html"));
+                    trResultado.Add(new Tripleta(0, "PR07", "<br>", "html"));
                 }
+
+
+                //int x = 0;
+                //try
+                //{
+                //    string Param1 = instruccion.Substring(10, 4);
+
+                //    if (Param1 == "POST")
+                //    {
+                //        List<Tripleta> arit = TripletaExpresionAritmetica(instruccion.Substring(10, instruccion.Length - 5));
+                //        trResultado.Add(new Tripleta(0, "PR07", "i = 0; do { document.write(\"<br>\") } while i < (" + arit., "js"));
+                //    }
+
+                //    int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
+                //    {
+                //        switch (CantidadColumnas)
+                //        {
+                //            case 2:
+                //                Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+                //                break;
+                //            case 4:
+                //                Param1 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+                //                break;
+                //            default:
+                //                break;
+                //        }
+                //    }
+                //    trResultado.Add(new Tripleta(0, "PR07", Param1, "OPRI"));
+                //    for (x = 0; x < int.Parse(Param1); x++)
+                //    {
+                //        trResultado.Add(new Tripleta(x + 1, "PR07", "<br>", "html"));
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    trResultado.Add(new Tripleta(x + 1, "PR07", "<br>", "html"));
+                //}
             }
+
+
+
 
             ////  TABLE
             ////  *Param1 -> Cantidad de col
-            //if (instruccion.Contains("PR09"))
-            //{
-            //    try
-            //    {
-            //        string Param1 = instruccion.Substring(10, 4);
-            //        int CantidadColumnas = BuscarEnTablasSimbolos(Param1).Cells.Count;
-            //        {
-            //            switch (CantidadColumnas)
-            //            {
-            //                case 2:
-            //                    Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
-            //                    break;
-            //                case 4:
-            //                    Param1 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
-            //                    break;
-            //                default:
-            //                    break;
-            //            }
-            //        }
-            //        for (int x = 0; x < int.Parse(Param1); x++)
-            //        {
-            //            trResultado.Add(new Tripleta(x, "PR07", "<br>", "html"));
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        trResultado.Add(new Tripleta(x, "PR07", "<br>", "html"));
-            //    }
-            //}
+            if (instruccion.Contains("PR10"))
+            {
+                trResultado.Add(new Tripleta(0, "PR10", "<tr>", "html"));
+                string Param1 = instruccion.Substring(10, 4);
+                string Param2 = instruccion.Substring(20, 4);
 
-            ////  TABLE_ROW
-            //if (instruccion.Contains("PR10"))
-            //{
-            //    trResultado.Add(new Tripleta(0, "PR10", null, null));
-            //}
+                int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
+                switch (CantidadColumnas)
+                {
+                    case 2:
+                        Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+                        break;
+                    case 4:
+                        Param1 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+                        break;
+                    default:
+                        break;
+                }
+
+                CantidadColumnas = BuscarEnTablasSimbolos(Param2) != null ? BuscarEnTablasSimbolos(Param2).Cells.Count : 0;
+                switch (CantidadColumnas)
+                {
+                    case 2:
+                        Param2 = BuscarEnTablasSimbolos(Param2).Cells[1].Value.ToString();
+                        break;
+                    case 4:
+                        Param2 = BuscarEnTablasSimbolos(Param2).Cells[3].Value.ToString();
+                        break;
+                    default:
+                        break;
+                }
+                
+                trResultado.Add(new Tripleta(1, "PR10", "<td>" + Param1 + "</td>" + "<td>" + Param2 + "</td>", "html"));
+                        
+                    
+                
+                trResultado.Add(new Tripleta(2, "PR10", "</tr>", "html"));
+            }
+
+                //if (instruccion.Contains("PR09"))
+                //{
+                //    try
+                //    {
+                //        string Param1 = instruccion.Substring(10, 4);
+                //        int CantidadColumnas = BuscarEnTablasSimbolos(Param1).Cells.Count;
+                //        {
+                //            switch (CantidadColumnas)
+                //            {
+                //                case 2:
+                //                    Param1 = BuscarEnTablasSimbolos(Param1).Cells[1].Value.ToString();
+                //                    break;
+                //                case 4:
+                //                    Param1 = BuscarEnTablasSimbolos(Param1).Cells[3].Value.ToString();
+                //                    break;
+                //                default:
+                //                    break;
+                //            }
+                //        }
+                //        for (int x = 0; x < int.Parse(Param1); x++)
+                //        {
+                //            trResultado.Add(new Tripleta(x, "PR07", "<br>", "html"));
+                //        }
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        trResultado.Add(new Tripleta(x, "PR07", "<br>", "html"));
+                //    }
+                //}
+
+                ////  TABLE_ROW
+                //if (instruccion.Contains("PR10"))
+                //{
+                //    trResultado.Add(new Tripleta(0, "PR10", null, null));
+                //}
 
             //  VAR
             // Param1 -> Nombre de la variable
@@ -2044,12 +2165,14 @@ namespace Codext
 
             foreach (List<Tripleta> listTripletas in tripletas)
             {
+
                 if (listTripletas.Count > 0 && listTripletas.ElementAt<Tripleta>(0).DatoObjeto.ToString() == "TIMES")                    
                 {
                     int contadorRegistro = 1;
                     bool banderaCondicion;
                     bool banderaCiclo;
 
+                    //  Generación del código final de una condición
                     if (listTripletas.ElementAt<Tripleta>(1).DatoObjeto.ToString() == "PR11")
                     {
                         swJS.WriteLine("if(");
@@ -2129,6 +2252,7 @@ namespace Codext
                         }
                     }
 
+                    //  Generación del código de un ciclo
                     if(listTripletas.ElementAt<Tripleta>(1).DatoObjeto.ToString() == "PR14")
                     {
                         List<List<object>> variables = new List<List<object>>();
