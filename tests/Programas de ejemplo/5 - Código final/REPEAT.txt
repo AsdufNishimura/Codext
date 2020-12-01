@@ -1,15 +1,12 @@
 DOC_START
 VAR ( _x )
+VAR ( _y )
 VALUE ( _x , <"HOLA MUNDO"> )
-VALUE ( _y , #2525 )
+VALUE ( _y , 2525# )
 REPEAT
 ->
-PAGE_JUMP
-NEXT_LINE
-PAGE_JUMP
-NEXT_LINE
 VIEW ( _x )
 VIEW ( _y )
 <-
-TIL ( LOGIC ( < , 2# , 2# ) )
+TIL ( LOGIC ( < , TIMES , 2# ) )
 DOC_END

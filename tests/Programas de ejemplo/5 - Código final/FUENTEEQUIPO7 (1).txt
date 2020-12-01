@@ -1,10 +1,14 @@
 DOC_START
+VAR ( _tam )
+VAR ( _NUM-CONTROL )
+VAR ( _CALIF )
+VAR ( _TITULO )
 VALUE ( _tam , 4# )
 VALUE ( _NUM-CONTROL , <"17100###">)
 VALUE ( _CALIF , 70# )
 VALUE ( _TITULO , <"LISTADO DE CALIFICACIONES DEL PARCIAL 1"> )
 TITLE ( _tam , _TITULO )
-TABLE ( 3# )
+TABLE ( 2# )
 ->
   TABLE_ROW ( <"Num. Control "> , <"Calificacion"> )
   REPEAT
@@ -18,11 +22,7 @@ TABLE ( 3# )
     ->
       TABLE_ROW ( _NUM-CONTROL , <"NA"> )
     <-
-    DECIDE ( LOGIC ( = , _CONTA , 40# ) )
-    ->
-      NEXT_LINE ( 5# )
-    <-
   <-
-  TIL ( LOGIC ( = , TIMES , 160# ) )
+  TIL ( LOGIC ( = , TIMES , 10# ) )
 <-
 DOC_END
