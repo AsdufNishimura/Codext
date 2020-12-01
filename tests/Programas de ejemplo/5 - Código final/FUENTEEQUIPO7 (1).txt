@@ -3,6 +3,10 @@ VAR ( _tam )
 VAR ( _NUM-CONTROL )
 VAR ( _CALIF )
 VAR ( _TITULO )
+VAR ( _columna )
+VAR ( _col )
+VALUE ( _col , <"Calificacion"> )
+VALUE ( _columna , <"Num. Control "> )
 VALUE ( _tam , 4# )
 VALUE ( _NUM-CONTROL , <"17100###">)
 VALUE ( _CALIF , 70# )
@@ -10,7 +14,8 @@ VALUE ( _TITULO , <"LISTADO DE CALIFICACIONES DEL PARCIAL 1"> )
 TITLE ( _tam , _TITULO )
 TABLE ( 2# )
 ->
-  TABLE_ROW ( <"Num. Control "> , <"Calificacion"> )
+  TABLE_ROW ( _columna , _col )
+  NEXT_LINE
   REPEAT
   ->
      TABLE_ROW ( _NUM-CONTROL , _CALIF )

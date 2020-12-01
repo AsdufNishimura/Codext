@@ -1880,10 +1880,10 @@ namespace Codext
                 Param1 = Regex.Replace(Param1, ">", "");
                 Param1 = Regex.Replace(Param1, b, "");
                 Param1 = Regex.Replace(Param1, "#", "");
-                Param2 = Regex.Replace(Param1, "<", "");
-                Param2 = Regex.Replace(Param1, ">", "");
-                Param2 = Regex.Replace(Param1, b, "");
-                Param2 = Regex.Replace(Param1, "#", "");
+                Param2 = Regex.Replace(Param2, "<", "");
+                Param2 = Regex.Replace(Param2, ">", "");
+                Param2 = Regex.Replace(Param2, b, "");
+                Param2 = Regex.Replace(Param2, "#", "");
                 trResultado.Add(new Tripleta(1, "PR10", "<td>" + Param1 + "</td>" + "<td>" + Param2 + "</td>", "html"));
                         
                     
