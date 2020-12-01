@@ -27,7 +27,7 @@ namespace Codext
         TaskCompletionSource<object> teclaEnter = new TaskCompletionSource<object>();
         List<List<Tripleta>> tripletas = new List<List<Tripleta>>();
         int intContadorVariablesTripleta = 0;
-        string usuario = "asduf";
+        string usuario = "Eliseo Zepeda";
 
         public FrmCodext()
         {
@@ -1978,7 +1978,7 @@ namespace Codext
             //  Param1 -> Objeto a mostrar
             if (instruccion.Contains("PR19"))
             {
-                string Param1 = instruccion.Substring(10, 4);
+                string Param1 = instruccion.Trim().Substring(10, 4);
 
                 int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
                 switch (CantidadColumnas)
@@ -2162,12 +2162,13 @@ namespace Codext
                         "</head>" +
                     "<body>" +
                         "<div>\")");
-
+            swJS.WriteLine("var TIMES;");
             foreach (List<Tripleta> listTripletas in tripletas)
             {
-
+                
                 if (listTripletas.Count > 0 && listTripletas.ElementAt<Tripleta>(0).DatoObjeto.ToString() == "TIMES")                    
                 {
+                    
                     int contadorRegistro = 1;
                     bool banderaCondicion;
                     bool banderaCiclo;
@@ -2257,6 +2258,7 @@ namespace Codext
                     {
                         List<List<object>> variables = new List<List<object>>();
                         string temp = "";
+                        swJS.WriteLine("TIMES = 0");
                         swJS.WriteLine("do{");
                         for (contadorRegistro = 1; contadorRegistro < listTripletas.Count; contadorRegistro++)
                         {
@@ -2286,6 +2288,17 @@ namespace Codext
                                         variable.Add(listTripletas[contadorRegistro].DatoObjeto);
                                         //Valor
                                         variable.Add(listTripletas[contadorRegistro].DatoFuente);
+                                        variables.Add(variable);
+                                    }
+
+                                    if (listTripletas[contadorRegistro].DatoFuente != null && listTripletas[contadorRegistro].DatoFuente.ToString().Equals("PR16"))
+                                    {
+                                        swJS.WriteLine("TIMES++");
+                                        List<object> variable = new List<object>();
+                                        //Nombre
+                                        variable.Add(listTripletas[contadorRegistro].DatoObjeto);
+                                        //Valor
+                                        variable.Add("TIMES");
                                         variables.Add(variable);
                                     }
                                 }
