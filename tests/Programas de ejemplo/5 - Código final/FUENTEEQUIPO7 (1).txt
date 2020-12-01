@@ -13,16 +13,9 @@ TABLE ( 2# )
   TABLE_ROW ( <"Num. Control "> , <"Calificacion"> )
   REPEAT
   ->
-    DECIDE ( LOGIC ( >= , _CALIF , 70# ) )
-    ->
-      TABLE_ROW ( _NUM-CONTROL , _CALIF )
-      NEXT_LINE
-    <-
-    DECFALSE
-    ->
-      TABLE_ROW ( _NUM-CONTROL , <"NA"> )
-    <-
+     TABLE_ROW ( _NUM-CONTROL , _CALIF )
+     NEXT_LINE
   <-
-  TIL ( LOGIC ( = , TIMES , 10# ) )
+  TIL ( LOGIC ( < , TIMES , 10# ) )
 <-
 DOC_END

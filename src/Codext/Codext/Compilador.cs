@@ -1846,8 +1846,8 @@ namespace Codext
             if (instruccion.Contains("PR10"))
             {
                 trResultado.Add(new Tripleta(0, "PR10", "<tr>", "html"));
-                string Param1 = instruccion.Substring(10, 4);
-                string Param2 = instruccion.Substring(20, 4);
+                string Param1 = instruccion.Trim().Substring(10, 4);
+                string Param2 = instruccion.Trim().Substring(20, 4);
 
                 int CantidadColumnas = BuscarEnTablasSimbolos(Param1) != null ? BuscarEnTablasSimbolos(Param1).Cells.Count : 0;
                 switch (CantidadColumnas)
@@ -1874,7 +1874,16 @@ namespace Codext
                     default:
                         break;
                 }
-                
+                string a = "\\";
+                string b = "\"";
+                Param1 = Regex.Replace(Param1, "<", "");
+                Param1 = Regex.Replace(Param1, ">", "");
+                Param1 = Regex.Replace(Param1, b, "");
+                Param1 = Regex.Replace(Param1, "#", "");
+                Param2 = Regex.Replace(Param1, "<", "");
+                Param2 = Regex.Replace(Param1, ">", "");
+                Param2 = Regex.Replace(Param1, b, "");
+                Param2 = Regex.Replace(Param1, "#", "");
                 trResultado.Add(new Tripleta(1, "PR10", "<td>" + Param1 + "</td>" + "<td>" + Param2 + "</td>", "html"));
                         
                     
