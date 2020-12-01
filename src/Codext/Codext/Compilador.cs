@@ -27,7 +27,7 @@ namespace Codext
         TaskCompletionSource<object> teclaEnter = new TaskCompletionSource<object>();
         List<List<Tripleta>> tripletas = new List<List<Tripleta>>();
         int intContadorVariablesTripleta = 0;
-        string usuario = "Eliseo Zepeda";
+        string usuario = "asduf";
 
         public FrmCodext()
         {
@@ -1009,8 +1009,11 @@ namespace Codext
              */
             string s = "";
             int contadorLinea = 0;
+            int contadorApertura = 0;
+            int contadorCierre = 0;
             bool banderaSeleccion = false;
             bool banderaCiclo = false;
+            bool banderaTabla = false;
             string cadenaOriginal = "";
 
             while (contadorLinea < txtPostFijo.Lines.Count() - 1)
@@ -1019,8 +1022,28 @@ namespace Codext
                 int contadorToken = 0;
                 string temp = txtPostFijo.Lines[contadorLinea];
 
+
+
                 if (!banderaSeleccion && !banderaCiclo)
                 {
+                    if (banderaTabla)
+                    {
+                        if (txtPostFijo.Lines[contadorLinea].Contains("PR03"))
+                        {
+                            contadorApertura++;
+                        }
+                        if (txtPostFijo.Lines[contadorLinea].Contains("PR04"))
+                        {
+                            contadorCierre++;
+                        }
+                        if (contadorApertura == contadorCierre)
+                        {
+                            banderaTabla = false;
+                            List<Tripleta> listemp = new List<Tripleta>();
+                            listemp.Add(new Tripleta(0, "PR09", "</table>", "html"));
+                            tripletas.Add(listemp);
+                        }
+                    }
                     while (contadorToken < cantidadTokens)
                     {
                         s = txtPostFijo.Lines[contadorLinea].Substring((contadorToken * 4) + contadorToken, 4);
@@ -1031,7 +1054,6 @@ namespace Codext
                             s == "PR05" ||
                             s == "PR06" ||
                             s == "PR07" ||
-                            s == "PR09" ||
                             s == "PR10" ||
                             s == "PR17" ||
                             s == "PR18" ||
@@ -1039,7 +1061,14 @@ namespace Codext
                         {
                             tripletas.Add(TripletaInstruccion(txtPostFijo.Lines[contadorLinea]));
                         }
-                        
+
+                        //  Tabla
+                        if (s == "PR09")
+                        {
+                            banderaTabla = true;
+                            tripletas.Add(TripletaInstruccion(txtPostFijo.Lines[contadorLinea]));
+                        }
+
                         //  Selección
                         if (s == "PR11")
                         {
@@ -1082,6 +1111,18 @@ namespace Codext
                             cadenaOriginal += txtPostFijo.Lines[contadorLinea] + "\n";
                             tripletas.Add(TripletaExpresionIteracion(cadenaOriginal));
                         }
+                        //if (banderaTabla)
+                        //{
+                        //    banderaTabla = false;
+                        //    cadenaOriginal += txtPostFijo.Lines[contadorLinea] + "\n";
+                        //    tripletas.Add(TripletaTabla(cadenaOriginal));
+                        //    //tripletas.Add(new Tripleta(0, "PR09", "<table>", "html"));
+                        //    //foreach (Tripleta t in TripletaTabla(cadenaOriginal))
+                        //    //{
+                        //    //    tripletas.Add(t);
+                        //    //}
+                        //    //tripletas.Add(new Tripleta(0, "PR09", "</table>", "html"));
+                        //}
                     }
                                        
                 }
@@ -1191,10 +1232,12 @@ namespace Codext
                         {
                             banderaTabla = false;
                             cadenaOriginal += arregloString[contadorLinea] + "\n";
+                            tripletaTemp.Add(new Tripleta(0, "PR09", "<table>", "html"));
                             foreach (Tripleta t in TripletaTabla(cadenaOriginal))
                             {
                                 tripletaTemp.Add(t);
                             }
+                            tripletaTemp.Add(new Tripleta(0, "PR09", "</table>", "html"));
                         }
                     }
 
@@ -1532,13 +1575,16 @@ namespace Codext
                 if (tripleta.DatoObjeto.ToString().Equals("ETIQ") && tripleta.DatoFuente == null)
                     break;
                 if (tripleta.DatoObjeto.ToString().Equals("PR11"))
+                {
                     tripleta.DatoObjeto = "PR14";
+                    tripleta.Operador = "js";
+                }
                 trResultado.Add(tripleta);
 
             }
 
             // Agregar tripletas faltantes
-            trResultado.Add(new Tripleta(trResultado.Count, "TIMES", 1, "ORAS"));
+            trResultado.Add(new Tripleta(trResultado.Count, "TIMES", 1, "OPAS"));
             foreach (Tripleta tripleta in trResultado)
             {
                 // Se agrega la tripleta que volverá al incio de la condición
@@ -1576,6 +1622,51 @@ namespace Codext
 
             for (int x = 1; x < arregloString.Length - 1; x++)
             {
+                if(arregloString[x] == "")
+                {
+                    break;
+                }
+
+                if (arregloString[x].Contains("PR01") ||
+                    arregloString[x].Contains("PR02") ||
+                    arregloString[x].Contains("PR05") ||
+                    arregloString[x].Contains("PR06") ||
+                    arregloString[x].Contains("PR07") ||
+                    arregloString[x].Contains("PR17") ||
+                    arregloString[x].Contains("PR18") ||
+                    arregloString[x].Contains("PR19"))
+                {
+                    foreach (Tripleta t in TripletaInstruccion(arregloString[x]))
+                    {
+                        trResultado.Add(t);
+                    }
+                }
+
+                //  Selección
+                if (arregloString[x].Contains("PR11"))
+                {
+                    string condicion = "";
+                    int cuentaApertura = 0;
+                    int cuentaCierre = 0;
+                    while (cuentaApertura != cuentaCierre && cuentaApertura != 0)
+                    {
+                        condicion = condicion + arregloString[x] + "\n";
+                        x++;
+                        if (arregloString[x].Contains("PR03"))
+                        {
+                            cuentaApertura++;
+                        }
+                        if (arregloString[x].Contains("PR04"))
+                        {
+                            cuentaCierre++;
+                        }
+                    }
+                    foreach (Tripleta t in TripletaExpresionCondicional(condicion))
+                    {
+                        trResultado.Add(t);
+                    }
+                }
+
                 if (arregloString[x].Contains("PR14"))
                 {
                     string ciclo = "";
@@ -1590,31 +1681,20 @@ namespace Codext
                     {
                         trResultado.Add(t);
                     }
-                }
-                //if (arregloString[x].Contains("PR14"))
-                //{
-                //    trResultado.Add(new Tripleta(0, "PR14", "do {", "js"));
-                //}
-                //if (arregloString[x].Contains("PR15"))
-                //{
-                //    trResultado.Add(new Tripleta(0, "PR15", "} while (", "js"));
-                //    //
-                //    trTr
-                //}
+                }                
                 else
                 {
-                    trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "<tr>", "html"));
-                    intContadorRegistro++;
+                    trResultado.Add(new Tripleta(x, "PR10", "<tr>", "html"));
                     int i = 0;
                     int intCantidadTokens = ObtenerCantidadTokens(arregloString[x].Trim());
                     while (i < intCantidadTokens)
                     {
-                        s = arregloString[0].Substring((i * 4) + i, 4);
+                        s = arregloString[x].Trim().Substring((i * 4) + i, 4);
                         if (!s.StartsWith("CE") && !s.StartsWith("PR"))
                         {
                             string Param = s;
-                            DataGridViewRow d = BuscarEnTablasSimbolos(s);
-                            switch (d.Cells.Count)
+                            int CantidadColumnas = BuscarEnTablasSimbolos(s) != null ? BuscarEnTablasSimbolos(s).Cells.Count : 0;
+                            switch (CantidadColumnas)
                             {
                                 case 2:
                                     Param = BuscarEnTablasSimbolos(s).Cells[1].Value.ToString();
@@ -1626,9 +1706,20 @@ namespace Codext
                                     Param = s;
                                     break;
                             }
+                            string a = "\\";
+                            string b = "\"";
+                            Param = Regex.Replace(Param, "<", "");
+                            Param = Regex.Replace(Param, ">", "");
+                            Param = Regex.Replace(Param, b, "");
+                            Param = Regex.Replace(Param, "#", "");
+                            if (Regex.Matches(Param, "#").Count <= 1)
+                            {
+                                Param = Regex.Replace(Param, "#", "");
+                            }
                             trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "<td>" + Param + "</td>", "html"));
                             intContadorRegistro++;
                         }
+                        i++;
                     }
                     trResultado.Add(new Tripleta(intContadorRegistro, "PR10", "</tr>", "html"));
                 }
@@ -1754,14 +1845,20 @@ namespace Codext
                 Param1 = Regex.Replace(Param1, "<", "");
                 Param1 = Regex.Replace(Param1, ">", "");
                 Param1 = Regex.Replace(Param1, b, "");
-                Param1 = Regex.Replace(Param1, "#", "");
+                if (Regex.Matches(Param1, "#").Count <= 1)
+                {
+                    Param1 = Regex.Replace(Param1, "#", "");
+                }
 
                 Param2 = Regex.Replace(Param2, "<", "");
                 Param2 = Regex.Replace(Param2, ">", "");
                 Param2 = Regex.Replace(Param2, b, "");
-                Param2 = Regex.Replace(Param2, "#", "");
+                if (Regex.Matches(Param2, "#").Count <= 1)
+                {
+                    Param2 = Regex.Replace(Param2, "#", "");
+                }
 
-                trResultado.Add(new Tripleta(0, "PR05", "<p style='font-size:" + Param1 + ";'>" + Param2 + "</p>", "html")) ;
+                trResultado.Add(new Tripleta(0, "PR05", "<p style='font-size:" + Param1 + "ch;'>" + Param2 + "</p>", "html")) ;
 
             }
 
@@ -1840,9 +1937,18 @@ namespace Codext
 
 
 
+            //if (instruccion.Contains("PR09"))
+            //{
 
+            //}
             ////  TABLE
             ////  *Param1 -> Cantidad de col
+            ///
+
+            if (instruccion.Contains("PR09"))
+            {
+                trResultado.Add(new Tripleta(0, "PR09", "<table>", "html"));
+            }
             if (instruccion.Contains("PR10"))
             {
                 trResultado.Add(new Tripleta(0, "PR10", "<tr>", "html"));
@@ -1879,11 +1985,18 @@ namespace Codext
                 Param1 = Regex.Replace(Param1, "<", "");
                 Param1 = Regex.Replace(Param1, ">", "");
                 Param1 = Regex.Replace(Param1, b, "");
-                Param1 = Regex.Replace(Param1, "#", "");
+                if (Regex.Matches(Param1, "#").Count <= 1)
+                {
+                    Param1 = Regex.Replace(Param1, "#", "");
+                }
+
                 Param2 = Regex.Replace(Param2, "<", "");
                 Param2 = Regex.Replace(Param2, ">", "");
                 Param2 = Regex.Replace(Param2, b, "");
-                Param2 = Regex.Replace(Param2, "#", "");
+                if (Regex.Matches(Param2, "#").Count <= 1)
+                {
+                    Param2 = Regex.Replace(Param2, "#", "");
+                }
                 trResultado.Add(new Tripleta(1, "PR10", "<td>" + Param1 + "</td>" + "<td>" + Param2 + "</td>", "html"));
                         
                     
@@ -2006,7 +2119,10 @@ namespace Codext
                 Param1 = Regex.Replace(Param1, "<", "");
                 Param1 = Regex.Replace(Param1, ">", "");
                 Param1 = Regex.Replace(Param1, b, "");
-                Param1 = Regex.Replace(Param1, "#", "");
+                if (Regex.Matches(Param1, "#").Count <= 1)
+                {
+                    Param1 = Regex.Replace(Param1, "#", "");
+                }
 
                 trResultado.Add(new Tripleta(0, "PR19", "<p>  " + Param1 + " </p>", "html"));
             }
@@ -2172,15 +2288,236 @@ namespace Codext
                     "<body>" +
                         "<div>\")");
             swJS.WriteLine("var TIMES;");
+
             foreach (List<Tripleta> listTripletas in tripletas)
             {
-                
+                //if (listTripletas.Count > 0 && listTripletas.ElementAt<Tripleta>(0).DatoObjeto.ToString() == "PR09")
+                //{
+                //    int contadorRegistro = 1;
+                //    bool banderaCondicion;
+                //    bool banderaCiclo = false;
+
+                //    for (contadorRegistro = 1; contadorRegistro < listTripletas.Count; contadorRegistro++)
+                //    {
+                //        if (listTripletas.ElementAt<Tripleta>(contadorRegistro).DatoObjeto.ToString() == "PR14")
+                //        {
+                //            List<List<object>> variables = new List<List<object>>();
+                //            string temp = "";
+                //            swJS.WriteLine("TIMES = 0");
+                //            swJS.WriteLine("do{");
+                //            for (contadorRegistro = contadorRegistro; contadorRegistro < listTripletas.Count; contadorRegistro++)
+                //            {
+                //                if (listTripletas[contadorRegistro].Operador != null)
+                //                {
+                //                    if (listTripletas[contadorRegistro].Operador.ToString() == "OPAS" || listTripletas[contadorRegistro].Operador.ToString() == "OPRI")
+                //                    {
+                //                        if (listTripletas[contadorRegistro].DatoFuente != null && listTripletas[contadorRegistro].DatoFuente.ToString().StartsWith("CN") || listTripletas[contadorRegistro].DatoFuente.ToString().StartsWith("CR") || listTripletas[contadorRegistro].DatoFuente.ToString().StartsWith("ID"))
+                //                        {
+
+                //                            int CantidadColumnas = BuscarEnTablasSimbolos(listTripletas[contadorRegistro].DatoFuente.ToString()) != null ? BuscarEnTablasSimbolos(listTripletas[contadorRegistro].DatoFuente.ToString()).Cells.Count : 0;
+                //                            {
+                //                                switch (CantidadColumnas)
+                //                                {
+                //                                    case 2:
+                //                                        listTripletas[contadorRegistro].DatoFuente = BuscarEnTablasSimbolos(listTripletas[contadorRegistro].DatoFuente.ToString()).Cells[1].Value.ToString();
+                //                                        break;
+                //                                    case 4:
+                //                                        listTripletas[contadorRegistro].DatoFuente = BuscarEnTablasSimbolos(listTripletas[contadorRegistro].DatoFuente.ToString()).Cells[3].Value.ToString();
+                //                                        break;
+                //                                    default:
+                //                                        break;
+                //                                }
+                //                            }
+                //                            List<object> variable = new List<object>();
+                //                            //Nombre
+                //                            variable.Add(listTripletas[contadorRegistro].DatoObjeto);
+                //                            //Valor
+                //                            variable.Add(listTripletas[contadorRegistro].DatoFuente);
+                //                            variables.Add(variable);
+                //                        }
+
+                //                        if (listTripletas[contadorRegistro].DatoFuente != null && listTripletas[contadorRegistro].DatoFuente.ToString().Equals("PR16"))
+                //                        {
+                //                            swJS.WriteLine("TIMES++");
+                //                            List<object> variable = new List<object>();
+                //                            //Nombre
+                //                            variable.Add(listTripletas[contadorRegistro].DatoObjeto);
+                //                            //Valor
+                //                            variable.Add("TIMES");
+                //                            variables.Add(variable);
+                //                        }
+                //                    }
+
+                //                }
+                //                if (listTripletas[contadorRegistro].DatoObjeto != null && listTripletas[contadorRegistro].DatoFuente != null && listTripletas[contadorRegistro].DatoFuente.ToString().StartsWith("TE") && listTripletas[contadorRegistro].DatoObjeto.ToString().StartsWith("TE"))
+                //                {
+                //                    string operador = "";
+                //                    switch (listTripletas[contadorRegistro].Operador.ToString())
+                //                    {
+                //                        case "OPRI":
+                //                            operador = "=";
+                //                            break;
+                //                        case "OPRM":
+                //                            operador = ">";
+                //                            break;
+                //                        case "OPRm":
+                //                            operador = "<";
+                //                            break;
+                //                        case "OPRD":
+                //                            operador = "<>";
+                //                            break;
+                //                        case "OPMI":
+                //                            operador = ">=";
+                //                            break;
+                //                        case "OPmI":
+                //                            operador = "<=";
+                //                            break;
+                //                        case "OPLA":
+                //                            operador = "&";
+                //                            break;
+                //                        case "OPLO":
+                //                            operador = "|";
+                //                            break;
+                //                        case "OPLN":
+                //                            operador = "!";
+                //                            break;
+
+                //                    }
+                //                    foreach (List<object> objetos in variables)
+                //                    {
+                //                        if (temp != "")
+                //                            temp += operador;
+                //                        temp += objetos[1].ToString();
+                //                    }
+                //                }
+                //                if (listTripletas[contadorRegistro].DatoObjeto != null && listTripletas[contadorRegistro].DatoObjeto.ToString() == "ETIQT")
+                //                {
+                //                    if (listTripletas[contadorRegistro].DatoFuente != null && listTripletas[contadorRegistro].DatoFuente is List<Tripleta>)
+                //                    {
+                //                        foreach (Tripleta t1 in (List<Tripleta>)listTripletas[contadorRegistro].DatoFuente)
+                //                        {
+                //                            if (t1.DatoObjeto.ToString().StartsWith("PR"))
+                //                            {
+                //                                switch (t1.Operador.ToString())
+                //                                {
+                //                                    case "html":
+                //                                        swJS.WriteLine("document.write(\"" + t1.DatoFuente.ToString() + "\");");
+                //                                        break;
+                //                                    case "js":
+                //                                        swJS.WriteLine(t1.DatoFuente.ToString());
+                //                                        break;
+                //                                }
+                //                            }
+                //                            if (t1.Operador.ToString().StartsWith("O"))
+                //                            {
+                //                                swJS.WriteLine(t1.DatoObjeto + "=" + t1.DatoObjeto + t1.Operador + t1.DatoFuente);
+                //                            }
+                //                        }
+                //                        swJS.WriteLine("}");
+                //                    }
+                //                }
+
+                //            }
+                //            swJS.WriteLine("while(" + temp + ");");
+                //        }
+                //        else
+                //        {
+                //            Tripleta t = listTripletas.ElementAt<Tripleta>(contadorRegistro);
+
+                //            //  Si es una instrucción (incluyendo tabla)
+                //            if (t.DatoObjeto.ToString().StartsWith("PR"))
+                //            {
+                //                if (t.DatoObjeto.ToString().StartsWith("PR01"))
+                //                {
+                //                    swHTML.WriteLine(t.DatoFuente.ToString());
+                //                }
+                //                else
+                //                {
+                //                    if (t.Operador != null && t.DatoFuente != null)
+                //                    {
+                //                        switch (t.Operador.ToString())
+                //                        {
+                //                            case "html":
+                //                                swJS.WriteLine("document.write(\"" + t.DatoFuente.ToString() + "\")");
+                //                                break;
+                //                            case "js":
+                //                                swJS.WriteLine(t.DatoFuente.ToString());
+                //                                break;
+                //                        }
+                //                    }
+                //                }
+                //            }
+
+                //            //  Si es una operación
+                //            if (t.Operador != null)
+                //            {
+                //                if (t.Operador.ToString().StartsWith("O") && !t.DatoObjeto.ToString().StartsWith("PR") && t.DatoObjeto.ToString() != "TIMES")
+                //                {
+                //                    string operador = "";
+                //                    switch (t.Operador.ToString())
+                //                    {
+                //                        case "OPAS":
+                //                            operador = "+";
+                //                            break;
+                //                        case "OPAR":
+                //                            operador = "-";
+                //                            break;
+                //                        case "OPAM":
+                //                            operador = "*";
+                //                            break;
+                //                        case "OPAD":
+                //                            operador = "/";
+                //                            break;
+                //                        case "OPAP":
+                //                            operador = "**";
+                //                            break;
+                //                        case "OPAC":
+                //                            operador = "%";
+                //                            break;
+                //                        case "OPRI":
+                //                            operador = "=";
+                //                            break;
+                //                        case "OPRM":
+                //                            operador = ">";
+                //                            break;
+                //                        case "OPRm":
+                //                            operador = "<";
+                //                            break;
+                //                        case "OPRD":
+                //                            operador = "<>";
+                //                            break;
+                //                        case "OPMI":
+                //                            operador = ">=";
+                //                            break;
+                //                        case "OPmI":
+                //                            operador = "<=";
+                //                            break;
+                //                        case "OPLA":
+                //                            operador = "&";
+                //                            break;
+                //                        case "OPLO":
+                //                            operador = "|";
+                //                            break;
+                //                        case "OPLN":
+                //                            operador = "!";
+                //                            break;
+                //                    }
+                //                    swJS.WriteLine(t.DatoObjeto + "=" + t.DatoObjeto + operador + t.DatoFuente);
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
+
+                //else 
                 if (listTripletas.Count > 0 && listTripletas.ElementAt<Tripleta>(0).DatoObjeto.ToString() == "TIMES")                    
                 {
                     
                     int contadorRegistro = 1;
                     bool banderaCondicion;
-                    bool banderaCiclo;
+                    bool banderaCiclo = false;
+
+                    
 
                     //  Generación del código final de una condición
                     if (listTripletas.ElementAt<Tripleta>(1).DatoObjeto.ToString() == "PR11")
@@ -2398,24 +2735,78 @@ namespace Codext
                             }
                             else 
                             {
-                                switch (t.Operador.ToString())
+                                if (t.Operador != null && t.DatoFuente != null)
                                 {
-                                    case "html":
-                                        swJS.WriteLine("document.write(\"" + t.DatoFuente.ToString() + "\")");
-                                        break;
-                                    case "js":
-                                        swJS.WriteLine(t.DatoFuente.ToString());
-                                        break;
+                                    switch (t.Operador.ToString())
+                                    {
+                                        case "html":
+                                            swJS.WriteLine("document.write(\"" + t.DatoFuente.ToString() + "\")");
+                                            break;
+                                        case "js":
+                                            swJS.WriteLine(t.DatoFuente.ToString());
+                                            break;
+                                    }
                                 }
                             }
                         }
 
                         //  Si es una operación
-                        if (t.Operador.ToString().StartsWith("O") && !t.DatoObjeto.ToString().StartsWith("PR"))
+                        if (t.Operador != null)
                         {
-                            swJS.WriteLine(t.DatoObjeto + "=" + t.DatoObjeto + t.Operador + t.DatoFuente);
+                            if (t.Operador.ToString().StartsWith("O") && !t.DatoObjeto.ToString().StartsWith("PR") && t.DatoObjeto.ToString() != "TIMES")
+                            {
+                                string operador = "";
+                                switch(t.Operador.ToString())
+                                {
+                                    case "OPAS":
+                                        operador = "+";
+                                        break;
+                                    case "OPAR":
+                                        operador = "-";
+                                        break;
+                                    case "OPAM":
+                                        operador = "*";
+                                        break;
+                                    case "OPAD":
+                                        operador = "/";
+                                        break;
+                                    case "OPAP":
+                                        operador = "**";
+                                        break;
+                                    case "OPAC":
+                                        operador = "%";
+                                        break;
+                                    case "OPRI":
+                                        operador = "=";
+                                        break;
+                                    case "OPRM":
+                                        operador = ">";
+                                        break;
+                                    case "OPRm":
+                                        operador = "<";
+                                        break;
+                                    case "OPRD":
+                                        operador = "<>";
+                                        break;
+                                    case "OPMI":
+                                        operador = ">=";
+                                        break;
+                                    case "OPmI":
+                                        operador = "<=";
+                                        break;
+                                    case "OPLA":
+                                        operador = "&";
+                                        break;
+                                    case "OPLO":
+                                        operador = "|";
+                                        break;
+                                    case "OPLN":
+                                        operador = "!";
+                                        break;
+                                }
+                                swJS.WriteLine(t.DatoObjeto + "=" + t.DatoObjeto + operador + t.DatoFuente);
+                            }
                         }
-
                     }
                 }
             }
